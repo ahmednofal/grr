@@ -5,7 +5,8 @@
 
 # Activity Diagram Flow
 
-# Server sends acauthority a request for an access token for certain number of named resources on the
+# Server sends acauthority a request for an access token for certain number of named resources
+# on the
 # client machine
 
 # The acauthority uses the keycloak in the backend to verify the role of the server user and the
@@ -29,8 +30,10 @@ class ACAuthority:
     def identity_roles(server_IP):
         pass
 
+    # cross checks the access requested with the supplied token
     def access_token_valid(token, access):
         pass
+
     # Send token to server
     def send_token(token):
         pass
