@@ -17,7 +17,7 @@
 
 # Returns roles of the identity using the KeyCloak api
 # args : identity is a certificate signed by a CA
-
+import keycloak
 
 class Token:
     pass
