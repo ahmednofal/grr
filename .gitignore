@@ -14,3 +14,4 @@ grr.egg-info/
 get-pip.py
 grr/core/grr_response_core/artifacts/*.yaml
 *.egg-info/
+tags
