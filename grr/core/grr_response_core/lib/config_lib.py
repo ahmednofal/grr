@@ -3,16 +3,14 @@
 
 This handles opening and parsing of config files.
 """
+from __future__ import absolute_import
 
 from __future__ import print_function
 from __future__ import unicode_literals
 
 import collections
-import ConfigParser
 import copy
 import errno
-import importlib
-import inspect
 import io
 import logging
 import os
@@ -22,14 +20,15 @@ import sys
 import traceback
 
 
+import configparser
 from future.utils import iteritems
 from future.utils import itervalues
 from future.utils import with_metaclass
-import pkg_resources
 import yaml
 
 from grr_response_core.lib import flags
 from grr_response_core.lib import lexer
+from grr_response_core.lib import package
 from grr_response_core.lib import registry
 from grr_response_core.lib import type_info
 from grr_response_core.lib import utils
@@ -38,7 +37,10 @@ from grr_response_core.lib.util import precondition
 
 # Default is set in distro_entry.py to be taken from package resource.
 flags.DEFINE_string(
-    "config", None, "Primary Configuration file to use. This is normally "
+    "config",
+    package.ResourcePath("grr-response-core",
+                         "install_data/etc/grr-server.yaml"),
+    "Primary Configuration file to use. This is normally "
     "taken from the installed package and should rarely "
     "be specified.")
 
@@ -54,11 +56,9 @@ flags.DEFINE_list("context", [], "Use these contexts for the config.")
 flags.DEFINE_bool("disallow_missing_config_definitions", False,
                   "If true, we raise an error on undefined config options.")
 
-flags.PARSER.add_argument(
-    "-p",
-    "--parameter",
-    action="append",
-    default=[],
+flags.DEFINE_multi_string(
+    "p",
+    "parameter",
     help="Global override of config values. "
     "For example -p DataStore.implementation=MySQLDataStore")
 
@@ -230,46 +230,22 @@ class Resource(ConfigFilter):
   name = "resource"
   default_package = "grr-response-core"
 
-  def _GetPkgResources(self, target, package):
-    requirement = pkg_resources.Requirement.parse(package)
-    try:
-      return pkg_resources.resource_filename(requirement, target)
-    except pkg_resources.DistributionNotFound:
-      # It may be that the working set is not in sync (e.g. if sys.path was
-      # manipulated). Try to reload it just in case.
-      pkg_resources.working_set = pkg_resources.WorkingSet()
-      try:
-        return pkg_resources.resource_filename(requirement, target)
-      except pkg_resources.DistributionNotFound:
-        logging.error("Distribution %s not found. Is it installed?", package)
-        return None
-
   def Filter(self, filename_spec):
     """Use pkg_resources to find the path to the required resource."""
-    package = self.default_package
-    filename = filename_spec
     if "@" in filename_spec:
-      filename, package = filename_spec.split("@", 1)
+      file_path, package_name = filename_spec.split("@")
+    else:
+      file_path, package_name = filename_spec, Resource.default_package
 
-    # If we are running a pyinstaller-built binary we rely on the sys.prefix
-    # code below and avoid running this which will generate confusing error
-    # messages.
-    if not getattr(sys, "frozen", None):
-      target = self._GetPkgResources(filename, package)
-      if target and os.access(target, os.R_OK):
-        return target
+    resource_path = package.ResourcePath(package_name, file_path)
+    if resource_path is not None:
+      return resource_path
 
-    # Installing from wheel places data_files relative to sys.prefix and not
-    # site-packages. If we can not find in site-packages, check sys.prefix
-    # instead.
-    # https://python-packaging-user-guide.readthedocs.io/en/latest/distributing/#data-files
-    target = os.path.join(sys.prefix, filename)
-    if target and os.access(target, os.R_OK):
-      return target
 
+    # pylint: disable=unreachable
     raise FilterError(
         "Unable to find resource %s while interpolating: " % filename_spec)
-
+    # pylint: enable=unreachable
 
 
 class ModulePath(ConfigFilter):
@@ -286,7 +262,7 @@ class ModulePath(ConfigFilter):
 
   def Filter(self, name):
     try:
-      module = importlib.import_module(name)
+      return package.ModulePath(name)
     except ImportError:
       message = (
           "Config parameter module_path expansion %r can not be imported." %
@@ -297,17 +273,6 @@ class ModulePath(ConfigFilter):
       traceback.print_exc()
       logging.error(message)
       raise FilterError(message)
-
-    result = inspect.getfile(module)
-
-    if os.path.basename(result).startswith("__init__."):
-      result = os.path.dirname(result)
-
-    # Sometimes __file__ points at a .pyc file, when we really mean the .py.
-    elif result.endswith(".pyc"):
-      result = result[:-4] + ".py"
-
-    return result
 
 
 class GRRConfigParser(with_metaclass(registry.MetaclassRegistry, object)):
@@ -353,7 +318,7 @@ class GRRConfigParser(with_metaclass(registry.MetaclassRegistry, object)):
     """
 
 
-class ConfigFileParser(ConfigParser.RawConfigParser, GRRConfigParser):
+class ConfigFileParser(configparser.RawConfigParser, GRRConfigParser):
   """A parser for ini style config files."""
 
   def __init__(self, filename=None, data=None, fd=None):
@@ -863,7 +828,6 @@ class GrrConfigManager(object):
     Args:
       filename: A filename which will receive updates. The file is parsed first
         and merged into the raw data from this object.
-
     """
     try:
       self.writeback = self.LoadSecondaryConfig(filename)
@@ -896,7 +860,6 @@ class GrrConfigManager(object):
     Args:
       sections: A list of sections to validate. All parameters within the
         section are validated.
-
       parameters: A list of specific parameters (in the format section.name) to
         validate.
 
@@ -946,6 +909,7 @@ class GrrConfigManager(object):
     Args:
       context_string: A string which describes the global program.
       description: A description as to when this context applies.
+
     Raises:
       InvalidContextError: An undefined context was specified.
     """
@@ -991,6 +955,7 @@ class GrrConfigManager(object):
       name: The name of the parameter to set.
       value: The value to set it to. The value will be validated against the
         option's type descriptor.
+
     Raises:
       ConstModificationError: When attempting to change a constant option.
     """
@@ -1062,8 +1027,8 @@ class GrrConfigManager(object):
     Args:
       descriptor: A TypeInfoObject instance describing the option.
       constant: If this is set, the option is treated as a constant - it can be
-                read at any time (before parsing the configuration) and it's an
-                error to try to override it in a config file.
+        read at any time (before parsing the configuration) and it's an error to
+        try to override it in a config file.
 
     Raises:
       RuntimeError: The descriptor's name must contain a . to denote the section
@@ -1175,9 +1140,8 @@ class GrrConfigManager(object):
     Args:
       filename: The configuration file that will be loaded. For example
            file:///etc/grr.conf or reg://HKEY_LOCAL_MACHINE/Software/GRR.
-
       parser: An optional parser can be given. In this case, the parser's data
-           will be loaded directly.
+        will be loaded directly.
 
     Returns:
       The parser used to parse this configuration source.
@@ -1242,16 +1206,11 @@ class GrrConfigManager(object):
 
     Args:
       filename: The name of the configuration file to use.
-
       data: The configuration given directly as a long string of data.
-
       fd: A file descriptor of a configuration file.
-
       reset: If true, the previous configuration will be erased.
-
       must_exist: If true the data source must exist and be a valid
         configuration file, or we raise an exception.
-
       parser: The parser class to use (i.e. the format of the file). If not
         specified guess from the filename.
 
@@ -1310,13 +1269,11 @@ class GrrConfigManager(object):
     Args:
       name: The name of the parameter to retrieve. This should be in the format
         of "Section.name"
-
       default: If retrieving the value results in an error, return this default.
-
       context: A list of context strings to resolve the configuration. This is a
-      set of roles the caller is current executing with. For example (client,
-      windows). If not specified we take the context from the current thread's
-      TLS stack.
+        set of roles the caller is current executing with. For example (client,
+        windows). If not specified we take the context from the current thread's
+        TLS stack.
 
     Returns:
       The value of the parameter.
@@ -1530,7 +1487,7 @@ class GrrConfigManager(object):
 
     Args:
       target_os: which os we are building for in this run (linux, windows,
-                 darwin)
+        darwin)
       target_arch: which arch we are building for in this run (i386, amd64)
       target_package: which package type we are building (exe, dmg, deb, rpm)
       context: config_lib context
@@ -1539,9 +1496,9 @@ class GrrConfigManager(object):
       bool: True if target_platforms spec matches parameters.
     """
     for spec in self.Get("ClientBuilder.target_platforms", context=context):
-      spec_os, arch, package = spec.split("_")
+      spec_os, arch, package_name = spec.split("_")
       if (spec_os == target_os and arch == target_arch and
-          package == target_package):
+          package_name == target_package):
         return True
     return False
 
@@ -1731,8 +1688,8 @@ def LoadConfig(config_obj,
   """Initialize a ConfigManager with the specified options.
 
   Args:
-    config_obj: The ConfigManager object to use and update. If None, one will
-        be created.
+    config_obj: The ConfigManager object to use and update. If None, one will be
+      created.
     config_file: Filename to read the config from.
     config_fd: A file-like object to read config data from.
     secondary_configs: A list of secondary config URLs to load.

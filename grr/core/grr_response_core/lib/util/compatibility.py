@@ -1,11 +1,16 @@
 #!/usr/bin/env python
 """A module with utilities for maintaining compatibility with Python 2 and 3."""
+from __future__ import absolute_import
+
 from __future__ import unicode_literals
 
 import sys
 import types
 
 from future.builtins import str
+from typing import List
+from typing import Text
+from typing import Tuple
 
 from grr_response_core.lib.util import precondition
 
@@ -74,7 +79,9 @@ def ListAttrs(cls):
   precondition.AssertType(cls, type)
 
   if _IsPython2():
-    return [item.decode("ascii") for item in dir(cls)]
+    # TODO(user): once https://github.com/google/pytype/issues/127 is fixed,
+    # pytype should be able to tell that this line is unreachable in py3.
+    return [item.decode("ascii") for item in dir(cls)]  # pytype: disable=attribute-error
   else:
     return dir(cls)
 

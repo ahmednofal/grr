@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """These are filesystem related flows."""
+from __future__ import absolute_import
 from __future__ import division
 from __future__ import unicode_literals
 
@@ -169,9 +170,6 @@ class ListDirectoryMixin(object):
 
   def NotifyAboutEnd(self):
     """Sends a notification that this flow is done."""
-    if not self.ShouldSendNotifications():
-      return
-
     if not self.state.urn:
       super(ListDirectoryMixin, self).NotifyAboutEnd()
       return
@@ -276,9 +274,6 @@ class RecursiveListDirectoryMixin(object):
         self.SendReply(stat_entry)  # Send Stats to parent flows.
 
   def NotifyAboutEnd(self):
-    if not self.ShouldSendNotifications():
-      return
-
     status_text = "Recursive Directory Listing complete %d nodes, %d dirs"
 
     urn = self.state.first_directory
@@ -937,10 +932,12 @@ class GlobLogic(object):
       if recursions_to_get or regexes_to_get:
         # Recursions or regexes need a base pathspec to operate on. If we
         # have neither a response or a root path, we send a default pathspec
-        # that opens the root with pathtype "OS".
+        # that opens the root with pathtype set to the pathtype expected by the
+        # user.
         base_pathspec = self._GetBasePathspec(response)
         if not base_pathspec:
-          base_pathspec = rdf_paths.PathSpec(path="/", pathtype="OS")
+          base_pathspec = rdf_paths.PathSpec(
+              path="/", pathtype=self.state.pathtype)
 
         for depth, recursions in iteritems(recursions_to_get):
           path_regex = "(?i)^" + "$|^".join(set([c.path for c in recursions

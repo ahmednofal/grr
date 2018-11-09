@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 """API handlers for stats."""
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
-
-from future.utils import iterkeys
+from future.utils import itervalues
 
 from grr_response_core.lib import rdfvalue
-from grr_response_core.lib import stats
 from grr_response_core.lib import utils
+from grr_response_core.lib.rdfvalues import stats as rdf_stats
 from grr_response_core.lib.rdfvalues import structs as rdf_structs
+from grr_response_core.stats import stats_collector_instance
 from grr_response_proto.api import stats_pb2
 from grr_response_server import aff4
 from grr_response_server import timeseries
@@ -40,7 +41,7 @@ class ApiListStatsStoreMetricsMetadataArgs(rdf_structs.RDFProtoStruct):
 class ApiListStatsStoreMetricsMetadataResult(rdf_structs.RDFProtoStruct):
   protobuf = stats_pb2.ApiListStatsStoreMetricsMetadataResult
   rdf_deps = [
-      stats.MetricMetadata,
+      rdf_stats.MetricMetadata,
   ]
 
 
@@ -64,8 +65,9 @@ class ApiListStatsStoreMetricsMetadataHandler(
     if not process_ids:
       return result
     else:
-      metadata = stats_store.ReadMetadata(process_id=process_ids[0])
-      result.items = sorted(metadata.metrics, key=lambda m: m.varname)
+      metric_metadata = stats_collector_instance.Get().GetAllMetricsMetadata()
+      result.items = sorted(
+          itervalues(metric_metadata), key=lambda m: m.varname)
       return result
 
 
@@ -126,9 +128,8 @@ class ApiGetStatsStoreMetricHandler(api_call_handler_base.ApiCallHandler):
     if not data:
       return result
 
-    pid = next(iterkeys(data))
-    metadata = stats_store.ReadMetadata(process_id=pid)
-    metric_metadata = metadata.AsDict()[args.metric_name]
+    metric_metadata = stats_collector_instance.Get().GetMetricMetadata(
+        args.metric_name)
 
     query = stats_store_lib.StatsStoreDataQuery(data)
     query.In(args.component.name.lower() + ".*").In(args.metric_name)

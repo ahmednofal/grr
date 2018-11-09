@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """Simple parsers for Linux files."""
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import re
@@ -29,6 +30,7 @@ class DebianPackagesStatusParser(parser.FileParser):
   def Parse(self, stat, file_object, knowledge_base):
     """Parse the status file."""
     _, _ = stat, knowledge_base
+
     try:
       sw_data = utils.ReadFileBytesAsUnicode(file_object)
       for pkg in self._deb822.Packages.iter_paragraphs(sw_data.splitlines()):
