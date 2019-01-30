@@ -12,3 +12,5 @@ remove the entire keycloak installation and reinstall it.
 
 TODO: get the location of the database server used by keycloak to be able to reinitialize it when you 
 corrupt the entire db
+
+Clients are the apps trying to authincate using the keycloak server
