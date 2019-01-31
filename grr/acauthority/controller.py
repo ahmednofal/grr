@@ -32,13 +32,14 @@
 # import keycloak
 # x = KeyCloak.client
 # keycloak.KeycloakAdmin.create_client(x)
+
+
 import keycloak
 
 class Token:
     pass
 
 class ACAuthority:
-
     def __init__(self):
         # AC Authority initialization
         # It should firstly get access to the admin account of keycloak
@@ -47,10 +48,12 @@ class ACAuthority:
         self.admin_password = "9437618525"
         # self.adminobj = keycloak.keycloak_admin.KeycloakAdmin("http://localhost:8080/auth/", self.admin_user_name, self.admin_password)
         self.adminobj = keycloak.keycloak_admin.KeycloakAdmin("http://localhost:8080/auth/", self.admin_user_name, self.admin_password)
-
-    def receive_token_request(token_req):
         pass
+    def get_identity(self, request):
+        self.adminobj.get_client(request.identity)
 
+    def facilitate_roles(self, request):
+        identity = self.get_identity(request);
     def identity_roles(server_IP):
         pass
 
@@ -58,22 +61,4 @@ class ACAuthority:
     def access_token_valid(token, access):
         pass
 
-    # Send token to server
-    def send_token(token):
-        pass
 
-    # returns created token
-    def create_token():
-        pass
-
-    # Change the
-    def invalidate_token(token):
-        pass
-
-    # Change the timestamp
-    def refresh_token(token):
-        pass
-
-
-
-# KEYCLOAK OPENID
