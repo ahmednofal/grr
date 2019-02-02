@@ -10,13 +10,9 @@
 # check_valid_req
 #
 
-import requests
-
 class IncomingActionHandler:
     def __init__(self):
         # this is supposed to initialize all possible internal data needed for communication
         pass
     def listen(self, port):
-
-
 
