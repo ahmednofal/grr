@@ -63,12 +63,9 @@
 # Also be aware that in this scheme there is no specific relationship between the client and the server analyst
 # or the server for that matter, except for the binary being available and referencable for the server
 
-#TODO: Rethink the need for a separate machine to be running 2 processes 1 for keycloak and 1 redundant for
-# a web server just to authenticate and pass down requests instead of just using a REST API, mayb there is a
-# client REST API rather than an Admin REST API
-# TODO: This flow might be deprecated
 # TODO: It is a good idea to transform this web server into an async one and use callbacks instead of just
 # waiting on requests
+
 # TODO: Most probably we will need to have a standalone web server
 # Component to handle the logic of the ac and not just keycloak on its
 # own even if we could just use a REST API for clients, still we would
@@ -76,6 +73,7 @@
 # or created ) that actually have a terminal(theory of computing sense
 # ) symbol, ie we need to have an underlying representation of what each
 # role means
+
 # TODO: Delete all of the non-keyclaok-API-using functions and classes and limit the usage to
 # keycloak
 # TODO: The keycloak api can be used to incorporate the required data for access and might have
@@ -86,29 +84,63 @@
 # Flow
 # client -> action -> acauth -> databases -> client role -> approve/deny role ->
 
+# TODO: We shifted from having any possible interaction from the client and server with the ac authority to just
+# having the ac authority being an access point to register through, the server and the client will register
+# then all incoming traffic will use rpc after registering and authenticating the server and client
+# TODO: To use the rpc in the grr server and client we have to register the methods of the ac server (
+# which are just keycloak objects methods) as dispatcher methods in the json-rpc module dispatcher
+# This can be done if we can list all of the functions one by one of all the classes in the module and then
+# use the syntax func = dec(func) here dec() is the add_method decorator used by the jsonrpc dispatcher
+
+# VERY IMPORTANT
+# TODO: The way to use json-rpc is to firstly initiate the dispatcher and then call add_object on a
+# keycloak admin object which will then include all needed methods of the object for rpc in the ac side from
+# the keycloak client(grr client) or keycloak user (grr server)
+# TODO: Might be a good idea to actually let the client and server (GRR) to call RPC on the registration and
+# Authentication and remove that code completely from the server side since it will also be in the client side
+# and just authenticate the server here and then let the client and server RPC on the methods of the
+# keycloak_admin
 
 import keycloak
 import http.server
 import requests, json
+import inspect # To be able to list all function pointers for them to be registrable in the rpc pool
 from accesslvl_identifier import *
 from request_types import *
 from httpserverconfig import *
+from jsonrpc import JSONRPCResponseManager, dispatcher
+
 class ACAuthority:
-    # Needed because the server apparently kicks us out every few ms
+    # Needed because the server apparently kicks us out every few ms, oh well such is life ....
     def auth(self):
         self.adminobj = keycloak.keycloak_admin.KeycloakAdmin("http://localhost:8080/auth/", self.admin_user_name, self.admin_password)
 
+    # TODO: May be this should be moved into a different class, something in __init__.py
+    def register_functions_in_jsonrpc(self):
+        """This function will register the entire keycloak api in the rpc pool (the list of all the methods call
+        able from rpc)
+        :returns: nothing for the time being
+
+        """
+        keycloak_admin_methods = inspect.getmembers(self.adminobj, predicate=inspect.ismethod) # list
+        for amethod in keycloak_admin_methods:
+            amethod[1] = dispatcher.add_method(amethod[1])
+        pass
     # This should be remove in favor of an initialization and installation script
     def __init__(self):
         # AC Authority initialization
         # It should firstly get access to the admin account of keycloak
         # TODO: Initializing the listening thread ...
         # TODO: move this into a different class to be just serving and has nothing to do with the controll
+        # On a second note just async the hell out of this server
+        # TODO: Add a command execution to spawn up the server if it si not already spawned
+
         self.port = ACAUTHORITY_HTTP_SERVERPORT
         handler = http.server.SimpleHTTPRequestHandler
         with socketserver.TCPServer(("", self.port), handler) as httpd:
             print("serving at port", self.port)
             httpd.serve_forever()
+        # these to be extracted from config files (Most probably YAML), and lets try encrypting them
         self.admin_user_name = "admin"
         self.admin_password = "9437618525"
         self.auth()
@@ -130,23 +162,26 @@ class ACAuthority:
         """
         req_type = request.req_type
         if req_type == ApproveTokenReq:
-            self.handle_approve_toke_req(token)
+            self.approve_toke(token)
             pass
         if req_type == CreateRoleReq:
-            self.handle_create_role_req(request.client, request.role)
+            self.create_role(request.client, request.role)
             pass
         if req_type == ModifyClientRolesReq:
-            self.handle_modyify_client_roles_req(request.client, request.new_role)
+            self.modyify_client_roles(request.client, request.new_role)
         if req_type == RefreshTokenReq:
-            self.handle_refresh_token_req(request.token)
+            self.refresh_token(request.token)
             pass
         pass
 
-    def handle_refresh_token_req(self, token):
+    def refresh_token(self, token):
         """takes a token and checks the validity of it probably after rechecking the identity of the server user
         TODO which might be in a separate function on its own to be transferable in all functions and executable
         in all of them as a preface to normal operation just to be clear out of any authorization issues and then
         sends a new token to the sender via using the keycloak api to generate a new token
+
+        Note this token is not an access token it is rather the token granted to the user to carry the
+        a client role
 
         :token: TODO
         :returns: TODO
@@ -157,7 +192,7 @@ class ACAuthority:
         else:
             keycloak.create_new_token(token)
             pass
-    def handle_approve_token_req(self, token):
+    def approve_token(self, token):
         """this function will handle the token and check if it is valid as the sender claims and then check the
         role asssumed by the sender onto the receiver end then either send back a response saying yes it is valid
         or sending back a response saying no it isnot
@@ -172,7 +207,7 @@ class ACAuthority:
         issuer = token.issuerid # this should be the same as the admin keycloak id
         if issuer == self.adminobj.client_id:
             # TODO: Look for a keycloak api to substitute for checking
-            # man
+            # manual
             # This means it is approved
             # Because the issuer is actually the ac auth
             # Send back a response with http code 200 ok or an authorized flag sent back of some sort
@@ -184,7 +219,7 @@ class ACAuthority:
             pass
         pass
 
-    def handle_create_role_req(self, client, role):
+    def create_role_req(self, client, role):
         """create a role if possible for the client in the request with the specific access rights in keycloak
 
 
@@ -199,7 +234,7 @@ class ACAuthority:
             created_role = self.adminobj.create_client_role()
         return created_role
 
-    def handle_modyify_client_roles_req(client, new_role):
+    def modyify_client_roles(client, new_role):
         """checks if the client has that role and then checks if the available new role and new access rights
         associated with the role can be applied
 
@@ -216,19 +251,16 @@ class ACAuthority:
         self.auth()
         return request.analyst
 
-    def request_client_machine(self, request):
+    def targeted_client(self, request):
         self.auth()
         return request.request_machine
 
-    def lookup_role(self, request):
+    def requested_role(self, request):
         self.auth()
         analyst = self.request_analyst(request)
         return self.adminobj.get_client_roles(analyst)
 
-    def lookup_action(self, request):
-        self.auth()
-        action = self.request_action(request)
-
+    # TODO: why do we have this ?????
     def identity_as_db_entry(self,identity):
         self.auth()
 
@@ -237,6 +269,7 @@ class ACAuthority:
         current_users = self.adminobj.get_users()
         db_entry = self.identity_as_db_entry(self.request)
 
+    # TODO: What is this supposed to do ?????
     def facilitate_roles(self, request):
         self.auth()
         identity = self.get_identity(request)
