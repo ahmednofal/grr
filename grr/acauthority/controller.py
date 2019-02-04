@@ -41,15 +41,10 @@
 
 # The server analyst will be the client trying to access the users with certain roles
 # The roles will be just a database of tags, the tags will be analyzed using the controller
-# TODO: Check what would happend when there are non conventional roles, where to check the roles actions
+# TODO: Check what would happen when there are non conventional roles, where to check the roles actions
 # TODO: adopt the grr terminology when dealing with clients in keycloak and refer to them as analysts
 # TODO: Figure out a way to be able to keep the connection open with the underlying keycloak server
-# TODO: Problem, the current client : analyst abstraction does not offer a relationship to the user
-# TODO: might be it a good idea to switch for client to actually be the client machine and the user would be the server
-# analyst, but then still we donot have an association between each client and each user and the roles assumed
-# TODO: we can always go back to groups being the client machines in which users are existant and can assume roles
 # TODO: Might it not be a good idea to keep track of the machines and just keep track of the server analysts ids
-# TODO: We are not going to back to the old implementation
 # TODO: in request handlers firstly check if the request contains the needed parameters to be processed so that
 # a faulty request does not break the entire system
 # TODO: ACAuth functionalities:
@@ -74,15 +69,30 @@
 # TODO: This flow might be deprecated
 # TODO: It is a good idea to transform this web server into an async one and use callbacks instead of just
 # waiting on requests
+# TODO: Most probably we will need to have a standalone web server
+# Component to handle the logic of the ac and not just keycloak on its
+# own even if we could just use a REST API for clients, still we would
+# need something to make sure that we are using roles (whether issued
+# or created ) that actually have a terminal(theory of computing sense
+# ) symbol, ie we need to have an underlying representation of what each
+# role means
+# TODO: Delete all of the non-keyclaok-API-using functions and classes and limit the usage to
+# keycloak
+# TODO: The keycloak api can be used to incorporate the required data for access and might have
+# fields for extra information which will be used to encode the flow, which can be of two types
+# either it is a fundamental type of the supported flows and then the access required for the flow
+# will be determined
+# TODO: encode access lvls in terms of the flows
 # Flow
 # client -> action -> acauth -> databases -> client role -> approve/deny role ->
+
 
 import keycloak
 import http.server
 import requests, json
+from accesslvl_identifier import *
 from request_types import *
 from httpserverconfig import *
-
 class ACAuthority:
     # Needed because the server apparently kicks us out every few ms
     def auth(self):
@@ -123,10 +133,10 @@ class ACAuthority:
             self.handle_approve_toke_req(token)
             pass
         if req_type == CreateRoleReq:
-            self.handle_create_role(request.client, request.role)
+            self.handle_create_role_req(request.client, request.role)
             pass
         if req_type == ModifyClientRolesReq:
-            self.handle_modyify_client_roles(request.client, request.new_role)
+            self.handle_modyify_client_roles_req(request.client, request.new_role)
         if req_type == RefreshTokenReq:
             self.handle_refresh_token_req(request.token)
             pass
@@ -147,12 +157,13 @@ class ACAuthority:
         else:
             keycloak.create_new_token(token)
             pass
-    def handle_approve_toke_req(self, token):
+    def handle_approve_token_req(self, token):
         """this function will handle the token and check if it is valid as the sender claims and then check the
         role asssumed by the sender onto the receiver end then either send back a response saying yes it is valid
         or sending back a response saying no it isnot
+        also this is supposed to be a callback function for the async http server
 
-        :token: a keycloak access token with an assumed role, can be refereshed
+        :token: a keycloak access token with an assumed role, can be refereshed, this is not an initial access token or a beared token, this is a token in the sense that an admin server analyst can use to assume roles
         :returns: an http response
 
         """
@@ -160,6 +171,8 @@ class ACAuthority:
         sender = token.senderid
         issuer = token.issuerid # this should be the same as the admin keycloak id
         if issuer == self.adminobj.client_id:
+            # TODO: Look for a keycloak api to substitute for checking
+            # man
             # This means it is approved
             # Because the issuer is actually the ac auth
             # Send back a response with http code 200 ok or an authorized flag sent back of some sort
@@ -171,19 +184,22 @@ class ACAuthority:
             pass
         pass
 
-    def handle_create_role(self, client, role):
+    def handle_create_role_req(self, client, role):
         """create a role if possible for the client in the request with the specific access rights in keycloak
 
 
         :client: client id to be checked against the sender TODO check also the credentials
-        :role: new role explaining the access rights granted to the user of the role
+        :role: new role explaining the access rights granted to the user of the role and this role checked for actual viability to be represented in terms of the available actions and flows
         :returns: boolean if the role is created or not
 
         """
+        # Firstly check if the role is legal
+        access_lvl_identifier = AccessLvlIdentifier() # new instance of the identifier
+        if access_lvl_identifier.access_lvl_appropriate(role):
+            created_role = self.adminobj.create_client_role()
+        return created_role
 
-        pass
-
-    def handle_modyify_client_roles(client, new_role):
+    def handle_modyify_client_roles_req(client, new_role):
         """checks if the client has that role and then checks if the available new role and new access rights
         associated with the role can be applied
 
@@ -191,11 +207,12 @@ class ACAuthority:
         """
         pass
     # TODO: From down here, probably deprecated
-    def request_action(self,request):
-        self.auth()
-        return request.action
+    # This is deprecated because the actions are no longer our main issue here, but rather the flow
+    # def request_action(self,request):
+    #     self.auth()
+    #     return request.action
 
-    def request_analyst(self, request):
+    def requester(self, request):
         self.auth()
         return request.analyst
 

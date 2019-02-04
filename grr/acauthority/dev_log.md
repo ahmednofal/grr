@@ -15,3 +15,7 @@ corrupt the entire db
 
  Clients are the apps trying to authincate using the keycloak server
  
+[04-02-2019]
+
+Used api from python-keycloak
+KeycloakAdmin.get_client_roles_of_user
