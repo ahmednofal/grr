@@ -22,3 +22,12 @@ The access control utility is not implemented, flagged as NotImplementedError
     logging.debug("Checking %s for client %s access.", token, client_urn)
     raise NotImplementedError()
 ```
+ACAuthority Dependencies
+========================
+
+using pip : 
+aiohttp
+aiodns
+cchardet
+
+
