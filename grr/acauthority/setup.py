@@ -3,6 +3,11 @@ from setuptools import setup, find_packages
 requires = [
     'tornado',
     'jsonrpc',
+    'python-keycloak',
+    'werkzeug',
+    'http',
+    'json',
+
     # 'tornado-sqlalchemy',
     # 'psycopg2',
 ]

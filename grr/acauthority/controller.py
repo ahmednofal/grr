@@ -106,51 +106,50 @@
 # regular http requests and let jsonrpc handle all the traffic for us
 
 import keycloak
-import http.server
-import requests, json
-
-# TODO: inpect might not be needed after all, it seems like that we can add complete objects
 from config import KEYCLOAK_CONFIG
 from accesslvl_identifier import *
 from request_types import *
-from jsonrpc import JSONRPCResponseManager, dispatcher
+from jsonrpc import Dispatcher
+
+
 
 class ACAuthority:
     # Needed because the server apparently kicks us out every few ms, oh well such is life ....
+
     def auth_keycloak_admin(self):
         self.adminobj = keycloak.keycloak_admin.KeycloakAdmin(\
             self.admin_auth_endpoint, \
             self.admin_user_name, \
             self.admin_password)
 
-    # TODO: May be this should be moved into a different class, something in __init__.py, still needed
+    # this is a comment I am writing
+    # This should be remove in favor of an initialization and installation script
+    def __init__(self,\
+                 port = KEYCLOAK_CONFIG['keycloak_server_port'],\
+                 admin_auth_endpoint = KEYCLOAK_CONFIG['admin_auth_endpoint'],\
+                 admin_user_name = KEYCLOAK_CONFIG['admin_user_name'],\
+                 admin_password = KEYCLOAK_CONFIG['admin_password']):
+        """Constructor for th ACAuthority object that will have admin_access to the keycloak server
+        all of the parameters to the constructor are optional because you can also use the config file to
+        setup all of the parameters
 
-    # TODO: This should not include the registration functionality otherwise it is not an ac, ie exclude the
-    # keycloak functions that can register clients
-    def register_functions_in_jsonrpc(self):
-        """This function will register the entire keycloak api in the rpc pool (the list of all the methods call
-        able from rpc)
-        :returns: nothing for the time being
+        :port: optional the port that the keycloak server is started up on
+        :admin_auth_endpoint: optional the admin authentication resource enpoint
+        :admin_user_name: optional the admin user_name
+        :admin_password: optional the admin password
+        :returns: nothing and initites an admin access into the keycloak server accessible by the self.admin_obj
 
         """
-        # keycloak_admin_methods = inspect.getmembers(self.adminobj, predicate=inspect.ismethod) # list
-        # for amethod in keycloak_admin_methods:
-        #     amethod[1] = dispatcher.add_method(amethod[1])
-        # pass
-        running_dispatcher = dispatcher.Dispatcher()
-        running_dispatcher.add_object(acauthority_object)
-
-    # This should be remove in favor of an initialization and installation script
-    def __init__(self):
         # AC Authority initialization
         # It should firstly get access to the admin account of keycloak
         # TODO: Add a command execution to spawn up the server if it is not already spawned
 
-        self.port = KEYCLOAK_CONFIG['keycloak_server_port']
-        self.admin_auth_endpoint = KEYCLOAK_CONFIG['admin_auth_endpoint']
-        self.admin_user_name = KEYCLOAK_CONFIG['admin_user_name']
-        self.admin_password = KEYCLOAK_CONFIG['admin_password']
+        self.port = port
+        self.admin_auth_endpoint = admin_auth_endpoint
+        self.admin_user_name = admin_user_name
+        self.admin_password = admin_password
         self.auth_keycloak_admin()
+        pass
 
     # This is going to be moved into the incomingrequesthandler
     # TODO: This might need to be removed in using the rpc instead of the old client-server implementation
@@ -173,6 +172,7 @@ class ACAuthority:
         :returns: nothing, just calls the appropriate function with the appropriate arguments
 
         """
+
         req_type = request.req_type
         if req_type == CreateRoleReq:
             self.create_role(request.client, request.role)
