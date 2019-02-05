@@ -102,6 +102,9 @@
 # and just authenticate the server here and then let the client and server RPC on the methods of the
 # keycloak_admin
 
+# TODO: Add the ac acuthority functionality as an rpc for the server and the client instead of having them as
+# regular http requests and let jsonrpc handle all the traffic for us
+
 import keycloak
 import http.server
 import requests, json
@@ -144,11 +147,7 @@ class ACAuthority:
         # TODO: Add a command execution to spawn up the server if it is not already spawned
 
         self.port = KEYCLOAK_CONFIG['keycloak_server_port']
-        handler = http.server.SimpleHTTPRequestHandler
-        with socketserver.TCPServer(("", self.port), handler) as httpd:
-            print("serving at port", self.port)
-            httpd.serve_forever()
-        # these to be extracted from config files (Most probably YAML), and lets try encrypting them
+
         self.admin_auth_endpoint = KEYCLOAK_CONFIG['admin_auth_endpoint']
         self.admin_user_name = KEYCLOAK_CONFIG['admin_user_name']
         self.admin_password = KEYCLOAK_CONFIG['admin_password']
@@ -176,18 +175,9 @@ class ACAuthority:
 
         """
         req_type = request.req_type
-        if req_type == ApproveTokenReq:
-            self.approve_toke(token)
-            pass
         if req_type == CreateRoleReq:
             self.create_role(request.client, request.role)
             pass
-        if req_type == ModifyClientRolesReq:
-            self.modyify_client_roles(request.client, request.new_role)
-        if req_type == RefreshTokenReq:
-            self.refresh_token(request.token)
-            pass
-        pass
 
     def create_role_req(self, client, role):
         """create a role if possible for the client in the request with the specific access rights in keycloak
