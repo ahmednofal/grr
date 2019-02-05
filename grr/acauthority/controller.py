@@ -106,6 +106,8 @@ import keycloak
 import http.server
 import requests, json
 import inspect # To be able to list all function pointers for them to be registrable in the rpc pool
+# TODO: inpect might not be needed after all, it seems like that we can add complete objects
+from config import KEYCLOAK_CONFIG
 from accesslvl_identifier import *
 from request_types import *
 from httpserverconfig import *
@@ -113,10 +115,15 @@ from jsonrpc import JSONRPCResponseManager, dispatcher
 
 class ACAuthority:
     # Needed because the server apparently kicks us out every few ms, oh well such is life ....
-    def auth(self):
-        self.adminobj = keycloak.keycloak_admin.KeycloakAdmin("http://localhost:8080/auth/", self.admin_user_name, self.admin_password)
+    def auth_keycloak_admin(self):
+        self.adminobj = keycloak.keycloak_admin.KeycloakAdmin(\
+            KEYCLOAK_CONFIG['admin_auth_endpoint'], \
+            self.admin_user_name, \
+            self.admin_password)
 
     # TODO: May be this should be moved into a different class, something in __init__.py
+    # TODO: This should not include the registration functionality otherwise it is not an ac, ie exclude the
+    # keycloak functions that can register clients
     def register_functions_in_jsonrpc(self):
         """This function will register the entire keycloak api in the rpc pool (the list of all the methods call
         able from rpc)
@@ -136,15 +143,15 @@ class ACAuthority:
         # On a second note just async the hell out of this server
         # TODO: Add a command execution to spawn up the server if it si not already spawned
 
-        self.port = ACAUTHORITY_HTTP_SERVERPORT
+        self.port = KEYCLOAK_CONFIG['keycloak_server_port']
         handler = http.server.SimpleHTTPRequestHandler
         with socketserver.TCPServer(("", self.port), handler) as httpd:
             print("serving at port", self.port)
             httpd.serve_forever()
         # these to be extracted from config files (Most probably YAML), and lets try encrypting them
-        self.admin_user_name = "admin"
-        self.admin_password = "9437618525"
-        self.auth()
+        self.admin_user_name = KEYCLOAK_CONFIG['admin_user_name']
+        self.admin_password = KEYCLOAK_CONFIG['admin_password']
+        self.auth_keycloak_admin()
 
     # This is going to be moved into the incomingrequesthandler
     # TODO: This might need to be removed in using the rpc instead of the old client-server implementation
@@ -251,39 +258,39 @@ class ACAuthority:
     # TODO: From down here, probably deprecated
     # This is deprecated because the actions are no longer our main issue here, but rather the flow
     # def request_action(self,request):
-    #     self.auth()
+    #     self.auth_keycloak_admin()
     #     return request.action
 
     def requester(self, request):
-        self.auth()
+        self.auth_keycloak_admin()
         return request.analyst
 
     def targeted_client(self, request):
-        self.auth()
+        self.auth_keycloak_admin()
         return request.request_machine
 
     def requested_role(self, request):
-        self.auth()
+        self.auth_keycloak_admin()
         analyst = self.request_analyst(request)
         return self.adminobj.get_client_roles(analyst)
 
     # TODO: why do we have this ?????
     def identity_as_db_entry(self,identity):
-        self.auth()
+        self.auth_keycloak_admin()
 
     def get_identity(self, request):
-        self.auth()
+        self.auth_keycloak_admin()
         current_users = self.adminobj.get_users()
         db_entry = self.identity_as_db_entry(self.request)
 
     # TODO: What is this supposed to do ?????
     def facilitate_roles(self, request):
-        self.auth()
+        self.auth_keycloak_admin()
         identity = self.get_identity(request)
 
     # DEPRECATED or is it ?
     def identity_roles(self,server_IP):
-        self.auth()
+        self.auth_keycloak_admin()
         realm_groups = self.adminobj.get_groups()
         # The single group is a client in our definition and the users in the group are the server analysts
         # subscribed to roles to be used analyzing the client machine
