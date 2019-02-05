@@ -96,6 +96,7 @@
 # TODO: The way to use json-rpc is to firstly initiate the dispatcher and then call add_object on a
 # keycloak admin object which will then include all needed methods of the object for rpc in the ac side from
 # the keycloak client(grr client) or keycloak user (grr server)
+
 # TODO: Might be a good idea to actually let the client and server (GRR) to call RPC on the registration and
 # Authentication and remove that code completely from the server side since it will also be in the client side
 # and just authenticate the server here and then let the client and server RPC on the methods of the
@@ -146,6 +147,12 @@ class ACAuthority:
         self.auth()
 
     # This is going to be moved into the incomingrequesthandler
+    # TODO: This might need to be removed in using the rpc instead of the old client-server implementation
+    # except for actually the registration part, that has to go through some checking, and also ther should be
+    # a legalizer for us, to check if the proposed role is actually legal, or actually we can enforce that the
+    # client (grr client) will have to choose in the interface a set of flows to include in the access role
+    # made available to assumers
+
     def dispatch(self, request):
         """This function is supposed to handle the requests types based on the sender and what they
         are trying to acheive, most likely it will be just a server analyst or a client machine and
