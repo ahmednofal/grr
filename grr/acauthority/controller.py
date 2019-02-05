@@ -117,7 +117,7 @@ class ACAuthority:
     # Needed because the server apparently kicks us out every few ms, oh well such is life ....
     def auth_keycloak_admin(self):
         self.adminobj = keycloak.keycloak_admin.KeycloakAdmin(\
-            KEYCLOAK_CONFIG['admin_auth_endpoint'], \
+            self.admin_auth_endpoint, \
             self.admin_user_name, \
             self.admin_password)
 
@@ -141,7 +141,7 @@ class ACAuthority:
         # TODO: Initializing the listening thread ...
         # TODO: move this into a different class to be just serving and has nothing to do with the controll
         # On a second note just async the hell out of this server
-        # TODO: Add a command execution to spawn up the server if it si not already spawned
+        # TODO: Add a command execution to spawn up the server if it is not already spawned
 
         self.port = KEYCLOAK_CONFIG['keycloak_server_port']
         handler = http.server.SimpleHTTPRequestHandler
@@ -149,6 +149,7 @@ class ACAuthority:
             print("serving at port", self.port)
             httpd.serve_forever()
         # these to be extracted from config files (Most probably YAML), and lets try encrypting them
+        self.admin_auth_endpoint = KEYCLOAK_CONFIG['admin_auth_endpoint']
         self.admin_user_name = KEYCLOAK_CONFIG['admin_user_name']
         self.admin_password = KEYCLOAK_CONFIG['admin_password']
         self.auth_keycloak_admin()
@@ -185,51 +186,6 @@ class ACAuthority:
             self.modyify_client_roles(request.client, request.new_role)
         if req_type == RefreshTokenReq:
             self.refresh_token(request.token)
-            pass
-        pass
-
-    def refresh_token(self, token):
-        """takes a token and checks the validity of it probably after rechecking the identity of the server user
-        TODO which might be in a separate function on its own to be transferable in all functions and executable
-        in all of them as a preface to normal operation just to be clear out of any authorization issues and then
-        sends a new token to the sender via using the keycloak api to generate a new token
-
-        Note this token is not an access token it is rather the token granted to the user to carry the
-        a client role
-
-        :token: TODO
-        :returns: TODO
-
-        """
-        if token.exp_date < current_date: # This really should not be less than but rather a data related operation, mayb keycloak offers a fresh()
-            return token
-        else:
-            keycloak.create_new_token(token)
-            pass
-    def approve_token(self, token):
-        """this function will handle the token and check if it is valid as the sender claims and then check the
-        role asssumed by the sender onto the receiver end then either send back a response saying yes it is valid
-        or sending back a response saying no it isnot
-        also this is supposed to be a callback function for the async http server
-
-        :token: a keycloak access token with an assumed role, can be refereshed, this is not an initial access token or a beared token, this is a token in the sense that an admin server analyst can use to assume roles
-        :returns: an http response
-
-        """
-        token_id = token.id
-        sender = token.senderid
-        issuer = token.issuerid # this should be the same as the admin keycloak id
-        if issuer == self.adminobj.client_id:
-            # TODO: Look for a keycloak api to substitute for checking
-            # manual
-            # This means it is approved
-            # Because the issuer is actually the ac auth
-            # Send back a response with http code 200 ok or an authorized flag sent back of some sort
-            return
-            pass
-        else:
-            # This means it is not approved
-            # use requests lib to send a response with 401 unauthorized tag to the sender
             pass
         pass
 
