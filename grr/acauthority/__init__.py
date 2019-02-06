@@ -37,11 +37,6 @@ def register_functions_in_jsonrpc():
     :returns: nothing for the time being
 
     """
-    # keycloak_admin_methods = inspect.getmembers(self.adminobj, predicate=inspect.ismethod) # list
-    # for amethod in keycloak_admin_methods:
-    #     amethod[1] = dispatcher.add_method(amethod[1])
-    # pass
-    # using the config file to issue the parameters of the acauthority
     dispatcher.add_object(acauthority_object.adminobj) # TODO: bad , restrict
     # TODO: Restrict Access to admin_obj api that can modify clients and users to clients in keycloak
     # TODO: Restiction will be in the image of whitelist/exposing certain api rather than blacklisting some

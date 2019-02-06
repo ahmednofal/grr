@@ -1,0 +1,955 @@
+Script started on 2019-02-06 13:35:43+0200
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]2;naufal@naufal: ~/Documents/auc/semesters/fall2018/seniorprj1/grr]1;..eniorprj1/grr[0m[27m[24m[J[39m[0m[49m[40m[39m naufal@naufal [44m[30m[30m ~/Documents/auc/semesters/fall2018/seniorprj1/grr [43m[34m[30m  acauthority ● [49m[33m[39m 
+ [34m>>[00m [K[?1h=[?2004h[32mscript[39m [4minstallation_trial.txt[24m [30D[32ms[32mo[32mu[32mr[32mc[32me[39m [4m~[4m/[4m.[4mv[4mi[4mr[4mt[4mu[4ma[4ml[4me[4mn[4mv[4m/[4mG[4mR[4mR[4m/[4mb[4mi[4mn[4m/[4ma[4mctivate[24m[?1l>[?2004l
+]2;source ~/.virtualenv/GRR/bin/activate]1;source[1m[7m%[27m[1m[0m                                                                                                                                                  ]2;naufal@naufal: ~/Documents/auc/semesters/fall2018/seniorprj1/grr]1;..eniorprj1/grr[0m[27m[24m[J(GRR) [39m[0m[49m[40m[39m naufal@naufal [44m[30m[30m ~/Documents/auc/semesters/fall2018/seniorprj1/grr [43m[34m[30m  acauthority ● [49m[33m[39m 
+ [34m>>[00m [K[?1h=[?2004h[32md[39m[90mot callgraph.dot[39m[16D[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [17D[4ma[24m[90mrandr[39m[24m[32ma[32ms[39m[90mc[90mi[90mi[90mn[90mema rec[39m[11D[1m[31ma[1m[31ms[1m[31mc[0m[39m[1m[31mc[1m[31mi[1m[31mi[1m[31mn[1m[31me[1m[31mm[1m[31ma[0m[39m[39m [39mr[39me[39mc[?1l>[?2004l
+]2;asciinema rec]1;asciinemazsh: command not found: asciinema
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]2;naufal@naufal: ~/Documents/auc/semesters/fall2018/seniorprj1/grr]1;..eniorprj1/grr[0m[27m[24m[J(GRR) [39m[0m[49m[40m[39m [31m✘[40m[39m naufal@naufal [44m[30m[30m ~/Documents/auc/semesters/fall2018/seniorprj1/grr [43m[34m[30m  acauthority ● [49m[33m[39m 
+ [34m>>[00m [K[?1h=[?2004h[1m[31ms[0m[39m[90mource ~/.virtualenv/GRR/bin/activate[39m[36D[0m[32ms[32mu[39m[90md[90mo[90m [90ma[90mp[90mt[90m [90mi[90mn[90ms[90mt[90ma[90ml[90ml[90m [90mk[90md[90me[90m-[90mc[90mo[90mn[90mf[90mi[90mg[90m-[90mt[90mo[90mu[90mc[90mh[90mp[90ma[90md[39m[39m [35D[1m[31ms[1m[31mu[1m[31md[0m[39m[0m[4m[32ms[0m[4m[32mu[0m[4m[32md[4m[32mo[24m[39m[39m [39m[4ma[24m[24m[1m[31ma[1m[31mt[0m[39m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [29D[1m[31mt[1m[31mp[0m[39m [1m[31mt[0m[39m[0m[39m [0m[39m[4ma[24m[0m[90mp[90mt install kde-config-touchpad[39m[30D[4ma[39m[4mp[24m[24m[32ma[24m[32mp[32mt[39m[1m[31ma[1m[31mp[1m[31mt[1m[31ms[0m[39m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [27D [0m[32ma[0m[32mp[0m[32mt[39m[0m[90m [90minstall kde-config-touchpad[39m[28D[39m [39m[4mi[24m[24mi[39ms[90mn[90ms[90mt[90ma[90ml[90ml[90m [90mk[90md[90me[90m-[90mc[90mo[90mn[90mf[90mi[90mg[90m-[90mt[90mo[90mu[90mc[90mh[90mp[90ma[90md[39m[26D[39mn[39mt[90ma[90ml[90ml[90m [90mp[90my[90mt[90mh[90mo[90mn[90m3[90m.[90m7[39m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [24D[39ma[39ml[39ml[39m [39m[4ma[24m[39m [39m [39m [39m [39m [39m [39m [39m [8D[24massc  ciinema[?1l>[?2004l
+]2;sudo apt isntall asciinema]1;apt[sudo] password for naufal: 
+E: Invalid operation isntall
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]2;naufal@naufal: ~/Documents/auc/semesters/fall2018/seniorprj1/grr]1;..eniorprj1/grr[0m[27m[24m[J(GRR) [39m[0m[49m[40m[39m [31m✘[40m[39m naufal@naufal [44m[30m[30m ~/Documents/auc/semesters/fall2018/seniorprj1/grr [43m[34m[30m  acauthority ● [49m[33m[39m 
+ [34m>>[00m [K[?1h=[?2004h[4m[32msudo[24m[39m [32mapt[39m isntall asciinema[9D[8Dasciinema        [17Diasciinema[9Dsasciinema[9Dnasciinema[9Dtasciinema[9D[1Casciinema[9Dlasciinema[9Dlasciinema[9Dasciinema       [16Diasciinema[9Dsasciinema[9Dnasciinema[9Dtasciinema[9D[1Casciinema[9Dlasciinema[9D[P[9C [10Dsciinema [10D[P[9C [10D[P[9C [10D[P[9C [10Dnasciinema[9Dsasciinema[9Dtasciinema[9D[1Casciinema[9D asciinema[9Dlasciinema[9Dlasciinema[9D asciinema[9D[P[9C [10D[P[9C [10D[P[9C [10D[P[9C [10Dlasciinema[9Dlasciinema[9D asciinema[9D[?1l>[?2004l
+]2;sudo apt install asciinema]1;aptReading package lists... 0%Reading package lists... 100%Reading package lists... Done
+Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 50%Building dependency tree... 50%Building dependency tree       
+Reading state information... 0%Reading state information... 0%Reading state information... Done
+The following packages were automatically installed and are no longer required:
+  adwaita-qt apport-symptoms avahi-utils gir1.2-appindicator3-0.1 gir1.2-gconf-2.0 gir1.2-gtk-2.0 gir1.2-harfbuzz-0.0 gyp icu-devtools
+  libart-2.0-2 libart-2.0-dev libavahi-client-dev libavahi-common-dev libbonobo2-0 libbonobo2-common libbonoboui2-common
+  libboost-filesystem1.62.0 libboost-python1.62.0 libboost-regex1.62.0 libboost-system1.62.0 libcairo-script-interpreter2 libcanberra-dev
+  libclang-common-3.9-dev libclang1-3.9 libclass-data-inheritable-perl libcrypt-openssl-bignum-perl libcrypt-openssl-rsa-perl
+  libdata-random-perl libear libgconf2-doc libgd-perl libgnome2-canvas-perl libgnome2-gconf-perl libgnome2-wnck-perl libgnomecanvas2-0
+  libgnomecanvas2-common libgnomeui-common libgnutls-dane0 libgnutls28-dev libgnutlsxx28 libgraphite2-dev libgsoap-2.8.60 libgtk2-imageview-perl
+  libgtk2-unique-perl libgtkimageview0 libharfbuzz-gobject0 libhttp-server-simple-perl libicu-le-hb0 libiculx60 libidl-2-0 libidn2-0-dev
+  libidn2-dev libimage-magick-perl libimage-magick-q16-perl libjemalloc1 libjs-node-uuid libjs-sphinxdoc libllvm3.9 libmouse-perl libmsgpackc2
+  libnet-dropbox-api-perl libnet-oauth-perl liborbit-2-0 liborbit2 libp11-kit-dev libpath-class-perl libpixman-1-dev libpopt-dev
+  libproc-processtable-perl libproc-simple-perl libsort-naturally-perl libtasn1-6-dev libtasn1-doc libtermkey1 libunbound2 libunibilium4
+  libunique-1.0-0 libuv1-dev libvncserver1 libvterm0 libwnck-common libwnck22 libwww-mechanize-perl libx11-protocol-other-perl libxcb-shm0-dev
+  libxcomposite-dev neovim neovim-runtime nettle-dev node-ansi node-ansi-color-table node-archy node-block-stream node-combined-stream
+  node-cookie-jar node-delayed-stream node-forever-agent node-form-data node-fstream node-fstream-ignore node-github-url-from-git
+  node-json-stringify-safe node-lockfile node-lru-cache node-mime node-mkdirp node-mute-stream node-node-uuid node-npmlog node-osenv
+  node-pseudomap node-qs node-read node-read-package-json node-request node-retry node-sha node-slide node-tar node-tunnel-agent node-typescript
+  node-underscore node-yallist orbit2 python-bottle python-concurrent.futures python-configparser python-frozendict python-future
+  python-greenlet python-jedi python-msgpack python-neovim python-parso python-trollius python-waitress python3-greenlet python3-msgpack
+  python3-neovim x11proto-composite-dev ycmd
+Use 'sudo apt autoremove' to remove them.
+The following NEW packages will be installed:
+  asciinema
+0 upgraded, 1 newly installed, 0 to remove and 353 not upgraded.
+Need to get 18.1 kB of archives.
+After this operation, 85.0 kB of additional disk space will be used.
+[33m0% [Working][0m            Get:1 http://us.archive.ubuntu.com/ubuntu bionic/universe amd64 asciinema all 2.0.0-1 [18.1 kB]
+[33m22% [1 asciinema 4,871 B/18.1 kB 27%][0m[33m                                     100% [Working][0m              Fetched 18.1 kB in 1s (26.7 kB/s)
+
+7[0;34r8[1ASelecting previously unselected package asciinema.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 589213 files and directories currently installed.)
+Preparing to unpack .../asciinema_2.0.0-1_all.deb ...
+7[35;0f[42m[30mProgress: [  0%][49m[39m [............................................................................................................................] 87[35;0f[42m[30mProgress: [ 17%][49m[39m [####################........................................................................................................] 8Unpacking asciinema (2.0.0-1) ...
+7[35;0f[42m[30mProgress: [ 33%][49m[39m [#########################################...................................................................................] 87[35;0f[42m[30mProgress: [ 50%][49m[39m [##############################################################..............................................................] 8Setting up asciinema (2.0.0-1) ...
+7[35;0f[42m[30mProgress: [ 67%][49m[39m [##################################################################################..........................................] 87[35;0f[42m[30mProgress: [ 83%][49m[39m [#######################################################################################################.....................] 8Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+
+7[0;35r8[1A[J[1m[7m%[27m[1m[0m                                                                                                                                                  ]2;naufal@naufal: ~/Documents/auc/semesters/fall2018/seniorprj1/grr]1;..eniorprj1/grr[0m[27m[24m[J(GRR) [39m[0m[49m[40m[39m naufal@naufal [44m[30m[30m ~/Documents/auc/semesters/fall2018/seniorprj1/grr [43m[34m[30m  acauthority ● [49m[33m[39m 
+ [34m>>[00m [K[?1h=[?2004h[4ma[24m[90msciinema rec[39m[12D[24m[32ma[32ms[39m[1m[31ma[1m[31ms[1m[31ms[0m[39m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [10D[0m[32ma[0m[32ms[39m[0m[90mc[90miinema rec[39m[11D[32ma[32ms[32mc[32mi[32mi[32mn[32me[32mm[32ma[39m[39m [39mr[39me[39mc[?1l>[?2004l
+]2;asciinema rec]1;asciinema[0;32masciinema: recording asciicast to /tmp/tmp89xbp8ks-ascii.cast[0m
+[0;32masciinema: press <ctrl-d> or type "exit" when you're done[0m
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]2;naufal@naufal: ~/Documents/auc/semesters/fall2018/seniorprj1/grr]1;..eniorprj1/grr[0m[27m[24m[J[39m[0m[49m[40m[39m naufal@naufal [44m[30m[30m ~/Documents/auc/semesters/fall2018/seniorprj1/grr [43m[34m[30m  acauthority ● [49m[33m[39m 
+ [34m>>[00m [K[?1h=[?2004h[1m[31ms[0m[39m[90mudo apt install asciinema[39m[25D[1m[31ms[1m[31mo[0m[39m[90mu[90mr[90mc[90me[90m [90m~[90m/[90m.[90mv[90mi[90mr[90mt[90mu[90ma[90ml[90me[90mn[90mv[90m/[90mG[90mR[90mR[90m/[90mb[90min/activate[39m[35D[1m[31ms[1m[31mo[1m[31mu[0m[39m[1m[31mu[1m[31mr[0m[39m[0m[32ms[0m[32mo[0m[32mu[0m[32mr[32mc[32me[39m[39m [39m[4m~[39m[4m/[39m[4m.[39m[4mv[39m[4mi[39m[4mr[39m[4mt[39m[4mu[39m[4ma[39m[4ml[39m[4me[39m[4mn[39m[4mv[39m[4m/[39m[4mG[39m[4mR[39m[4mR[39m[4m/[39m[4mb[39m[4mi[39m[4mn[39m[4m/[39m[4ma[39m[4mc[39m[4mt[39m[4mi[39m[4mv[39m[4ma[39m[4mt[39m[4me[24m[?1l>[?2004l
+]2;source ~/.virtualenv/GRR/bin/activate]1;source[1m[7m%[27m[1m[0m                                                                                                                                                  ]2;naufal@naufal: ~/Documents/auc/semesters/fall2018/seniorprj1/grr]1;..eniorprj1/grr[0m[27m[24m[J(GRR) [39m[0m[49m[40m[39m naufal@naufal [44m[30m[30m ~/Documents/auc/semesters/fall2018/seniorprj1/grr [43m[34m[30m  acauthority ● [49m[33m[39m 
+ [34m>>[00m [K[?1h=[?2004h[32msource[39m [4m~/.virtualenv/GRR/bin/activate[24m[37D[32ma[32ms[32mc[32mi[32mi[32mn[32me[24m[32mm[24m[32ma[39m[24m [24mr[24me[24mc[24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24D[13D[4m[32ms[4m[32mu[4m[32md[4m[32mo[24m[39m[39m [32ma[32mp[32mt[39m[39m install asciinema[16Dsn[14C[26D[24m[32ma[24m[32ms[24m[32mc[24m[32mi[32mi[32mn[32me[32mm[32ma[39m rec             [13D[13D[32ms[32mo[32mu[32mr[32mc[32me[39m[39m [39m[4m~[39m[4m/[4m.[4mv[4mi[4mr[4mtualenv/GRR/bin/activate[24m[37D[32ms[32mc[32mr[32mi[32mp[32mt[39m [4mi[4mn[4ms[4mt[4ma[4ml[4ml[4ma[4mt[4mi[4mo[4mn[4m_[4mt[4mr[4mi[4ma[4ml[4m.[4mt[4mx[4mt[24m[24m [24m [24m [24m [24m [24m [24m [24m [30D[32ms[32mo[32mu[32mr[32mc[32me[39m [4m~[4m/[4m.[4mv[4mi[4mr[4mt[4mu[4ma[4ml[4me[4mn[4mv[4m/[4mG[4mR[4mR[4m/[4mb[4mi[4mn[4m/[4ma[4mctivate[24m[37D[32mp[32mi[32mp[39m[39m [39mi[39mns[24mt[24ma[24ml[24ml[24m [24m-[24me[24m [4m.[4m/[4mg[4mr[4mr[4m/[4mp[4mr[4mo[4mt[4mo[24m[24m [24m [24m [24m [24m [24m [24m [24m [24m [24m [24m 
+[32mpip[39m install -e [4m./api_client/python[24m[K
+[32mpip[39m install -e [4m./grr/core[24m[K
+[32mpip[39m install -e [4m./grr/client[24m[K
+[32mpip[39m install -e ./grr/server/[mysqldatastore][K
+[32mpip[39m install -e [4m./grr/test[24m[K[5A[5C[26D[32ms[32mc[32mr[32mi[32mp[32mt[39m [4mi[4mn[4ms[4mt[4ma[4ml[4ml[4ma[4mt[4mi[4mo[4mn[4m_[4mt[4mr[4mi[4ma[4ml[4m.[4mtxt[24m [1B[K[1B[K[1B[K[1B[K[1B[K[5A[34C[30D[32mp[32mi[32mp[39m[39m [39mi[39mns[24mt[24ma[24ml[24ml[24m [24m-[24me[24m [4m.[4m/[4mg[4mr[4mr[4m/[4mp[4mr[4mo[4mt[4mo[24m[24m [24m [24m [1B[32mpip[39m install -e [4m./api_client/python[24m[K[1B[32mpip[39m install -e [4m./grr/core[24m[K[1B[32mpip[39m install -e [4m./grr/client[24m[K[1B[32mpip[39m install -e ./grr/server/[mysqldatastore][K[1B[32mpip[39m install -e [4m./grr/test[24m[K[5A[5C[?1l>[?2004l[5B
+]2;pip install -e ./grr/proto; pip install -e ./api_client/python; pip install -]1;pip[33mDEPRECATION: Python 2.7 will reach the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 won't be maintained after that date. A future version of pip will drop support for Python 2.7.[0m
+Obtaining file:///home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/proto
+Requirement already satisfied: protobuf==3.3.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-proto==3.2.4.post3) (3.3.0)
+Requirement already satisfied: six>=1.9 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from protobuf==3.3.0->grr-response-proto==3.2.4.post3) (1.12.0)
+Requirement already satisfied: setuptools in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from protobuf==3.3.0->grr-response-proto==3.2.4.post3) (40.8.0)
+Installing collected packages: grr-response-proto
+  Found existing installation: grr-response-proto 3.2.4.post3
+    Not uninstalling grr-response-proto at /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/proto, outside environment /home/naufal/.virtualenv/GRR
+    Can't uninstall 'grr-response-proto'. No files were found to uninstall.
+  Running setup.py develop for grr-response-proto
+Successfully installed grr-response-proto
+[33mDEPRECATION: Python 2.7 will reach the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 won't be maintained after that date. A future version of pip will drop support for Python 2.7.[0m
+Obtaining file:///home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/api_client/python
+Requirement already satisfied: future==0.16.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-api-client==3.2.4.post3) (0.16.0)
+Requirement already satisfied: grr_response_proto==3.2.4post3 in ./grr/proto (from grr-api-client==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: cryptography==2.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-api-client==3.2.4.post3) (2.3)
+Requirement already satisfied: ipython==5.0.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-api-client==3.2.4.post3) (5.0.0)
+Requirement already satisfied: protobuf==3.3.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-api-client==3.2.4.post3) (3.3.0)
+Requirement already satisfied: requests==2.19.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-api-client==3.2.4.post3) (2.19.1)
+Requirement already satisfied: Werkzeug==0.11.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-api-client==3.2.4.post3) (0.11.3)
+Requirement already satisfied: enum34; python_version < "3" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4.post3) (1.1.6)
+Requirement already satisfied: idna>=2.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4.post3) (2.8)
+Requirement already satisfied: asn1crypto>=0.21.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4.post3) (0.24.0)
+Requirement already satisfied: cffi!=1.11.3,>=1.7 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4.post3) (1.11.5)
+Requirement already satisfied: six>=1.4.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4.post3) (1.12.0)
+Requirement already satisfied: ipaddress; python_version < "3" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4.post3) (1.0.22)
+Requirement already satisfied: prompt-toolkit<2.0.0,>=1.0.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (1.0.15)
+Requirement already satisfied: pickleshare in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (0.7.5)
+Requirement already satisfied: backports.shutil-get-terminal-size; python_version == "2.7" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (1.0.0)
+Requirement already satisfied: simplegeneric>0.8 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (0.8.1)
+Requirement already satisfied: pathlib2; python_version == "2.7" or python_version == "3.3" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (2.3.3)
+Requirement already satisfied: pexpect; sys_platform != "win32" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (4.6.0)
+Requirement already satisfied: traitlets>=4.2 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (4.3.2)
+Requirement already satisfied: pygments in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (2.3.1)
+Requirement already satisfied: decorator in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (4.3.2)
+Requirement already satisfied: setuptools>=18.5 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (40.8.0)
+Requirement already satisfied: certifi>=2017.4.17 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from requests==2.19.1->grr-api-client==3.2.4.post3) (2018.11.29)
+Requirement already satisfied: chardet<3.1.0,>=3.0.2 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from requests==2.19.1->grr-api-client==3.2.4.post3) (3.0.4)
+Requirement already satisfied: urllib3<1.24,>=1.21.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from requests==2.19.1->grr-api-client==3.2.4.post3) (1.23)
+Requirement already satisfied: pycparser in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cffi!=1.11.3,>=1.7->cryptography==2.3->grr-api-client==3.2.4.post3) (2.19)
+Requirement already satisfied: wcwidth in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from prompt-toolkit<2.0.0,>=1.0.3->ipython==5.0.0->grr-api-client==3.2.4.post3) (0.1.7)
+Requirement already satisfied: scandir; python_version < "3.5" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from pathlib2; python_version == "2.7" or python_version == "3.3"->ipython==5.0.0->grr-api-client==3.2.4.post3) (1.9.0)
+Requirement already satisfied: ptyprocess>=0.5 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from pexpect; sys_platform != "win32"->ipython==5.0.0->grr-api-client==3.2.4.post3) (0.6.0)
+Requirement already satisfied: ipython-genutils in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from traitlets>=4.2->ipython==5.0.0->grr-api-client==3.2.4.post3) (0.2.0)
+Installing collected packages: grr-api-client
+  Found existing installation: grr-api-client 3.2.4.post3
+    Not uninstalling grr-api-client at /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/api_client/python, outside environment /home/naufal/.virtualenv/GRR
+    Can't uninstall 'grr-api-client'. No files were found to uninstall.
+  Running setup.py develop for grr-api-client
+Successfully installed grr-api-client
+[33mDEPRECATION: Python 2.7 will reach the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 won't be maintained after that date. A future version of pip will drop support for Python 2.7.[0m
+Obtaining file:///home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core
+Requirement already satisfied: binplist==0.1.4 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (0.1.4)
+Requirement already satisfied: configparser==3.5.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (3.5.0)
+Requirement already satisfied: cryptography==2.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (2.3)
+Requirement already satisfied: fleetspeak==0.0.7 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (0.0.7)
+Requirement already satisfied: future==0.16.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (0.16.0)
+Requirement already satisfied: grr-response-proto==3.2.4post3 in ./grr/proto (from grr-response-core==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: ipaddr==2.2.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (2.2.0)
+Requirement already satisfied: ipython==5.0.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (5.0.0)
+Requirement already satisfied: pip>=8.1.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (19.0.1)
+Requirement already satisfied: psutil==5.4.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (5.4.3)
+Requirement already satisfied: python-crontab==2.0.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (2.0.1)
+Requirement already satisfied: python-dateutil==2.6.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (2.6.1)
+Requirement already satisfied: pytsk3==20170802 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (20170802)
+Requirement already satisfied: pytz==2017.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (2017.3)
+Requirement already satisfied: PyYAML==3.12 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (3.12)
+Requirement already satisfied: requests==2.19.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (2.19.1)
+Requirement already satisfied: typing==3.6.4 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (3.6.4)
+Requirement already satisfied: virtualenv==15.0.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (15.0.3)
+Requirement already satisfied: wheel==0.30 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (0.30.0)
+Requirement already satisfied: yara-python==3.6.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (3.6.3)
+Requirement already satisfied: enum34; python_version < "3" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4.post3) (1.1.6)
+Requirement already satisfied: idna>=2.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4.post3) (2.8)
+Requirement already satisfied: asn1crypto>=0.21.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4.post3) (0.24.0)
+Requirement already satisfied: cffi!=1.11.3,>=1.7 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4.post3) (1.11.5)
+Requirement already satisfied: six>=1.4.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4.post3) (1.12.0)
+Requirement already satisfied: ipaddress; python_version < "3" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4.post3) (1.0.22)
+Requirement already satisfied: google-apputils==0.4.2 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4.post3) (0.4.2)
+Requirement already satisfied: grpcio==1.7.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4.post3) (1.7.0)
+Requirement already satisfied: python-gflags==3.1.2 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4.post3) (3.1.2)
+Requirement already satisfied: futures==3.2.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4.post3) (3.2.0)
+Requirement already satisfied: grpcio-tools==1.7.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4.post3) (1.7.0)
+Requirement already satisfied: protobuf==3.3.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-proto==3.2.4post3->grr-response-core==3.2.4.post3) (3.3.0)
+Requirement already satisfied: prompt-toolkit<2.0.0,>=1.0.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (1.0.15)
+Requirement already satisfied: pickleshare in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (0.7.5)
+Requirement already satisfied: backports.shutil-get-terminal-size; python_version == "2.7" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (1.0.0)
+Requirement already satisfied: simplegeneric>0.8 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (0.8.1)
+Requirement already satisfied: pathlib2; python_version == "2.7" or python_version == "3.3" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (2.3.3)
+Requirement already satisfied: pexpect; sys_platform != "win32" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (4.6.0)
+Requirement already satisfied: traitlets>=4.2 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (4.3.2)
+Requirement already satisfied: pygments in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (2.3.1)
+Requirement already satisfied: decorator in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (4.3.2)
+Requirement already satisfied: setuptools>=18.5 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (40.8.0)
+Requirement already satisfied: certifi>=2017.4.17 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from requests==2.19.1->grr-response-core==3.2.4.post3) (2018.11.29)
+Requirement already satisfied: chardet<3.1.0,>=3.0.2 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from requests==2.19.1->grr-response-core==3.2.4.post3) (3.0.4)
+Requirement already satisfied: urllib3<1.24,>=1.21.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from requests==2.19.1->grr-response-core==3.2.4.post3) (1.23)
+Requirement already satisfied: pycparser in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cffi!=1.11.3,>=1.7->cryptography==2.3->grr-response-core==3.2.4.post3) (2.19)
+Requirement already satisfied: wcwidth in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from prompt-toolkit<2.0.0,>=1.0.3->ipython==5.0.0->grr-response-core==3.2.4.post3) (0.1.7)
+Requirement already satisfied: scandir; python_version < "3.5" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from pathlib2; python_version == "2.7" or python_version == "3.3"->ipython==5.0.0->grr-response-core==3.2.4.post3) (1.9.0)
+Requirement already satisfied: ptyprocess>=0.5 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from pexpect; sys_platform != "win32"->ipython==5.0.0->grr-response-core==3.2.4.post3) (0.6.0)
+Requirement already satisfied: ipython-genutils in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from traitlets>=4.2->ipython==5.0.0->grr-response-core==3.2.4.post3) (0.2.0)
+Installing collected packages: grr-response-core
+  Found existing installation: grr-response-core 3.2.4.post3
+    Not uninstalling grr-response-core at /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core, outside environment /home/naufal/.virtualenv/GRR
+    Can't uninstall 'grr-response-core'. No files were found to uninstall.
+  Running setup.py develop for grr-response-core
+Successfully installed grr-response-core
+[33mDEPRECATION: Python 2.7 will reach the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 won't be maintained after that date. A future version of pip will drop support for Python 2.7.[0m
+Obtaining file:///home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/client
+Requirement already satisfied: grr-response-core==3.2.4post3 in ./grr/core (from grr-response-client==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: rekall-core==1.7.2rc1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-client==3.2.4.post3) (1.7.2rc1)
+Requirement already satisfied: pyinstaller==3.2.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-client==3.2.4.post3) (3.2.1)
+Requirement already satisfied: chipsec==1.2.4 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-client==3.2.4.post3) (1.2.4)
+Requirement already satisfied: xattr==0.9.2 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-client==3.2.4.post3) (0.9.2)
+Requirement already satisfied: binplist==0.1.4 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.1.4)
+Requirement already satisfied: configparser==3.5.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.5.0)
+Requirement already satisfied: cryptography==2.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.3)
+Requirement already satisfied: fleetspeak==0.0.7 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.0.7)
+Requirement already satisfied: future==0.16.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.16.0)
+Requirement already satisfied: grr-response-proto==3.2.4post3 in ./grr/proto (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: ipaddr==2.2.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.2.0)
+Requirement already satisfied: ipython==5.0.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (5.0.0)
+Requirement already satisfied: pip>=8.1.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (19.0.1)
+Requirement already satisfied: psutil==5.4.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (5.4.3)
+Requirement already satisfied: python-crontab==2.0.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.0.1)
+Requirement already satisfied: python-dateutil==2.6.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.6.1)
+Requirement already satisfied: pytsk3==20170802 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (20170802)
+Requirement already satisfied: pytz==2017.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2017.3)
+Requirement already satisfied: PyYAML==3.12 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.12)
+Requirement already satisfied: requests==2.19.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.19.1)
+Requirement already satisfied: typing==3.6.4 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.6.4)
+Requirement already satisfied: virtualenv==15.0.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (15.0.3)
+Requirement already satisfied: wheel==0.30 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.30.0)
+Requirement already satisfied: yara-python==3.6.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.6.3)
+Requirement already satisfied: pyelftools==0.24 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (0.24)
+Requirement already satisfied: rekall-efilter<1.7,>=1.6 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (1.6.0)
+Requirement already satisfied: pyaff4<0.30,>=0.26 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (0.26.post6)
+Requirement already satisfied: pyparsing==2.1.5 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (2.1.5)
+Requirement already satisfied: rekall-yara==3.6.3.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (3.6.3.1)
+Requirement already satisfied: arrow==0.10.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (0.10.0)
+Requirement already satisfied: pycryptodome==3.4.7 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (3.4.7)
+Requirement already satisfied: rekall-lib in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (1.7.1)
+Requirement already satisfied: intervaltree==2.1.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (2.1.0)
+Requirement already satisfied: rekall-capstone==3.0.5.post2 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (3.0.5.post2)
+Requirement already satisfied: acora==2.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (2.0)
+Requirement already satisfied: parsedatetime==2.4 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (2.4)
+Requirement already satisfied: artifacts==20170909 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (20170909)
+Requirement already satisfied: setuptools in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from pyinstaller==3.2.1->grr-response-client==3.2.4.post3) (40.8.0)
+Requirement already satisfied: cffi>=1.0.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from xattr==0.9.2->grr-response-client==3.2.4.post3) (1.11.5)
+Requirement already satisfied: enum34; python_version < "3" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.1.6)
+Requirement already satisfied: idna>=2.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.8)
+Requirement already satisfied: asn1crypto>=0.21.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.24.0)
+Requirement already satisfied: six>=1.4.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.12.0)
+Requirement already satisfied: ipaddress; python_version < "3" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.0.22)
+Requirement already satisfied: google-apputils==0.4.2 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.4.2)
+Requirement already satisfied: grpcio==1.7.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.7.0)
+Requirement already satisfied: python-gflags==3.1.2 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.1.2)
+Requirement already satisfied: futures==3.2.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.2.0)
+Requirement already satisfied: grpcio-tools==1.7.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.7.0)
+Requirement already satisfied: protobuf==3.3.0 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from grr-response-proto==3.2.4post3->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.3.0)
+Requirement already satisfied: prompt-toolkit<2.0.0,>=1.0.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.0.15)
+Requirement already satisfied: pickleshare in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.7.5)
+Requirement already satisfied: backports.shutil-get-terminal-size; python_version == "2.7" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.0.0)
+Requirement already satisfied: pathlib2; python_version == "2.7" or python_version == "3.3" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.3.3)
+Requirement already satisfied: pexpect; sys_platform != "win32" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (4.6.0)
+Requirement already satisfied: traitlets>=4.2 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (4.3.2)
+Requirement already satisfied: pygments in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.3.1)
+Requirement already satisfied: decorator in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (4.3.2)
+Requirement already satisfied: simplegeneric>0.8 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.8.1)
+Requirement already satisfied: certifi>=2017.4.17 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from requests==2.19.1->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2018.11.29)
+Requirement already satisfied: chardet<3.1.0,>=3.0.2 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from requests==2.19.1->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.0.4)
+Requirement already satisfied: urllib3<1.24,>=1.21.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from requests==2.19.1->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.23)
+Requirement already satisfied: rdflib[sparql]==4.2.2 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (4.2.2)
+Requirement already satisfied: html5lib in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (1.0.1)
+Requirement already satisfied: aff4-snappy==0.5.1 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (0.5.1)
+Requirement already satisfied: pyblake2==0.9.3 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (0.9.3)
+Requirement already satisfied: expiringdict==1.1.4 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (1.1.4)
+Requirement already satisfied: sortedcontainers==1.5.7 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rekall-lib->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (1.5.7)
+Requirement already satisfied: pycparser in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from cffi>=1.0.0->xattr==0.9.2->grr-response-client==3.2.4.post3) (2.19)
+Requirement already satisfied: wcwidth in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from prompt-toolkit<2.0.0,>=1.0.3->ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.1.7)
+Requirement already satisfied: scandir; python_version < "3.5" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from pathlib2; python_version == "2.7" or python_version == "3.3"->ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.9.0)
+Requirement already satisfied: ptyprocess>=0.5 in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from pexpect; sys_platform != "win32"->ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.6.0)
+Requirement already satisfied: ipython-genutils in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from traitlets>=4.2->ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.2.0)
+Requirement already satisfied: isodate in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rdflib[sparql]==4.2.2->pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (0.6.0)
+Requirement already satisfied: SPARQLWrapper; extra == "sparql" in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from rdflib[sparql]==4.2.2->pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (1.8.2)
+Requirement already satisfied: webencodings in /home/naufal/.virtualenv/GRR/lib/python2.7/site-packages (from html5lib->pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (0.5.1)
+Installing collected packages: grr-response-client
+  Found existing installation: grr-response-client 3.2.4.post3
+    Not uninstalling grr-response-client at /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/client, outside environment /home/naufal/.virtualenv/GRR
+    Can't uninstall 'grr-response-client'. No files were found to uninstall.
+  Running setup.py develop for grr-response-client
+Successfully installed grr-response-client
+zsh: no matches found: ./grr/server/[mysqldatastore]
+[33mDEPRECATION: Python 2.7 will reach the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 won't be maintained after that date. A future version of pip will drop support for Python 2.7.[0m
+Obtaining file:///home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/test
+Collecting mock==2.0.0 (from grr-response-test==3.2.4.post3)
+  Using cached https://files.pythonhosted.org/packages/e6/35/f187bdf23be87092bd0f1200d43d23076cee4d0dec109f195173fd3ebc79/mock-2.0.0-py2.py3-none-any.whl
+Collecting mox==0.5.3 (from grr-response-test==3.2.4.post3)
+Collecting pytest==3.0.5 (from grr-response-test==3.2.4.post3)
+  Using cached https://files.pythonhosted.org/packages/dd/28/4abc547194d8e6ff93d3ef186cb809a413d719cdc21e524af08fe986f7c2/pytest-3.0.5-py2.py3-none-any.whl
+Collecting selenium==2.50.1 (from grr-response-test==3.2.4.post3)
+  Using cached https://files.pythonhosted.org/packages/18/f4/ebd33b8611f763c80449173fa770fc7fbb2898b70efad0cda9d08a22e745/selenium-2.50.1-py2-none-any.whl
+Requirement already satisfied: grr-api-client==3.2.4post3 in ./api_client/python (from grr-response-test==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: grr-response-client==3.2.4post3 in ./grr/client (from grr-response-test==3.2.4.post3) (3.2.4.post3)
+Collecting grr-response-server==3.2.4post3 (from grr-response-test==3.2.4.post3)
+[31m  Could not find a version that satisfies the requirement grr-response-server==3.2.4post3 (from grr-response-test==3.2.4.post3) (from versions: 3.1.0, 3.1.0.post2, 3.2.0.post1, 3.2.1.post0, 3.2.1.post1, 3.2.1.post7, 3.2.2.post0, 3.2.3.post0, 3.2.3.post2, 3.2.4.post4, 3.2.4.post5, 3.2.4.post6)[0m
+[31mNo matching distribution found for grr-response-server==3.2.4post3 (from grr-response-test==3.2.4.post3)[0m
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]2;naufal@naufal: ~/Documents/auc/semesters/fall2018/seniorprj1/grr]1;..eniorprj1/grr[0m[27m[24m[J(GRR) [39m[0m[49m[40m[39m [31m✘[40m[39m naufal@naufal [44m[30m[30m ~/Documents/auc/semesters/fall2018/seniorprj1/grr [43m[34m[30m  acauthority ● [49m[33m[39m 
+ [34m>>[00m [K[?1h=[?2004h[?2004l
+[0;32masciinema: recording finished[0m
+[0;32masciinema: press <enter> to upload to asciinema.org, <ctrl-c> to save locally[0m
+
+View the recording at:
+
+    https://asciinema.org/a/zM7iM6rcGFWPQ1atUrNUsVPkb
+
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]2;naufal@naufal: ~/Documents/auc/semesters/fall2018/seniorprj1/grr]1;..eniorprj1/grr[0m[27m[24m[J(GRR) [39m[0m[49m[40m[39m naufal@naufal [44m[30m[30m ~/Documents/auc/semesters/fall2018/seniorprj1/grr [43m[34m[30m  acauthority ● [49m[33m[39m 
+ [34m>>[00m [K[?1h=[?2004h[32ml[39m[90ms[39m[32ml[39m[39m [?1l>[?2004l
+]2;ls --color=tty -lah]1;ltotal 176K
+drwxr-xr-x 13 naufal naufal 4.0K Feb  6 13:35 [0m[01;34m.[0m
+drwxrwxr-x  6 naufal naufal 4.0K Jan 31 18:00 [01;34m..[0m
+-rw-r--r--  1 naufal naufal 1.1K Nov  2 16:04 ACKNOWLEDGEMENTS
+drwxr-xr-x  3 naufal naufal 4.0K Nov  2 16:04 [01;34mapi_client[0m
+drwxr-xr-x  5 naufal naufal 4.0K Nov  2 16:04 [01;34mappveyor[0m
+-rw-r--r--  1 naufal naufal  569 Nov  2 16:04 AUTHORS
+-rw-r--r--  1 naufal naufal 1.8K Nov  9 15:34 conftest.py
+drwxr-xr-x  2 naufal naufal 4.0K Nov  2 16:04 [01;34mdebian[0m
+drwxr-xr-x  2 naufal naufal 4.0K Nov  9 15:34 [01;34mdevdocs[0m
+drwxr-xr-x  2 naufal naufal 4.0K Nov  2 16:04 [01;34mdocker[0m
+-rw-r--r--  1 naufal naufal 2.2K Nov  9 15:34 Dockerfile
+-rw-r--r--  1 naufal naufal  569 Nov  2 16:04 .dockerignore
+drwxr-xr-x  8 naufal naufal 4.0K Feb  6 13:38 [01;34m.git[0m
+-rw-r--r--  1 naufal naufal  170 Nov  9 15:57 .gitignore
+drwxr-xr-x 12 naufal naufal 4.0K Feb  6 11:05 [01;34mgrr[0m
+-rw-r--r--  1 naufal naufal  52K Feb  6 13:38 installation_trial.txt
+drwxr-xr-x  3 naufal naufal 4.0K Nov  2 16:04 [01;34mkeys[0m
+-rw-r--r--  1 naufal naufal  12K Nov  2 16:04 LICENSE
+-rw-r--r--  1 naufal naufal  213 Feb  1 19:39 new
+-rw-r--r--  1 naufal naufal  400 Nov  2 16:04 pytest.ini
+-rw-r--r--  1 naufal naufal  140 Nov  2 16:04 README
+-rw-r--r--  1 naufal naufal 2.8K Nov  2 16:04 README.md
+drwxr-xr-x  3 naufal naufal 4.0K Nov  2 16:04 [01;34mterraform[0m
+drwxr-xr-x  2 naufal naufal 4.0K Nov  9 15:34 [01;34mtravis[0m
+-rw-r--r--  1 naufal naufal  12K Nov  2 16:04 .travis.yml
+drwxr-xr-x  2 naufal naufal 4.0K Nov  2 16:04 [01;34mvagrant[0m
+-rw-r--r--  1 naufal naufal  158 Nov  9 15:34 version.ini
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]2;naufal@naufal: ~/Documents/auc/semesters/fall2018/seniorprj1/grr]1;..eniorprj1/grr[0m[27m[24m[J(GRR) [39m[0m[49m[40m[39m naufal@naufal [44m[30m[30m ~/Documents/auc/semesters/fall2018/seniorprj1/grr [43m[34m[30m  acauthority ● [49m[33m[39m 
+ [34m>>[00m [K[?1h=[?2004h[32m.[39m[90m/travis/install_protobuf.sh linux[39m[33D[39m[4m.[39m[4m/[24m[4m.[4m/[39m[4mt[24m[24m[1m[31m.[24m[1m[31m/[24m[1m[31mt[1m[31ma[0m[39m[90mr[90mg[90me[90mt[90m/[90md[90me[90mb[90mu[90mg[90m/[90md[90me[90mp[90ms[90m/[90mh[90me[90ml[90ml[90mo[90m_[90mc[90ma[90mr[90mg[90mo[90m-[90m8[90mc[90me26b4c26ba3a92[39m[44D[1m[31ma[1m[31mr[0m[39m[1m[31ma[0m[39m[0m[90mr[0m[39m[39m[4m.[0m[39m[4m/[0m[39m[4mt[24m[0m[90mr[90ma[90mv[90mi[90ms[90m/[90mi[90mn[90ms[90mt[90ma[90ml[90ml[90m_[90mp[90mr[90mo[90mt[90mo[90mb[90mu[90mf[90m.[90ms[90mh[90m [90ml[90mi[90mn[90mu[90mx[39m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [45D[4m.[4m/[24m[24m[90mt[24m[32m.[24m[32m/[32mt[32mr[32ma[32mv[32mi[32ms[32m/[32mi[32mn[32ms[32mt[32ma[32ml[32ml[32m_[32mp[32mr[32mo[32mt[32mo[32mb[32mu[32mf[32m.[32ms[32mh[39m[39m [39ml[39mi[39mn[39mu[39mx[1C[1C[1C[1C[1C[1C[1C[1C[90ml[90mi[90mn[90mu[90mx[39m[29D[39m[4m.[39m[4m/[39m[4mt[39m[4mr[39m[4ma[39m[4mv[39m[4mi[39m[4ms[39m[4m/[39m[4mi[39m[4mn[39m[4ms[39m[4mt[39m[4ma[39m[4ml[39m[4ml[39m[4m_[39m[4mp[39m[4mr[39m[4mo[39m[4mt[39m[4mo[39m[4mb[39m[4mu[39m[4mf[39m[4m.[24m[90ms[90mh[90m [39m[4mf[24m[24m[90m.[39m[4mu[24m[24m[90mf[39m[4mb[24m[24m[90mu[39m[4mo[24m[24m[90mb[39m[4mt[24m[24m[90mo[39m[4mo[24m[24m[90mt[39m[4mr[24m[24m[90mo[39m[4mp[24m[24m[90mr[39m[4m_[24m[24m[90mp[39m[4ml[24m[24m[90m_[39m[4ml[24m[24m[90ml[39m[4ml[39m[4ml[24m[16D[24m.[24m/[24mt[24mr[24ma[24mv[24mi[24ms[24m/[24mi[24mn[24ms[24mt[24ma[24ml[24ml[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [18D
+[J[01;32minstall_centos_prereqs.sh[0m*  [J[01;32minstall_client_only.sh[0m*     [J[01;32minstall_protobuf.sh[0m*        [J[01;32minstall.sh[0m*               [J[A[0m[27m[24m[0m[34m[49m[4C./travis/install[K[0m[34m[49m[90m_protobuf.sh linux[39m[18D[39m_[39mc[39me[39mn[39mt[39mo[39ms[39m_[39mp[39mr[39me[39mr[39me[39mq[39ms[39m.[39ms[39mh
+[J[7minstall_centos_prereqs.sh*[0m  [J[01;32minstall_client_only.sh[0m*     [J[01;32minstall_protobuf.sh[0m*        [J[01;32minstall.sh[0m*               [J[A[0m[27m[24m[0m[34m[49m[4C./travis/install_centos_prereqs.sh[K[0m[34m[49m
+[7minstall_centos_prereqs.sh*[0m  [7minstall_centos_prereqs.sh*[0m  [A[0m[27m[24m[0m[34m[49m[4C./travis/install_centos_prereqs.sh[K[0m[34m[49m[16Dlient_only.sh   
+[28C[7minstall_client_only.sh*   [0m  [01;32minstall_centos_prereqs.sh[0m*  [A[0m[27m[24m[0m[34m[49m[4C./travis/install_client_only.sh[K[0m[34m[49m[14Dprotobuf.sh   
+[56C[7minstall_protobuf.sh*      [0m  [28C[01;32minstall_client_only.sh[0m*     [A[0m[27m[24m[0m[34m[49m[4C./travis/install_protobuf.sh[K[0m[34m[49m[12D.sh         [9D
+[84C[7minstall.sh*               [0m[56C[01;32minstall_protobuf.sh[0m*        [A[0m[27m[24m[0m[34m[49m[4C./travis/install.sh[K[0m[34m[49m
+[J[A[23C[1m [0m[20D[32m.[32m/[32mt[32mr[32ma[32mv[32mi[32ms[32m/[32mi[32mn[32ms[32mt[32ma[32ml[32ml[32m.[32ms[32mh[39m[1m [0m[90mlinux[39m[0m [39m [39m [39m [39m [39m [?1l>[?2004l
+[J]2;./travis/install.sh]1;./travis/install.sh+ source /home/naufal/INSTALL/bin/activate
+++ deactivate nondestructive
+++ unset -f pydoc
+++ '[' -z '' ']'
+++ '[' -z '' ']'
+++ '[' -n /bin/bash ']'
+++ hash -r
+++ '[' -z '' ']'
+++ unset VIRTUAL_ENV
+++ '[' '!' nondestructive = nondestructive ']'
+++ VIRTUAL_ENV=/home/naufal/INSTALL
+++ export VIRTUAL_ENV
+++ _OLD_VIRTUAL_PATH=/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.cargo/bin:/home/naufal/bin:/home/naufal/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/home/naufal/bin:/usr/lib/jvm/java-8-oracle/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/home/naufal/Downloads/packages/fzf/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin
+++ PATH=/home/naufal/INSTALL/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.cargo/bin:/home/naufal/bin:/home/naufal/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/home/naufal/bin:/usr/lib/jvm/java-8-oracle/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/home/naufal/Downloads/packages/fzf/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin
+++ export PATH
+++ '[' -z '' ']'
+++ '[' -z '' ']'
+++ _OLD_VIRTUAL_PS1=
+++ '[' x '!=' x ']'
++++ basename /home/naufal/INSTALL
+++ PS1='(INSTALL) '
+++ export PS1
+++ alias pydoc
+++ '[' -n /bin/bash ']'
+++ hash -r
+++ NODE_VIRTUAL_ENV_DISABLE_PROMPT=1
+++ deactivate_node nondestructive
+++ '[' -n '' ']'
+++ '[' -n /bin/bash -o -n '' ']'
+++ hash -r
+++ '[' -n '' ']'
+++ unset NODE_VIRTUAL_ENV
+++ '[' '!' nondestructive = nondestructive ']'
+++ '[' /home/naufal/INSTALL/bin/activate ']'
+++ SOURCE=/home/naufal/INSTALL/bin/activate
+++ '[' -h /home/naufal/INSTALL/bin/activate ']'
+++++ dirname /home/naufal/INSTALL/bin/activate
++++ command cd -P /home/naufal/INSTALL/bin
++++ cd -P /home/naufal/INSTALL/bin
++++ pwd
+++ DIR=/home/naufal/INSTALL/bin
++++ dirname /home/naufal/INSTALL/bin
+++ NODE_VIRTUAL_ENV=/home/naufal/INSTALL
+++ export NODE_VIRTUAL_ENV
+++ _OLD_NODE_VIRTUAL_PATH=/home/naufal/INSTALL/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.cargo/bin:/home/naufal/bin:/home/naufal/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/home/naufal/bin:/usr/lib/jvm/java-8-oracle/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/home/naufal/Downloads/packages/fzf/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin
+++ PATH=/home/naufal/INSTALL/lib/node_modules/.bin:/home/naufal/INSTALL/bin:/home/naufal/INSTALL/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.cargo/bin:/home/naufal/bin:/home/naufal/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/home/naufal/bin:/usr/lib/jvm/java-8-oracle/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/home/naufal/Downloads/packages/fzf/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin
+++ export PATH
+++ _OLD_NODE_PATH=/home/naufal/.virtualenv/GRR/lib/node_modules
+++ NODE_PATH=/home/naufal/INSTALL/lib/node_modules
+++ export NODE_PATH
+++ _OLD_NPM_CONFIG_PREFIX=/home/naufal/.virtualenv/GRR
+++ _OLD_npm_config_prefix=/home/naufal/.virtualenv/GRR
+++ NPM_CONFIG_PREFIX=/home/naufal/INSTALL
+++ npm_config_prefix=/home/naufal/INSTALL
+++ export NPM_CONFIG_PREFIX
+++ export npm_config_prefix
+++ '[' -z 1 ']'
+++ '[' -n /bin/bash -o -n '' ']'
+++ hash -r
+++ unset NODE_VIRTUAL_ENV_DISABLE_PROMPT
++ pip install --upgrade pip wheel six setuptools nodeenv
+[33mDEPRECATION: Python 2.7 will reach the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 won't be maintained after that date. A future version of pip will drop support for Python 2.7.[0m
+Requirement already up-to-date: pip in /home/naufal/INSTALL/lib/python2.7/site-packages (19.0.1)
+Requirement already up-to-date: wheel in /home/naufal/INSTALL/lib/python2.7/site-packages (0.32.3)
+Requirement already up-to-date: six in /home/naufal/INSTALL/lib/python2.7/site-packages (1.12.0)
+Collecting setuptools
+  Using cached https://files.pythonhosted.org/packages/d1/6a/4b2fcefd2ea0868810e92d519dacac1ddc64a2e53ba9e3422c3b62b378a6/setuptools-40.8.0-py2.py3-none-any.whl
+Requirement already up-to-date: nodeenv in /home/naufal/INSTALL/lib/python2.7/site-packages (1.3.3)
+[31mgrr-response-core 3.2.4.post3 has requirement wheel==0.30, but you'll have wheel 0.32.3 which is incompatible.[0m
+Installing collected packages: setuptools
+  Found existing installation: setuptools 40.7.2
+    Uninstalling setuptools-40.7.2:
+      Successfully uninstalled setuptools-40.7.2
+Successfully installed setuptools-40.8.0
++ nodeenv -p --prebuilt --node=10.12.0
+ * Install prebuilt node (10.12.0) ..... done.
++ source /home/naufal/INSTALL/bin/activate
+++ deactivate nondestructive
+++ unset -f pydoc
+++ '[' -z _ ']'
+++ PATH=/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.cargo/bin:/home/naufal/bin:/home/naufal/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/home/naufal/bin:/usr/lib/jvm/java-8-oracle/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/home/naufal/Downloads/packages/fzf/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin
+++ export PATH
+++ unset _OLD_VIRTUAL_PATH
+++ '[' -z '' ']'
+++ '[' -n /bin/bash ']'
+++ hash -r
+++ '[' -z _ ']'
+++ PS1=
+++ export PS1
+++ unset _OLD_VIRTUAL_PS1
+++ unset VIRTUAL_ENV
+++ '[' '!' nondestructive = nondestructive ']'
+++ VIRTUAL_ENV=/home/naufal/INSTALL
+++ export VIRTUAL_ENV
+++ _OLD_VIRTUAL_PATH=/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.cargo/bin:/home/naufal/bin:/home/naufal/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/home/naufal/bin:/usr/lib/jvm/java-8-oracle/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/home/naufal/Downloads/packages/fzf/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin
+++ PATH=/home/naufal/INSTALL/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.cargo/bin:/home/naufal/bin:/home/naufal/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/home/naufal/bin:/usr/lib/jvm/java-8-oracle/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/home/naufal/Downloads/packages/fzf/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin
+++ export PATH
+++ '[' -z '' ']'
+++ '[' -z '' ']'
+++ _OLD_VIRTUAL_PS1=
+++ '[' x '!=' x ']'
++++ basename /home/naufal/INSTALL
+++ PS1='(INSTALL) '
+++ export PS1
+++ alias pydoc
+++ '[' -n /bin/bash ']'
+++ hash -r
+++ NODE_VIRTUAL_ENV_DISABLE_PROMPT=1
+++ deactivate_node nondestructive
+++ '[' -n /home/naufal/INSTALL/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.cargo/bin:/home/naufal/bin:/home/naufal/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/home/naufal/bin:/usr/lib/jvm/java-8-oracle/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/home/naufal/Downloads/packages/fzf/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin ']'
+++ PATH=/home/naufal/INSTALL/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.cargo/bin:/home/naufal/bin:/home/naufal/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/home/naufal/bin:/usr/lib/jvm/java-8-oracle/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/home/naufal/Downloads/packages/fzf/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin
+++ export PATH
+++ unset _OLD_NODE_VIRTUAL_PATH
+++ NODE_PATH=/home/naufal/.virtualenv/GRR/lib/node_modules
+++ export NODE_PATH
+++ unset _OLD_NODE_PATH
+++ NPM_CONFIG_PREFIX=/home/naufal/.virtualenv/GRR
+++ npm_config_prefix=/home/naufal/.virtualenv/GRR
+++ export NPM_CONFIG_PREFIX
+++ export npm_config_prefix
+++ unset _OLD_NPM_CONFIG_PREFIX
+++ unset _OLD_npm_config_prefix
+++ '[' -n /bin/bash -o -n '' ']'
+++ hash -r
+++ '[' -n '' ']'
+++ unset NODE_VIRTUAL_ENV
+++ '[' '!' nondestructive = nondestructive ']'
+++ '[' /home/naufal/INSTALL/bin/activate ']'
+++ SOURCE=/home/naufal/INSTALL/bin/activate
+++ '[' -h /home/naufal/INSTALL/bin/activate ']'
+++++ dirname /home/naufal/INSTALL/bin/activate
++++ command cd -P /home/naufal/INSTALL/bin
++++ cd -P /home/naufal/INSTALL/bin
++++ pwd
+++ DIR=/home/naufal/INSTALL/bin
++++ dirname /home/naufal/INSTALL/bin
+++ NODE_VIRTUAL_ENV=/home/naufal/INSTALL
+++ export NODE_VIRTUAL_ENV
+++ _OLD_NODE_VIRTUAL_PATH=/home/naufal/INSTALL/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.cargo/bin:/home/naufal/bin:/home/naufal/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/home/naufal/bin:/usr/lib/jvm/java-8-oracle/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/home/naufal/Downloads/packages/fzf/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin
+++ PATH=/home/naufal/INSTALL/lib/node_modules/.bin:/home/naufal/INSTALL/bin:/home/naufal/INSTALL/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.virtualenv/GRR/lib/node_modules/.bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.virtualenv/GRR/bin:/home/naufal/.local/bin:/opt/st-link/usr/local/bin:/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/riscv32-zephyr-elf:/home/naufal/.cargo/bin:/home/naufal/.cargo/bin:/home/naufal/bin:/home/naufal/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/home/naufal/bin:/usr/lib/jvm/java-8-oracle/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/home/naufal/Downloads/packages/fzf/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin:/opt/arm/bin:/opt/keycloak-4.5.0.Final/bin:/opt/lampp/bin:/opt/maven/bin:/opt/metasploit-framework/bin:/opt/riscv64-unknown-elf-gcc-20180928-x86_64-linux-ubuntu14/bin:/opt/riscv/bin:/opt/wildfly-14.0.1.Final/bin
+++ export PATH
+++ _OLD_NODE_PATH=/home/naufal/.virtualenv/GRR/lib/node_modules
+++ NODE_PATH=/home/naufal/INSTALL/lib/node_modules
+++ export NODE_PATH
+++ _OLD_NPM_CONFIG_PREFIX=/home/naufal/.virtualenv/GRR
+++ _OLD_npm_config_prefix=/home/naufal/.virtualenv/GRR
+++ NPM_CONFIG_PREFIX=/home/naufal/INSTALL
+++ npm_config_prefix=/home/naufal/INSTALL
+++ export NPM_CONFIG_PREFIX
+++ export npm_config_prefix
+++ '[' -z 1 ']'
+++ '[' -n /bin/bash -o -n '' ']'
+++ hash -r
+++ unset NODE_VIRTUAL_ENV_DISABLE_PROMPT
++ default_protoc_path=/home/naufal/protobuf/bin/protoc
++ [[ -z /home/naufal/protobuf/bin/protoc ]]
++ unset _JAVA_OPTIONS
++ unset JAVA_TOOL_OPTIONS
++ pip install -e grr/proto --progress-bar off
+[33mDEPRECATION: Python 2.7 will reach the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 won't be maintained after that date. A future version of pip will drop support for Python 2.7.[0m
+Obtaining file:///home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/proto
+Requirement already satisfied: protobuf==3.3.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-proto==3.2.4.post3) (3.3.0)
+Requirement already satisfied: six>=1.9 in /home/naufal/INSTALL/lib/python2.7/site-packages (from protobuf==3.3.0->grr-response-proto==3.2.4.post3) (1.12.0)
+Requirement already satisfied: setuptools in /home/naufal/INSTALL/lib/python2.7/site-packages (from protobuf==3.3.0->grr-response-proto==3.2.4.post3) (40.8.0)
+[31mgrr-response-core 3.2.4.post3 has requirement wheel==0.30, but you'll have wheel 0.32.3 which is incompatible.[0m
+Installing collected packages: grr-response-proto
+  Found existing installation: grr-response-proto 3.2.4.post3
+    Not uninstalling grr-response-proto at /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/proto, outside environment /home/naufal/INSTALL
+    Can't uninstall 'grr-response-proto'. No files were found to uninstall.
+  Running setup.py develop for grr-response-proto
+Successfully installed grr-response-proto
++ pip install -e grr/core --progress-bar off
+[33mDEPRECATION: Python 2.7 will reach the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 won't be maintained after that date. A future version of pip will drop support for Python 2.7.[0m
+Obtaining file:///home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core
+Requirement already satisfied: binplist==0.1.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (0.1.4)
+Requirement already satisfied: configparser==3.5.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (3.5.0)
+Requirement already satisfied: cryptography==2.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (2.3)
+Requirement already satisfied: fleetspeak==0.0.7 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (0.0.7)
+Requirement already satisfied: future==0.16.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (0.16.0)
+Requirement already satisfied: grr-response-proto==3.2.4post3 in ./grr/proto (from grr-response-core==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: ipaddr==2.2.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (2.2.0)
+Requirement already satisfied: ipython==5.0.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (5.0.0)
+Requirement already satisfied: pip>=8.1.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (19.0.1)
+Requirement already satisfied: psutil==5.4.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (5.4.3)
+Requirement already satisfied: python-crontab==2.0.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (2.0.1)
+Requirement already satisfied: python-dateutil==2.6.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (2.6.1)
+Requirement already satisfied: pytsk3==20170802 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (20170802)
+Requirement already satisfied: pytz==2017.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (2017.3)
+Requirement already satisfied: PyYAML==3.12 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (3.12)
+Requirement already satisfied: requests==2.19.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (2.19.1)
+Requirement already satisfied: typing==3.6.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (3.6.4)
+Requirement already satisfied: virtualenv==15.0.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (15.0.3)
+Collecting wheel==0.30 (from grr-response-core==3.2.4.post3)
+  Using cached https://files.pythonhosted.org/packages/0c/80/16a85b47702a1f47a63c104c91abdd0a6704ee8ae3b4ce4afc49bc39f9d9/wheel-0.30.0-py2.py3-none-any.whl
+Requirement already satisfied: yara-python==3.6.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4.post3) (3.6.3)
+Requirement already satisfied: enum34; python_version < "3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4.post3) (1.1.6)
+Requirement already satisfied: idna>=2.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4.post3) (2.7)
+Requirement already satisfied: asn1crypto>=0.21.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4.post3) (0.24.0)
+Requirement already satisfied: cffi!=1.11.3,>=1.7 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4.post3) (1.11.5)
+Requirement already satisfied: six>=1.4.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4.post3) (1.12.0)
+Requirement already satisfied: ipaddress; python_version < "3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4.post3) (1.0.22)
+Requirement already satisfied: google-apputils==0.4.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4.post3) (0.4.2)
+Requirement already satisfied: grpcio==1.7.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4.post3) (1.7.0)
+Requirement already satisfied: python-gflags==3.1.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4.post3) (3.1.2)
+Requirement already satisfied: futures==3.2.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4.post3) (3.2.0)
+Requirement already satisfied: grpcio-tools==1.7.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4.post3) (1.7.0)
+Requirement already satisfied: protobuf==3.3.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-proto==3.2.4post3->grr-response-core==3.2.4.post3) (3.3.0)
+Requirement already satisfied: prompt-toolkit<2.0.0,>=1.0.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (1.0.15)
+Requirement already satisfied: pickleshare in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (0.7.5)
+Requirement already satisfied: simplegeneric>0.8 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (0.8.1)
+Requirement already satisfied: backports.shutil-get-terminal-size; python_version == "2.7" in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (1.0.0)
+Requirement already satisfied: pathlib2; python_version == "2.7" or python_version == "3.3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (2.3.2)
+Requirement already satisfied: pexpect; sys_platform != "win32" in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (4.0.1)
+Requirement already satisfied: traitlets>=4.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (4.3.2)
+Requirement already satisfied: pygments in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (2.2.0)
+Requirement already satisfied: decorator in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (4.3.0)
+Requirement already satisfied: setuptools>=18.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4.post3) (40.8.0)
+Requirement already satisfied: certifi>=2017.4.17 in /home/naufal/INSTALL/lib/python2.7/site-packages (from requests==2.19.1->grr-response-core==3.2.4.post3) (2018.10.15)
+Requirement already satisfied: chardet<3.1.0,>=3.0.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from requests==2.19.1->grr-response-core==3.2.4.post3) (3.0.4)
+Requirement already satisfied: urllib3<1.24,>=1.21.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from requests==2.19.1->grr-response-core==3.2.4.post3) (1.23)
+Requirement already satisfied: pycparser in /home/naufal/INSTALL/lib/python2.7/site-packages (from cffi!=1.11.3,>=1.7->cryptography==2.3->grr-response-core==3.2.4.post3) (2.19)
+Requirement already satisfied: wcwidth in /home/naufal/INSTALL/lib/python2.7/site-packages (from prompt-toolkit<2.0.0,>=1.0.3->ipython==5.0.0->grr-response-core==3.2.4.post3) (0.1.7)
+Requirement already satisfied: scandir; python_version < "3.5" in /home/naufal/INSTALL/lib/python2.7/site-packages (from pathlib2; python_version == "2.7" or python_version == "3.3"->ipython==5.0.0->grr-response-core==3.2.4.post3) (1.9.0)
+Requirement already satisfied: ptyprocess>=0.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from pexpect; sys_platform != "win32"->ipython==5.0.0->grr-response-core==3.2.4.post3) (0.6.0)
+Requirement already satisfied: ipython-genutils in /home/naufal/INSTALL/lib/python2.7/site-packages (from traitlets>=4.2->ipython==5.0.0->grr-response-core==3.2.4.post3) (0.2.0)
+Installing collected packages: wheel, grr-response-core
+  Found existing installation: wheel 0.32.3
+    Uninstalling wheel-0.32.3:
+      Successfully uninstalled wheel-0.32.3
+  Found existing installation: grr-response-core 3.2.4.post3
+    Not uninstalling grr-response-core at /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core, outside environment /home/naufal/INSTALL
+    Can't uninstall 'grr-response-core'. No files were found to uninstall.
+  Running setup.py develop for grr-response-core
+Successfully installed grr-response-core wheel-0.30.0
++ pip install -e grr/client --progress-bar off
+[33mDEPRECATION: Python 2.7 will reach the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 won't be maintained after that date. A future version of pip will drop support for Python 2.7.[0m
+Obtaining file:///home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/client
+Requirement already satisfied: grr-response-core==3.2.4post3 in ./grr/core (from grr-response-client==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: rekall-core==1.7.2rc1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-client==3.2.4.post3) (1.7.2rc1)
+Requirement already satisfied: pyinstaller==3.2.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-client==3.2.4.post3) (3.2.1)
+Requirement already satisfied: chipsec==1.2.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-client==3.2.4.post3) (1.2.4)
+Requirement already satisfied: xattr==0.9.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-client==3.2.4.post3) (0.9.2)
+Requirement already satisfied: binplist==0.1.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.1.4)
+Requirement already satisfied: configparser==3.5.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.5.0)
+Requirement already satisfied: cryptography==2.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.3)
+Requirement already satisfied: fleetspeak==0.0.7 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.0.7)
+Requirement already satisfied: future==0.16.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.16.0)
+Requirement already satisfied: grr-response-proto==3.2.4post3 in ./grr/proto (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: ipaddr==2.2.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.2.0)
+Requirement already satisfied: ipython==5.0.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (5.0.0)
+Requirement already satisfied: pip>=8.1.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (19.0.1)
+Requirement already satisfied: psutil==5.4.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (5.4.3)
+Requirement already satisfied: python-crontab==2.0.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.0.1)
+Requirement already satisfied: python-dateutil==2.6.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.6.1)
+Requirement already satisfied: pytsk3==20170802 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (20170802)
+Requirement already satisfied: pytz==2017.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2017.3)
+Requirement already satisfied: PyYAML==3.12 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.12)
+Requirement already satisfied: requests==2.19.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.19.1)
+Requirement already satisfied: typing==3.6.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.6.4)
+Requirement already satisfied: virtualenv==15.0.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (15.0.3)
+Requirement already satisfied: wheel==0.30 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.30.0)
+Requirement already satisfied: yara-python==3.6.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.6.3)
+Requirement already satisfied: pyelftools==0.24 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (0.24)
+Requirement already satisfied: rekall-efilter<1.7,>=1.6 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (1.6.0)
+Requirement already satisfied: pyaff4<0.30,>=0.26 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (0.26.post6)
+Requirement already satisfied: pyparsing==2.1.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (2.1.5)
+Requirement already satisfied: rekall-yara==3.6.3.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (3.6.3.1)
+Requirement already satisfied: arrow==0.10.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (0.10.0)
+Requirement already satisfied: pycryptodome==3.4.7 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (3.4.7)
+Requirement already satisfied: rekall-lib in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (1.7.1)
+Requirement already satisfied: intervaltree==2.1.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (2.1.0)
+Requirement already satisfied: rekall-capstone==3.0.5.post2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (3.0.5.post2)
+Requirement already satisfied: acora==2.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (2.0)
+Requirement already satisfied: parsedatetime==2.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (2.4)
+Requirement already satisfied: artifacts==20170909 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (20170909)
+Requirement already satisfied: setuptools in /home/naufal/INSTALL/lib/python2.7/site-packages (from pyinstaller==3.2.1->grr-response-client==3.2.4.post3) (40.8.0)
+Requirement already satisfied: cffi>=1.0.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from xattr==0.9.2->grr-response-client==3.2.4.post3) (1.11.5)
+Requirement already satisfied: enum34; python_version < "3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.1.6)
+Requirement already satisfied: idna>=2.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.7)
+Requirement already satisfied: asn1crypto>=0.21.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.24.0)
+Requirement already satisfied: six>=1.4.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.12.0)
+Requirement already satisfied: ipaddress; python_version < "3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.0.22)
+Requirement already satisfied: google-apputils==0.4.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.4.2)
+Requirement already satisfied: grpcio==1.7.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.7.0)
+Requirement already satisfied: python-gflags==3.1.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.1.2)
+Requirement already satisfied: futures==3.2.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.2.0)
+Requirement already satisfied: grpcio-tools==1.7.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.7.0)
+Requirement already satisfied: protobuf==3.3.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-proto==3.2.4post3->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.3.0)
+Requirement already satisfied: prompt-toolkit<2.0.0,>=1.0.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.0.15)
+Requirement already satisfied: pickleshare in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.7.5)
+Requirement already satisfied: backports.shutil-get-terminal-size; python_version == "2.7" in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.0.0)
+Requirement already satisfied: pathlib2; python_version == "2.7" or python_version == "3.3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.3.2)
+Requirement already satisfied: pexpect; sys_platform != "win32" in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (4.0.1)
+Requirement already satisfied: traitlets>=4.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (4.3.2)
+Requirement already satisfied: simplegeneric>0.8 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.8.1)
+Requirement already satisfied: pygments in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2.2.0)
+Requirement already satisfied: decorator in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (4.3.0)
+Requirement already satisfied: certifi>=2017.4.17 in /home/naufal/INSTALL/lib/python2.7/site-packages (from requests==2.19.1->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (2018.10.15)
+Requirement already satisfied: chardet<3.1.0,>=3.0.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from requests==2.19.1->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (3.0.4)
+Requirement already satisfied: urllib3<1.24,>=1.21.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from requests==2.19.1->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.23)
+Requirement already satisfied: rdflib[sparql]==4.2.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (4.2.2)
+Requirement already satisfied: html5lib in /home/naufal/INSTALL/lib/python2.7/site-packages (from pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (1.0.1)
+Requirement already satisfied: aff4-snappy==0.5.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (0.5.1)
+Requirement already satisfied: pyblake2==0.9.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (0.9.3)
+Requirement already satisfied: expiringdict==1.1.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (1.1.4)
+Requirement already satisfied: sortedcontainers==1.5.7 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-lib->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (1.5.7)
+Requirement already satisfied: pycparser in /home/naufal/INSTALL/lib/python2.7/site-packages (from cffi>=1.0.0->xattr==0.9.2->grr-response-client==3.2.4.post3) (2.19)
+Requirement already satisfied: wcwidth in /home/naufal/INSTALL/lib/python2.7/site-packages (from prompt-toolkit<2.0.0,>=1.0.3->ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.1.7)
+Requirement already satisfied: scandir; python_version < "3.5" in /home/naufal/INSTALL/lib/python2.7/site-packages (from pathlib2; python_version == "2.7" or python_version == "3.3"->ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (1.9.0)
+Requirement already satisfied: ptyprocess>=0.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from pexpect; sys_platform != "win32"->ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.6.0)
+Requirement already satisfied: ipython-genutils in /home/naufal/INSTALL/lib/python2.7/site-packages (from traitlets>=4.2->ipython==5.0.0->grr-response-core==3.2.4post3->grr-response-client==3.2.4.post3) (0.2.0)
+Requirement already satisfied: isodate in /home/naufal/INSTALL/lib/python2.7/site-packages (from rdflib[sparql]==4.2.2->pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (0.6.0)
+Requirement already satisfied: SPARQLWrapper; extra == "sparql" in /home/naufal/INSTALL/lib/python2.7/site-packages (from rdflib[sparql]==4.2.2->pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (1.8.2)
+Requirement already satisfied: webencodings in /home/naufal/INSTALL/lib/python2.7/site-packages (from html5lib->pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4.post3) (0.5.1)
+Installing collected packages: grr-response-client
+  Found existing installation: grr-response-client 3.2.4.post3
+    Not uninstalling grr-response-client at /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/client, outside environment /home/naufal/INSTALL
+    Can't uninstall 'grr-response-client'. No files were found to uninstall.
+  Running setup.py develop for grr-response-client
+Successfully installed grr-response-client
++ pip install -e api_client/python --progress-bar off
+[33mDEPRECATION: Python 2.7 will reach the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 won't be maintained after that date. A future version of pip will drop support for Python 2.7.[0m
+Obtaining file:///home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/api_client/python
+Requirement already satisfied: future==0.16.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4.post3) (0.16.0)
+Requirement already satisfied: grr_response_proto==3.2.4post3 in ./grr/proto (from grr-api-client==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: cryptography==2.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4.post3) (2.3)
+Requirement already satisfied: ipython==5.0.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4.post3) (5.0.0)
+Requirement already satisfied: protobuf==3.3.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4.post3) (3.3.0)
+Requirement already satisfied: requests==2.19.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4.post3) (2.19.1)
+Requirement already satisfied: Werkzeug==0.11.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4.post3) (0.11.3)
+Requirement already satisfied: enum34; python_version < "3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4.post3) (1.1.6)
+Requirement already satisfied: idna>=2.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4.post3) (2.7)
+Requirement already satisfied: asn1crypto>=0.21.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4.post3) (0.24.0)
+Requirement already satisfied: cffi!=1.11.3,>=1.7 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4.post3) (1.11.5)
+Requirement already satisfied: six>=1.4.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4.post3) (1.12.0)
+Requirement already satisfied: ipaddress; python_version < "3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4.post3) (1.0.22)
+Requirement already satisfied: prompt-toolkit<2.0.0,>=1.0.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (1.0.15)
+Requirement already satisfied: pickleshare in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (0.7.5)
+Requirement already satisfied: backports.shutil-get-terminal-size; python_version == "2.7" in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (1.0.0)
+Requirement already satisfied: simplegeneric>0.8 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (0.8.1)
+Requirement already satisfied: pathlib2; python_version == "2.7" or python_version == "3.3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (2.3.2)
+Requirement already satisfied: pexpect; sys_platform != "win32" in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (4.0.1)
+Requirement already satisfied: traitlets>=4.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (4.3.2)
+Requirement already satisfied: pygments in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (2.2.0)
+Requirement already satisfied: decorator in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (4.3.0)
+Requirement already satisfied: setuptools>=18.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4.post3) (40.8.0)
+Requirement already satisfied: certifi>=2017.4.17 in /home/naufal/INSTALL/lib/python2.7/site-packages (from requests==2.19.1->grr-api-client==3.2.4.post3) (2018.10.15)
+Requirement already satisfied: chardet<3.1.0,>=3.0.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from requests==2.19.1->grr-api-client==3.2.4.post3) (3.0.4)
+Requirement already satisfied: urllib3<1.24,>=1.21.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from requests==2.19.1->grr-api-client==3.2.4.post3) (1.23)
+Requirement already satisfied: pycparser in /home/naufal/INSTALL/lib/python2.7/site-packages (from cffi!=1.11.3,>=1.7->cryptography==2.3->grr-api-client==3.2.4.post3) (2.19)
+Requirement already satisfied: wcwidth in /home/naufal/INSTALL/lib/python2.7/site-packages (from prompt-toolkit<2.0.0,>=1.0.3->ipython==5.0.0->grr-api-client==3.2.4.post3) (0.1.7)
+Requirement already satisfied: scandir; python_version < "3.5" in /home/naufal/INSTALL/lib/python2.7/site-packages (from pathlib2; python_version == "2.7" or python_version == "3.3"->ipython==5.0.0->grr-api-client==3.2.4.post3) (1.9.0)
+Requirement already satisfied: ptyprocess>=0.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from pexpect; sys_platform != "win32"->ipython==5.0.0->grr-api-client==3.2.4.post3) (0.6.0)
+Requirement already satisfied: ipython-genutils in /home/naufal/INSTALL/lib/python2.7/site-packages (from traitlets>=4.2->ipython==5.0.0->grr-api-client==3.2.4.post3) (0.2.0)
+Installing collected packages: grr-api-client
+  Found existing installation: grr-api-client 3.2.4.post3
+    Not uninstalling grr-api-client at /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/api_client/python, outside environment /home/naufal/INSTALL
+    Can't uninstall 'grr-api-client'. No files were found to uninstall.
+  Running setup.py develop for grr-api-client
+Successfully installed grr-api-client
++ pip install -e 'grr/server/[mysqldatastore]' --progress-bar off
+[33mDEPRECATION: Python 2.7 will reach the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 won't be maintained after that date. A future version of pip will drop support for Python 2.7.[0m
+Obtaining file:///home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server
+Requirement already satisfied: google-api-python-client==1.6.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4.post3) (1.6.2)
+Requirement already satisfied: google-auth==1.2.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4.post3) (1.2.1)
+Requirement already satisfied: google-cloud-bigquery==0.22.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4.post3) (0.22.1)
+Requirement already satisfied: grr-api-client==3.2.4post3 in ./api_client/python (from grr-response-server==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: grr-response-core==3.2.4post3 in ./grr/core (from grr-response-server==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: Jinja2==2.9.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4.post3) (2.9.5)
+Requirement already satisfied: pexpect==4.0.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4.post3) (4.0.1)
+Requirement already satisfied: portpicker==1.1.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4.post3) (1.1.1)
+Requirement already satisfied: python-crontab==2.0.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4.post3) (2.0.1)
+Requirement already satisfied: python-debian==0.1.31 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4.post3) (0.1.31)
+Requirement already satisfied: Werkzeug==0.11.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4.post3) (0.11.3)
+Requirement already satisfied: wsgiref==0.1.2 in /usr/lib/python2.7 (from grr-response-server==3.2.4.post3) (0.1.2)
+Requirement already satisfied: mysqlclient==1.3.12 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4.post3) (1.3.12)
+Requirement already satisfied: six<2dev,>=1.6.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-api-python-client==1.6.2->grr-response-server==3.2.4.post3) (1.12.0)
+Requirement already satisfied: httplib2<1dev,>=0.9.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-api-python-client==1.6.2->grr-response-server==3.2.4.post3) (0.11.3)
+Requirement already satisfied: oauth2client<5.0.0dev,>=1.5.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-api-python-client==1.6.2->grr-response-server==3.2.4.post3) (4.1.3)
+Requirement already satisfied: uritemplate<4dev,>=3.0.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-api-python-client==1.6.2->grr-response-server==3.2.4.post3) (3.0.0)
+Requirement already satisfied: cachetools>=2.0.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-auth==1.2.1->grr-response-server==3.2.4.post3) (2.1.0)
+Requirement already satisfied: pyasn1>=0.1.7 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-auth==1.2.1->grr-response-server==3.2.4.post3) (0.4.4)
+Requirement already satisfied: pyasn1-modules>=0.0.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-auth==1.2.1->grr-response-server==3.2.4.post3) (0.2.2)
+Requirement already satisfied: rsa>=3.1.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-auth==1.2.1->grr-response-server==3.2.4.post3) (4.0)
+Requirement already satisfied: google-cloud-core<0.23dev,>=0.22.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-cloud-bigquery==0.22.1->grr-response-server==3.2.4.post3) (0.22.1)
+Requirement already satisfied: future==0.16.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (0.16.0)
+Requirement already satisfied: grr_response_proto==3.2.4post3 in ./grr/proto (from grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: cryptography==2.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (2.3)
+Requirement already satisfied: ipython==5.0.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (5.0.0)
+Requirement already satisfied: protobuf==3.3.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (3.3.0)
+Requirement already satisfied: requests==2.19.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (2.19.1)
+Requirement already satisfied: binplist==0.1.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (0.1.4)
+Requirement already satisfied: configparser==3.5.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (3.5.0)
+Requirement already satisfied: fleetspeak==0.0.7 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (0.0.7)
+Requirement already satisfied: ipaddr==2.2.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (2.2.0)
+Requirement already satisfied: pip>=8.1.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (19.0.1)
+Requirement already satisfied: psutil==5.4.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (5.4.3)
+Requirement already satisfied: python-dateutil==2.6.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (2.6.1)
+Requirement already satisfied: pytsk3==20170802 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (20170802)
+Requirement already satisfied: pytz==2017.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (2017.3)
+Requirement already satisfied: PyYAML==3.12 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (3.12)
+Requirement already satisfied: typing==3.6.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (3.6.4)
+Requirement already satisfied: virtualenv==15.0.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (15.0.3)
+Requirement already satisfied: wheel==0.30 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (0.30.0)
+Requirement already satisfied: yara-python==3.6.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (3.6.3)
+Requirement already satisfied: MarkupSafe>=0.23 in /home/naufal/INSTALL/lib/python2.7/site-packages (from Jinja2==2.9.5->grr-response-server==3.2.4.post3) (1.0)
+Requirement already satisfied: ptyprocess>=0.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from pexpect==4.0.1->grr-response-server==3.2.4.post3) (0.6.0)
+Requirement already satisfied: chardet in /home/naufal/INSTALL/lib/python2.7/site-packages (from python-debian==0.1.31->grr-response-server==3.2.4.post3) (3.0.4)
+Requirement already satisfied: google-auth-httplib2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-cloud-core<0.23dev,>=0.22.1->google-cloud-bigquery==0.22.1->grr-response-server==3.2.4.post3) (0.0.3)
+Requirement already satisfied: googleapis-common-protos>=1.3.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-cloud-core<0.23dev,>=0.22.1->google-cloud-bigquery==0.22.1->grr-response-server==3.2.4.post3) (1.5.5)
+Requirement already satisfied: enum34; python_version < "3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (1.1.6)
+Requirement already satisfied: idna>=2.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (2.7)
+Requirement already satisfied: asn1crypto>=0.21.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (0.24.0)
+Requirement already satisfied: cffi!=1.11.3,>=1.7 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (1.11.5)
+Requirement already satisfied: ipaddress; python_version < "3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (1.0.22)
+Requirement already satisfied: prompt-toolkit<2.0.0,>=1.0.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (1.0.15)
+Requirement already satisfied: pickleshare in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (0.7.5)
+Requirement already satisfied: backports.shutil-get-terminal-size; python_version == "2.7" in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (1.0.0)
+Requirement already satisfied: pathlib2; python_version == "2.7" or python_version == "3.3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (2.3.2)
+Requirement already satisfied: traitlets>=4.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (4.3.2)
+Requirement already satisfied: simplegeneric>0.8 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (0.8.1)
+Requirement already satisfied: pygments in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (2.2.0)
+Requirement already satisfied: decorator in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (4.3.0)
+Requirement already satisfied: setuptools>=18.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (40.8.0)
+Requirement already satisfied: certifi>=2017.4.17 in /home/naufal/INSTALL/lib/python2.7/site-packages (from requests==2.19.1->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (2018.10.15)
+Requirement already satisfied: urllib3<1.24,>=1.21.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from requests==2.19.1->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (1.23)
+Requirement already satisfied: google-apputils==0.4.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (0.4.2)
+Requirement already satisfied: grpcio==1.7.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (1.7.0)
+Requirement already satisfied: python-gflags==3.1.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (3.1.2)
+Requirement already satisfied: futures==3.2.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (3.2.0)
+Requirement already satisfied: grpcio-tools==1.7.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-server==3.2.4.post3) (1.7.0)
+Requirement already satisfied: pycparser in /home/naufal/INSTALL/lib/python2.7/site-packages (from cffi!=1.11.3,>=1.7->cryptography==2.3->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (2.19)
+Requirement already satisfied: wcwidth in /home/naufal/INSTALL/lib/python2.7/site-packages (from prompt-toolkit<2.0.0,>=1.0.3->ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (0.1.7)
+Requirement already satisfied: scandir; python_version < "3.5" in /home/naufal/INSTALL/lib/python2.7/site-packages (from pathlib2; python_version == "2.7" or python_version == "3.3"->ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (1.9.0)
+Requirement already satisfied: ipython-genutils in /home/naufal/INSTALL/lib/python2.7/site-packages (from traitlets>=4.2->ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-server==3.2.4.post3) (0.2.0)
+Installing collected packages: grr-response-server
+  Found existing installation: grr-response-server 3.2.4.post3
+    Not uninstalling grr-response-server at /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server, outside environment /home/naufal/INSTALL
+    Can't uninstall 'grr-response-server'. No files were found to uninstall.
+  Running setup.py develop for grr-response-server
+Successfully installed grr-response-server
++ pip install -e grr/test --progress-bar off
+[33mDEPRECATION: Python 2.7 will reach the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 won't be maintained after that date. A future version of pip will drop support for Python 2.7.[0m
+Obtaining file:///home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/test
+Requirement already satisfied: mock==2.0.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-test==3.2.4.post3) (2.0.0)
+Requirement already satisfied: mox==0.5.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-test==3.2.4.post3) (0.5.3)
+Requirement already satisfied: pytest==3.0.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-test==3.2.4.post3) (3.0.5)
+Requirement already satisfied: selenium==2.50.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-test==3.2.4.post3) (2.50.1)
+Requirement already satisfied: grr-api-client==3.2.4post3 in ./api_client/python (from grr-response-test==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: grr-response-client==3.2.4post3 in ./grr/client (from grr-response-test==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: grr-response-server==3.2.4post3 in ./grr/server (from grr-response-test==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: funcsigs>=1; python_version < "3.3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from mock==2.0.0->grr-response-test==3.2.4.post3) (1.0.2)
+Requirement already satisfied: six>=1.9 in /home/naufal/INSTALL/lib/python2.7/site-packages (from mock==2.0.0->grr-response-test==3.2.4.post3) (1.12.0)
+Requirement already satisfied: pbr>=0.11 in /home/naufal/INSTALL/lib/python2.7/site-packages (from mock==2.0.0->grr-response-test==3.2.4.post3) (5.1.0)
+Requirement already satisfied: py>=1.4.29 in /home/naufal/INSTALL/lib/python2.7/site-packages (from pytest==3.0.5->grr-response-test==3.2.4.post3) (1.7.0)
+Requirement already satisfied: future==0.16.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.16.0)
+Requirement already satisfied: grr_response_proto==3.2.4post3 in ./grr/proto (from grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: cryptography==2.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (2.3)
+Requirement already satisfied: ipython==5.0.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (5.0.0)
+Requirement already satisfied: protobuf==3.3.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (3.3.0)
+Requirement already satisfied: requests==2.19.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (2.19.1)
+Requirement already satisfied: Werkzeug==0.11.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.11.3)
+Requirement already satisfied: grr-response-core==3.2.4post3 in ./grr/core (from grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (3.2.4.post3)
+Requirement already satisfied: rekall-core==1.7.2rc1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.7.2rc1)
+Requirement already satisfied: pyinstaller==3.2.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (3.2.1)
+Requirement already satisfied: chipsec==1.2.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.2.4)
+Requirement already satisfied: xattr==0.9.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.9.2)
+Requirement already satisfied: google-api-python-client==1.6.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (1.6.2)
+Requirement already satisfied: google-auth==1.2.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (1.2.1)
+Requirement already satisfied: google-cloud-bigquery==0.22.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (0.22.1)
+Requirement already satisfied: Jinja2==2.9.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (2.9.5)
+Requirement already satisfied: pexpect==4.0.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (4.0.1)
+Requirement already satisfied: portpicker==1.1.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (1.1.1)
+Requirement already satisfied: python-crontab==2.0.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (2.0.1)
+Requirement already satisfied: python-debian==0.1.31 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (0.1.31)
+Requirement already satisfied: wsgiref==0.1.2 in /usr/lib/python2.7 (from grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (0.1.2)
+Requirement already satisfied: enum34; python_version < "3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.1.6)
+Requirement already satisfied: idna>=2.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (2.7)
+Requirement already satisfied: asn1crypto>=0.21.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.24.0)
+Requirement already satisfied: cffi!=1.11.3,>=1.7 in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.11.5)
+Requirement already satisfied: ipaddress; python_version < "3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from cryptography==2.3->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.0.22)
+Requirement already satisfied: prompt-toolkit<2.0.0,>=1.0.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.0.15)
+Requirement already satisfied: pickleshare in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.7.5)
+Requirement already satisfied: backports.shutil-get-terminal-size; python_version == "2.7" in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.0.0)
+Requirement already satisfied: simplegeneric>0.8 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.8.1)
+Requirement already satisfied: pathlib2; python_version == "2.7" or python_version == "3.3" in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (2.3.2)
+Requirement already satisfied: traitlets>=4.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (4.3.2)
+Requirement already satisfied: pygments in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (2.2.0)
+Requirement already satisfied: decorator in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (4.3.0)
+Requirement already satisfied: setuptools>=18.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (40.8.0)
+Requirement already satisfied: certifi>=2017.4.17 in /home/naufal/INSTALL/lib/python2.7/site-packages (from requests==2.19.1->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (2018.10.15)
+Requirement already satisfied: chardet<3.1.0,>=3.0.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from requests==2.19.1->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (3.0.4)
+Requirement already satisfied: urllib3<1.24,>=1.21.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from requests==2.19.1->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.23)
+Requirement already satisfied: binplist==0.1.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.1.4)
+Requirement already satisfied: configparser==3.5.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (3.5.0)
+Requirement already satisfied: fleetspeak==0.0.7 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.0.7)
+Requirement already satisfied: ipaddr==2.2.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (2.2.0)
+Requirement already satisfied: pip>=8.1.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (19.0.1)
+Requirement already satisfied: psutil==5.4.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (5.4.3)
+Requirement already satisfied: python-dateutil==2.6.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (2.6.1)
+Requirement already satisfied: pytsk3==20170802 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (20170802)
+Requirement already satisfied: pytz==2017.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (2017.3)
+Requirement already satisfied: PyYAML==3.12 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (3.12)
+Requirement already satisfied: typing==3.6.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (3.6.4)
+Requirement already satisfied: virtualenv==15.0.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (15.0.3)
+Requirement already satisfied: wheel==0.30 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.30.0)
+Requirement already satisfied: yara-python==3.6.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (3.6.3)
+Requirement already satisfied: pyelftools==0.24 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.24)
+Requirement already satisfied: rekall-efilter<1.7,>=1.6 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.6.0)
+Requirement already satisfied: pyaff4<0.30,>=0.26 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.26.post6)
+Requirement already satisfied: pyparsing==2.1.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (2.1.5)
+Requirement already satisfied: rekall-yara==3.6.3.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (3.6.3.1)
+Requirement already satisfied: arrow==0.10.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.10.0)
+Requirement already satisfied: pycryptodome==3.4.7 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (3.4.7)
+Requirement already satisfied: rekall-lib in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.7.1)
+Requirement already satisfied: intervaltree==2.1.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (2.1.0)
+Requirement already satisfied: rekall-capstone==3.0.5.post2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (3.0.5.post2)
+Requirement already satisfied: acora==2.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (2.0)
+Requirement already satisfied: parsedatetime==2.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (2.4)
+Requirement already satisfied: artifacts==20170909 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (20170909)
+Requirement already satisfied: httplib2<1dev,>=0.9.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-api-python-client==1.6.2->grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (0.11.3)
+Requirement already satisfied: oauth2client<5.0.0dev,>=1.5.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-api-python-client==1.6.2->grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (4.1.3)
+Requirement already satisfied: uritemplate<4dev,>=3.0.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-api-python-client==1.6.2->grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (3.0.0)
+Requirement already satisfied: cachetools>=2.0.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-auth==1.2.1->grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (2.1.0)
+Requirement already satisfied: pyasn1>=0.1.7 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-auth==1.2.1->grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (0.4.4)
+Requirement already satisfied: pyasn1-modules>=0.0.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-auth==1.2.1->grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (0.2.2)
+Requirement already satisfied: rsa>=3.1.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-auth==1.2.1->grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (4.0)
+Requirement already satisfied: google-cloud-core<0.23dev,>=0.22.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-cloud-bigquery==0.22.1->grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (0.22.1)
+Requirement already satisfied: MarkupSafe>=0.23 in /home/naufal/INSTALL/lib/python2.7/site-packages (from Jinja2==2.9.5->grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (1.0)
+Requirement already satisfied: ptyprocess>=0.5 in /home/naufal/INSTALL/lib/python2.7/site-packages (from pexpect==4.0.1->grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (0.6.0)
+Requirement already satisfied: pycparser in /home/naufal/INSTALL/lib/python2.7/site-packages (from cffi!=1.11.3,>=1.7->cryptography==2.3->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (2.19)
+Requirement already satisfied: wcwidth in /home/naufal/INSTALL/lib/python2.7/site-packages (from prompt-toolkit<2.0.0,>=1.0.3->ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.1.7)
+Requirement already satisfied: scandir; python_version < "3.5" in /home/naufal/INSTALL/lib/python2.7/site-packages (from pathlib2; python_version == "2.7" or python_version == "3.3"->ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.9.0)
+Requirement already satisfied: ipython-genutils in /home/naufal/INSTALL/lib/python2.7/site-packages (from traitlets>=4.2->ipython==5.0.0->grr-api-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.2.0)
+Requirement already satisfied: google-apputils==0.4.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.4.2)
+Requirement already satisfied: grpcio==1.7.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.7.0)
+Requirement already satisfied: python-gflags==3.1.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (3.1.2)
+Requirement already satisfied: futures==3.2.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (3.2.0)
+Requirement already satisfied: grpcio-tools==1.7.0 in /home/naufal/INSTALL/lib/python2.7/site-packages (from fleetspeak==0.0.7->grr-response-core==3.2.4post3->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.7.0)
+Requirement already satisfied: rdflib[sparql]==4.2.2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (4.2.2)
+Requirement already satisfied: html5lib in /home/naufal/INSTALL/lib/python2.7/site-packages (from pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.0.1)
+Requirement already satisfied: aff4-snappy==0.5.1 in /home/naufal/INSTALL/lib/python2.7/site-packages (from pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.5.1)
+Requirement already satisfied: pyblake2==0.9.3 in /home/naufal/INSTALL/lib/python2.7/site-packages (from pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.9.3)
+Requirement already satisfied: expiringdict==1.1.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.1.4)
+Requirement already satisfied: sortedcontainers==1.5.7 in /home/naufal/INSTALL/lib/python2.7/site-packages (from rekall-lib->rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.5.7)
+Requirement already satisfied: google-auth-httplib2 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-cloud-core<0.23dev,>=0.22.1->google-cloud-bigquery==0.22.1->grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (0.0.3)
+Requirement already satisfied: googleapis-common-protos>=1.3.4 in /home/naufal/INSTALL/lib/python2.7/site-packages (from google-cloud-core<0.23dev,>=0.22.1->google-cloud-bigquery==0.22.1->grr-response-server==3.2.4post3->grr-response-test==3.2.4.post3) (1.5.5)
+Requirement already satisfied: isodate in /home/naufal/INSTALL/lib/python2.7/site-packages (from rdflib[sparql]==4.2.2->pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.6.0)
+Requirement already satisfied: SPARQLWrapper; extra == "sparql" in /home/naufal/INSTALL/lib/python2.7/site-packages (from rdflib[sparql]==4.2.2->pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (1.8.2)
+Requirement already satisfied: webencodings in /home/naufal/INSTALL/lib/python2.7/site-packages (from html5lib->pyaff4<0.30,>=0.26->rekall-core==1.7.2rc1->grr-response-client==3.2.4post3->grr-response-test==3.2.4.post3) (0.5.1)
+Installing collected packages: grr-response-test
+  Found existing installation: grr-response-test 3.2.4.post3
+    Not uninstalling grr-response-test at /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/test, outside environment /home/naufal/INSTALL
+    Can't uninstall 'grr-response-test'. No files were found to uninstall.
+  Running setup.py develop for grr-response-test
+Successfully installed grr-response-test
++ cd grr/proto
++ python makefile.py
++ cd -
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr
++ cd grr/core/grr_response_core/artifacts
++ python makefile.py
+Extracting artifacts-20170814/data/antivirus.yaml
+Extracting artifacts-20170814/data/applications.yaml
+Extracting artifacts-20170814/data/cloud_services.yaml
+Extracting artifacts-20170814/data/config_files.yaml
+Extracting artifacts-20170814/data/installed_modules.yaml
+Extracting artifacts-20170814/data/java.yaml
+Extracting artifacts-20170814/data/kaspersky_careto.yaml
+Extracting artifacts-20170814/data/legacy.yaml
+Extracting artifacts-20170814/data/linux.yaml
+Extracting artifacts-20170814/data/linux_proc.yaml
+Extracting artifacts-20170814/data/macos.yaml
+Extracting artifacts-20170814/data/ntfs.yaml
+Extracting artifacts-20170814/data/unix_common.yaml
+Extracting artifacts-20170814/data/webbrowser.yaml
+Extracting artifacts-20170814/data/windows.yaml
+Extracting artifacts-20170814/data/windows_dll_hijacking.yaml
+Extracting artifacts-20170814/data/wmi.yaml
++ cd -
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]2;naufal@naufal: ~/Documents/auc/semesters/fall2018/seniorprj1/grr]1;..eniorprj1/grr[0m[27m[24m[J(GRR) [39m[0m[49m[40m[39m naufal@naufal [44m[30m[30m ~/Documents/auc/semesters/fall2018/seniorprj1/grr [43m[34m[30m  acauthority ● [49m[33m[39m 
+ [34m>>[00m [K[?1h=[?2004h[32mg[39m[90mvim server.local.yaml[39m[21D[32mg[32mi[39m[90mt[90m [90mc[90ml[90mo[90mn[90me[90m [90m-[90m-[90mr[90me[90mc[90mu[90mr[90ms[90mi[90mv[90me[90m [90mhttps://github.com/dhruvasagar/vim-table-mode[39m[65D[32mg[32mi[32mt[39m[39m [90m [32mg[32mi[39m[90mt[32mg[39m[90mv[90mi[90mm[90m [90ms[90me[90mr[90mv[90me[90mr[90m.[90ml[90mo[90mc[90ma[90ml[90m.[90my[90ma[90mm[90ml[39m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [66D[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [22D[32mg[39m[90mvim server.local.yaml[39m[21D[32mg[32mi[39m[90mt[90m [90mc[90ml[90mo[90mn[90me[90m [90m-[90m-[90mr[90me[90mc[90mu[90mr[90ms[90mi[90mv[90me[90m [90mhttps://github.com/dhruvasagar/vim-table-mode[39m[65D[32mg[32mi[32mt[39m[39m [39m[4ma[24m[90md[90md[90m [90m.[39m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [62D[24ma[39md[39md[39m [39m[4m.[24m[?1l>[?2004l
+]2;git add .]1;gitwarning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/expand-range/node_modules/repeat-string/.gitattributes.
+The file will have its original line endings in your working directory.
+warning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/expand-range/node_modules/repeat-string/.jshintrc.
+The file will have its original line endings in your working directory.
+warning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/expand-range/node_modules/repeat-string/.npmignore.
+The file will have its original line endings in your working directory.
+git cwarning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/jquery-migrate/.gitattributes.
+The file will have its original line endings in your working directory.
+warning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/jquery-migrate/.jshintrc.
+The file will have its original line endings in your working directory.
+warning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/jquery-migrate/.npmignore.
+The file will have its original line endings in your working directory.
+warning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/jquery-migrate/.travis.yml.
+The file will have its original line endings in your working directory.
+warning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/jquery-migrate/AUTHORS.txt.
+The file will have its original line endings in your working directory.
+warning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/jquery-migrate/CONTRIBUTING.md.
+The file will have its original line endings in your working directory.
+warning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/jquery-migrate/LICENSE.txt.
+The file will have its original line endings in your working directory.
+warning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/jquery-migrate/README.md.
+The file will have its original line endings in your working directory.
+warning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/nodifacts-20170814/data/applications.yaml
+Extracting artifacts-20170814/data/cloud_services.yaml
+Extracting artifacts-20170814/data/config_files.yaml
+Extracting artifacts-20170814/data/installed_modules.yaml
+Extracting artifacts-20170814/data/java.yaml
+Extracting artifacts-20170814/data/kaspersky_careto.yaml
+Extracting artifacts-20170814/data/legacy.yaml
+Extracting artifacts-20170814/data/linux.yaml
+Extracting artifacts-20170814/data/linux_proc.yaml
+Extracting artifacts-20170814/data/macos.yaml
+Extracting artifacts-20170814/data/ntfs.yaml
+Extracting artifacts-20170814/data/unix_common.yaml
+Extracting artifacts-20170814/data/webbrowser.yaml
+Extracting artifacts-20170814/data/windows.yaml
+Extracting artifacts-20170814/data/windows_dll_hijacking.yaml
+Extracting artifacts-20170814/data/wmi.yaml
++ cd -
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]2;naufal@naufal: ~/Documents/auc/semesters/fall2018/seniorprj1/grr]1;..eniorprj1/grr[0m[27m[24m[J(GRR) [39m[0m[49m[40m[39m naufal@naufal [44m[30m[30m ~/Documents/auc/semesters/fall2018/seniorprj1/grr [43m[34m[30m  acauthority ● [49m[33m[39m 
+ [34m>>[00m [K[?1h=[?2004h[32mg[39m[90mvim server.local.yaml[39m[21D[32mg[32mi[39m[90mt[90m [90mc[90ml[90mo[90mn[90me[90m [90m-[90m-[90mr[90me[90mc[90mu[90mr[90ms[90mi[90mv[90me[90m [90mhttps://github.com/dhruvasagar/vim-table-mode[39m[65D[32mg[32mi[32mt[39m[39m [90m [32mg[32mi[39m[90mt[32mg[39m[90mv[90mi[90mm[90m [90ms[90me[90mr[90mv[90me[90mr[90m.[90ml[90mo[90mc[90ma[90ml[90m.[90my[90ma[90mm[90ml[39m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [66D[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [22D[32mg[39m[90mvim server.local.yaml[39m[21D[32mg[32mi[39m[90mt[90m [90mc[90ml[90mo[90mn[90me[90m [90m-[90m-[90mr[90me[90mc[90mu[90mr[90ms[90mi[90mv[90me[90m [90mhttps://github.com/dhruvasagar/vim-table-mode[39m[65D[32mg[32mi[32mt[39m[39m [39m[4ma[24m[90md[90md[90m [90m.[39m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [62D[24ma[39md[39md[39m [39m[4m.[24m[?1l>[?2004l
+]2;git add .]1;gitwarning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/expand-range/node_modules/repeat-string/.gitattributes.
+The file will have its original line endings in your working directory.
+warning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/expand-range/node_modules/repeat-string/.jshintrc.
+The file will have its original line endings in your working directory.
+warning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/expand-range/node_modules/repeat-string/.npmignore.
+The file will have its original line endings in your working directory.
+git cwarning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/jquery-migrate/.gitattributes.
+The file will have its original line endings in your working directory.
+warning: CRLF will be replaced by LF in grr/server/grr_response_server/gui/static/node_modules/jquery-migrate/.jshintrc.
+The file will have its original line endings in your working directory.
+warning: CRLF will be replaced by LF in g
