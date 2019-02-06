@@ -47,3 +47,10 @@ The token datastructure
 
 Looking into current implementations of tokens, might have to serialize and deserialize 
 internally 
+
+Building Tips
+=============
+- The grr team sets the virtualenv variable in the travis/install.sh script use the ubuntu variant instead
+- Be sure not to use source with travis/install.sh it messes up the env
+
+
