@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Registry for filters and abstract classes for basic filter functionality."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import collections
@@ -13,7 +14,7 @@ import os
 from future.utils import iteritems
 from future.utils import iterkeys
 from future.utils import itervalues
-import yaml
+from future.utils import string_types
 
 from grr_response_core import config
 from grr_response_core.lib import registry
@@ -21,6 +22,7 @@ from grr_response_core.lib.rdfvalues import anomaly as rdf_anomaly
 from grr_response_core.lib.rdfvalues import client as rdf_client
 from grr_response_core.lib.rdfvalues import protodict as rdf_protodict
 from grr_response_core.lib.rdfvalues import structs as rdf_structs
+from grr_response_core.lib.util import yaml
 from grr_response_proto import anomaly_pb2
 from grr_response_proto import checks_pb2
 from grr_response_server.check_lib import filters
@@ -63,7 +65,7 @@ def MatchStrToList(match=None):
   # Allow multiple match types, either as a list or as a string.
   if match is None:
     match = ["ANY"]
-  elif isinstance(match, basestring):
+  elif isinstance(match, string_types):
     match = match.split()
   return match
 
@@ -402,7 +404,7 @@ class Check(rdf_structs.RDFProtoStruct):
     # If artifact is a single string, see if it is in the list of artifacts
     # as-is. Otherwise, test whether any of the artifacts passed in to this
     # function exist in the list of artifacts.
-    if isinstance(artifacts, basestring):
+    if isinstance(artifacts, string_types):
       return artifacts in self.artifacts
     else:
       return any(True for artifact in artifacts if artifact in self.artifacts)
@@ -575,7 +577,8 @@ class CheckRegistry(object):
   @staticmethod
   def _AsList(arg):
     """Encapsulates an argument in a list, if it's not already iterable."""
-    if isinstance(arg, basestring) or not isinstance(arg, collections.Iterable):
+    if (isinstance(arg, string_types) or
+        not isinstance(arg, collections.Iterable)):
       return [arg]
     else:
       return list(arg)
@@ -762,8 +765,7 @@ def CheckHost(host_data,
 
 def LoadConfigsFromFile(file_path):
   """Loads check definitions from a file."""
-  with open(file_path) as data:
-    return {d["check_id"]: d for d in yaml.safe_load_all(data)}
+  return {d["check_id"]: d for d in yaml.ReadManyFromPath(file_path)}
 
 
 def LoadCheckFromFile(file_path, check_id, overwrite_if_exists=True):

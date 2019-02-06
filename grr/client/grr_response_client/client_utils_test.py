@@ -1,20 +1,22 @@
 #!/usr/bin/env python
-# -*- mode: python; encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 """Test client utility functions."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import hashlib
 import imp
 import os
 import sys
+
+from absl.testing import absltest
 import mock
 
-import unittest
 from grr_response_client import client_utils_common
 from grr_response_client import client_utils_osx
 from grr_response_core.lib import flags
-from grr.test_lib import temp
+from grr_response_core.lib.util import temp
 from grr.test_lib import test_lib
 
 
@@ -40,8 +42,8 @@ class ClientUtilsTest(test_lib.GRRBaseTest):
     # pylint: enable=g-import-not-at-top
 
     testdata = [(r"C:\Windows", "\\\\?\\Volume{11111}", "/Windows"),
-                (r"C:\\Windows\\", "\\\\?\\Volume{11111}",
-                 "/Windows"), (r"C:\\", "\\\\?\\Volume{11111}", "/")]
+                (r"C:\\Windows\\", "\\\\?\\Volume{11111}", "/Windows"),
+                (r"C:\\", "\\\\?\\Volume{11111}", "/")]
 
     for filename, expected_device, expected_path in testdata:
       raw_pathspec, path = client_utils_windows.GetRawDevice(filename)
@@ -109,7 +111,7 @@ class ClientUtilsTest(test_lib.GRRBaseTest):
     _, _, _, time_used = client_utils_common.Execute("/bin/sleep", ["10"], 0.1)
 
     # This should take just a bit longer than 0.1 seconds.
-    self.assertLess(time_used, 0.5)
+    self.assertLess(time_used, 1.0)
 
 
 @mock.patch(
@@ -127,7 +129,7 @@ class OSXVersionTests(test_lib.GRRBaseTest):
     self.assertEqual(osversion.VersionString(), "10.8.1")
 
 
-class MultiHasherTest(unittest.TestCase):
+class MultiHasherTest(absltest.TestCase):
 
   @staticmethod
   def _GetHash(hashfunc, data):

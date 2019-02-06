@@ -1,24 +1,29 @@
 #!/usr/bin/env python
 """Stats server implementation."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import collections
+import errno
 import json
 import logging
 import socket
 import threading
 
-
-from builtins import range  # pylint: disable=redefined-builtin
+from future.builtins import range
+from future.moves.urllib import parse as urlparse
 from future.utils import iteritems
 from http import server as http_server
+
+import prometheus_client
 
 from grr_response_core import config
 from grr_response_core.lib import registry
 from grr_response_core.lib import utils
 from grr_response_core.lib.rdfvalues import stats as rdf_stats
 from grr_response_core.stats import stats_collector_instance
+from grr_response_server import base_stats_server
 
 
 def _JSONMetricValue(metric_info, value):
@@ -73,45 +78,74 @@ class StatsServerHandler(http_server.BaseHTTPRequestHandler):
   """Default stats server implementation."""
 
   def do_GET(self):  # pylint: disable=g-bad-name
-    if self.path == "/varz":
+    # Per Prometheus docs: /metrics is the default path for scraping.
+    if self.path == "/metrics":
+      # TODO: This code is copied from
+      # prometheus_client.MetricsHandler. Because MetricsHandler is an old-style
+      # class and dispatching to different BaseHTTPRequestHandlers is
+      # surprisingly hard, we copied the code instead of calling it. After a
+      # deprecation period, the /varz route will be removed and
+      # StatsServerHandler can be replaced by prometheus_client.MetricsHandler.
+      pc_registry = prometheus_client.REGISTRY
+      params = urlparse.parse_qs(urlparse.urlparse(self.path).query)
+      encoder, content_type = prometheus_client.exposition.choose_encoder(
+          self.headers.get("Accept"))
+      if "name[]" in params:
+        pc_registry = pc_registry.restricted_registry(params["name[]"])
+      try:
+        output = encoder(pc_registry)
+      except:
+        self.send_error(500, "error generating metric output")
+        raise
+      self.send_response(200)
+      self.send_header("Content-Type", content_type)
+      self.end_headers()
+      self.wfile.write(output)
+    elif self.path == "/varz":
       self.send_response(200)
       self.send_header("Content-type", "application/json")
       self.end_headers()
 
       self.wfile.write(BuildVarzJsonString())
+    elif self.path == "/healthz":
+      self.send_response(200)
     else:
-      self.send_error(403, "Access forbidden: %s" % self.path)
+      self.send_error(404, "Not found")
 
 
-class StatsServer(object):
+class StatsServer(base_stats_server.BaseStatsServer):
+  """A statistics server that exposes a minimal, custom /varz route."""
 
   def __init__(self, port):
-    self.port = port
+    """Instantiates a new StatsServer.
+
+    Args:
+      port: The TCP port that the server should listen to.
+    """
+    super(StatsServer, self).__init__(port)
+    self._http_server = None
+    self._server_thread = None
 
   def Start(self):
     """Start HTTPServer."""
-    # Use the same number of available ports as the adminui is using. If we
-    # have 10 available for adminui we will need 10 for the stats server.
-    adminui_max_port = config.CONFIG.Get("AdminUI.port_max",
-                                         config.CONFIG["AdminUI.port"])
+    try:
+      self._http_server = http_server.HTTPServer(("", self.port),
+                                                 StatsServerHandler)
+    except socket.error as e:
+      if e.errno == errno.EADDRINUSE:
+        raise base_stats_server.PortInUseError(self.port)
+      else:
+        raise
 
-    additional_ports = adminui_max_port - config.CONFIG["AdminUI.port"]
-    max_port = self.port + additional_ports
+    self._server_thread = threading.Thread(
+        target=self._http_server.serve_forever)
+    self._server_thread.daemon = True
+    self._server_thread.start()
 
-    for port in range(self.port, max_port + 1):
-      # Make a simple reference implementation WSGI server
-      try:
-        server = http_server.HTTPServer(("", port), StatsServerHandler)
-        break
-      except socket.error as e:
-        if e.errno == socket.errno.EADDRINUSE and port < max_port:
-          logging.info("Port %s in use, trying %s", port, port + 1)
-        else:
-          raise
-
-    server_thread = threading.Thread(target=server.serve_forever)
-    server_thread.daemon = True
-    server_thread.start()
+  def Stop(self):
+    """Stops serving statistics."""
+    self._http_server.shutdown()
+    self._server_thread.join()
 
 
 class StatsServerInit(registry.InitHook):
@@ -128,18 +162,37 @@ class StatsServerInit(registry.InitHook):
 
     # Figure out which port to use.
     port = config.CONFIG["Monitoring.http_port"]
-    if port != 0:
-      logging.info("Starting monitoring server on port %d.", port)
-      try:
-        # pylint: disable=g-import-not-at-top
-        from grr_response_server.local import stats_server
-        # pylint: enable=g-import-not-at-top
-        server_obj = stats_server.StatsServer(port)
-        logging.debug("Using local StatsServer")
-      except ImportError:
-        logging.debug("Using default StatsServer")
-        server_obj = StatsServer(port)
-
-      server_obj.Start()
-    else:
+    if not port:
       logging.info("Monitoring server disabled.")
+      return
+
+    # TODO(user): Implement __contains__ for GrrConfigManager.
+    max_port = config.CONFIG.Get("Monitoring.http_port_max", None)
+    if max_port is None:
+      # Use the same number of available ports as the adminui is using. If we
+      # have 10 available for adminui we will need 10 for the stats server.
+      adminui_max_port = config.CONFIG.Get("AdminUI.port_max",
+                                           config.CONFIG["AdminUI.port"])
+      max_port = port + adminui_max_port - config.CONFIG["AdminUI.port"]
+
+    try:
+      # pylint: disable=g-import-not-at-top
+      from grr_response_server.local import stats_server
+      # pylint: enable=g-import-not-at-top
+      server_cls = stats_server.StatsServer
+      logging.debug("Using local StatsServer")
+    except ImportError:
+      logging.debug("Using default StatsServer")
+      server_cls = StatsServer
+
+    for port in range(port, max_port + 1):
+      try:
+        logging.info("Starting monitoring server on port %d.", port)
+        server_obj = server_cls(port)
+        server_obj.Start()
+        return
+      except base_stats_server.PortInUseError as e:
+        if e.port < max_port:
+          logging.info(e.message)
+          continue
+        raise

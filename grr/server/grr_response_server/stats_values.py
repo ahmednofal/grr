@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 """RDF values for representing stats in the data-store."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 
+from grr_response_core.lib import rdfvalue
 from grr_response_core.lib.rdfvalues import stats as rdf_stats
 from grr_response_core.lib.rdfvalues import structs as rdf_structs
 from grr_response_proto import jobs_pb2
@@ -51,7 +53,8 @@ class StatsStoreValue(rdf_structs.RDFProtoStruct):
       value = self.int_value
     elif self.value_type == rdf_stats.MetricMetadata.ValueType.FLOAT:
       value = self.float_value
-    elif self.value_type == rdf_stats.MetricMetadata.ValueType.STR:
+    # TODO: String gauges are deprecated.
+    elif self.value_type == rdf_stats.MetricMetadata.ValueType.DEPRECATED_STR:
       value = self.str_value
     elif self.value_type == rdf_stats.MetricMetadata.ValueType.DISTRIBUTION:
       value = self.distribution_value
@@ -66,7 +69,8 @@ class StatsStoreValue(rdf_structs.RDFProtoStruct):
       self.int_value = value
     elif value_type == rdf_stats.MetricMetadata.ValueType.FLOAT:
       self.float_value = value
-    elif value_type == rdf_stats.MetricMetadata.ValueType.STR:
+    # TODO: String gauges are deprecated.
+    elif value_type == rdf_stats.MetricMetadata.ValueType.DEPRECATED_STR:
       self.str_value = value
     elif value_type == rdf_stats.MetricMetadata.ValueType.DISTRIBUTION:
       self.distribution_value = value
@@ -74,3 +78,12 @@ class StatsStoreValue(rdf_structs.RDFProtoStruct):
       raise ValueError("Invalid value type %d." % value_type)
 
     self.value_type = value_type
+
+
+class StatsStoreEntry(rdf_structs.RDFProtoStruct):
+  """Represents a single entry/row in the StatsEntries table."""
+  protobuf = jobs_pb2.StatsStoreEntry
+  rdf_deps = [
+      StatsStoreValue,
+      rdfvalue.RDFDatetime,
+  ]

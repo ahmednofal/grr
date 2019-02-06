@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Yara based client actions."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import os
@@ -91,8 +92,8 @@ class YaraProcessScan(actions.ActionPlugin):
           if offset + len(s) > chunk.overlap:
             # We haven't seen this match before.
             rdf_match = rdf_yara.YaraMatch.FromLibYaraMatch(m)
-            for s in rdf_match.string_matches:
-              s.offset += chunk.offset
+            for string_match in rdf_match.string_matches:
+              string_match.offset += chunk.offset
             yield rdf_match
             break
 

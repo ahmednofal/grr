@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """A module for registering all known parsers."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 from grr_response_core.lib import parsers
@@ -18,7 +19,6 @@ from grr_response_core.lib.parsers import linux_software_parser
 from grr_response_core.lib.parsers import linux_sysctl_parser
 from grr_response_core.lib.parsers import osx_file_parser
 from grr_response_core.lib.parsers import osx_launchd
-from grr_response_core.lib.parsers import rekall_artifact_parser
 from grr_response_core.lib.parsers import windows_persistence
 from grr_response_core.lib.parsers import windows_registry_parser
 from grr_response_core.lib.parsers import wmi_parser
@@ -107,12 +107,6 @@ def Register():
       "WindowsPersistenceMechanism",
       windows_persistence.WindowsPersistenceMechanismsParser)
 
-  # Rekall parsers.
-  parsers.SINGLE_RESPONSE_PARSER_FACTORY.Register(
-      "RekallPsList", rekall_artifact_parser.RekallPsListParser)
-  parsers.SINGLE_RESPONSE_PARSER_FACTORY.Register(
-      "RekallVad", rekall_artifact_parser.RekallVADParser)
-
   # Registry multi-parsers.
   parsers.MULTI_RESPONSE_PARSER_FACTORY.Register(
       "WinUserSpecialDirs", windows_registry_parser.WinUserSpecialDirs)
@@ -154,6 +148,8 @@ def Register():
       "Sudoers", config_file.SudoersParser)
   parsers.SINGLE_FILE_PARSER_FACTORY.Register(
       "OsxLaunchdPlist", osx_file_parser.OSXLaunchdPlistParser)
+  parsers.SINGLE_FILE_PARSER_FACTORY.Register(
+      "OSXInstallHistoryPlist", osx_file_parser.OSXInstallHistoryPlistParser)
 
   try:
     from debian import deb822  # pylint: disable=g-import-not-at-top

@@ -1,20 +1,30 @@
 #!/usr/bin/env python
 """REL_DB-based file store implementation."""
 from __future__ import absolute_import
+from __future__ import division
+
 from __future__ import unicode_literals
 
 import abc
+import collections
 import hashlib
 import io
 import os
 
 from future.utils import iteritems
+from future.utils import iterkeys
 from future.utils import with_metaclass
+
+from typing import Dict
+from typing import Iterable
+from typing import NamedTuple
 
 from grr_response_core import config
 from grr_response_core.lib import utils
 from grr_response_core.lib.util import collection
+from grr_response_core.lib.util import precondition
 from grr_response_server import data_store
+from grr_response_server import db
 from grr_response_server.rdfvalues import objects as rdf_objects
 
 
@@ -22,29 +32,49 @@ class Error(Exception):
   """FileStore-related error class."""
 
 
-class BlobNotFound(Error):
+class BlobNotFoundError(Error):
   """Raised when a blob was expected to exist, but couldn't be found."""
 
 
-class FileHasNoContent(Error):
+class FileHasNoContentError(Error):
   """Raised when trying to read a file that was never downloaded."""
 
+  def __init__(self, path):
+    super(FileHasNoContentError,
+          self).__init__("File was never collected: %r" % (path,))
 
-class MissingBlobReferences(Error):
+
+class MissingBlobReferencesError(Error):
   """Raised when blob refs are supposed to be there but couldn't be found."""
 
 
-class OversizedRead(Error):
+class OversizedReadError(Error):
   """Raises when trying to read large files without specifying read length."""
+
+
+FileMetadata = NamedTuple("FileMetadata", [
+    ("client_path", db.ClientPath),
+    ("blob_refs", Iterable[rdf_objects.BlobReference]),
+])
 
 
 class ExternalFileStore(with_metaclass(abc.ABCMeta, object)):
   """Filestore for files collected from clients."""
 
   @abc.abstractmethod
-  def AddFile(self, file_hash, blob_refs):
+  def AddFile(self, hash_id, metadata):
     """Add a new file to the file store."""
     raise NotImplementedError()
+
+  def AddFiles(self, hash_id_metadatas):
+    """Adds multiple files to the file store.
+
+    Args:
+      hash_id_metadatas: A dictionary mapping hash ids to file metadata (a tuple
+        of hash client path and blob references).
+    """
+    for hash_id, metadata in iteritems(hash_id_metadatas):
+      self.AddFile(hash_id, metadata)
 
 
 class CompositeExternalFileStore(ExternalFileStore):
@@ -62,9 +92,13 @@ class CompositeExternalFileStore(ExternalFileStore):
 
     self.nested_stores.append(fs)
 
-  def AddFile(self, file_hash, blob_refs):
+  def AddFile(self, hash_id, metadata):
     for fs in self.nested_stores:
-      fs.AddFile(file_hash, blob_refs)
+      fs.AddFile(hash_id, metadata)
+
+  def AddFiles(self, hash_id_metadatas):
+    for nested_store in self.nested_stores:
+      nested_store.AddFiles(hash_id_metadatas)
 
 
 EXTERNAL_FILE_STORE = CompositeExternalFileStore()
@@ -75,7 +109,8 @@ EXTERNAL_FILE_STORE = CompositeExternalFileStore()
 class BlobStream(object):
   """File-like object for reading from blobs."""
 
-  def __init__(self, blob_refs, hash_id):
+  def __init__(self, client_path, blob_refs, hash_id):
+    self._client_path = client_path
     self._blob_refs = blob_refs
     self._hash_id = hash_id
 
@@ -116,9 +151,9 @@ class BlobStream(object):
       length = self._length - self._offset
 
     if length > self._max_unbound_read:
-      raise OversizedRead("Attempted to read %d bytes when "
-                          "Server.max_unbound_read_size is %d" %
-                          (length, self._max_unbound_read))
+      raise OversizedReadError("Attempted to read %d bytes when "
+                               "Server.max_unbound_read_size is %d" %
+                               (length, self._max_unbound_read))
 
     result = io.BytesIO()
     while result.tell() < length:
@@ -166,39 +201,109 @@ class BlobStream(object):
     """Hash ID identifying hashed data."""
     return self._hash_id
 
+  def Path(self):
+    return self._client_path.Path()
+
 
 _BLOBS_READ_BATCH_SIZE = 200
 
 
-def AddFileWithUnknownHash(blob_ids):
+def AddFilesWithUnknownHashes(
+    client_path_blob_refs
+):
+  """Adds new files consisting of given blob references.
+
+  Args:
+    client_path_blob_refs: A dictionary mapping `db.ClientPath` instances to
+      lists of blob references.
+
+  Returns:
+    A dictionary mapping `db.ClientPath` to hash ids of the file.
+
+  Raises:
+    BlobNotFoundError: If one of the referenced blobs cannot be found.
+  """
+  hash_id_blob_refs = dict()
+  client_path_hash_id = dict()
+  metadatas = dict()
+
+  all_client_path_blob_refs = list()
+  for client_path, blob_refs in iteritems(client_path_blob_refs):
+    # In the special case where there is only one blob, we don't need to go to
+    # the data store to read said blob and rehash it, we have all that
+    # information already available. For empty files without blobs, we can just
+    # hash the empty string instead.
+    if len(blob_refs) <= 1:
+      if blob_refs:
+        hash_id = rdf_objects.SHA256HashID.FromBytes(
+            blob_refs[0].blob_id.AsBytes())
+      else:
+        hash_id = rdf_objects.SHA256HashID.FromData(b"")
+
+      client_path_hash_id[client_path] = hash_id
+      hash_id_blob_refs[hash_id] = blob_refs
+      metadatas[hash_id] = FileMetadata(
+          client_path=client_path, blob_refs=blob_refs)
+    else:
+      for blob_ref in blob_refs:
+        all_client_path_blob_refs.append((client_path, blob_ref))
+
+  client_path_offset = collections.defaultdict(lambda: 0)
+  client_path_sha256 = collections.defaultdict(hashlib.sha256)
+  verified_client_path_blob_refs = collections.defaultdict(list)
+
+  client_path_blob_ref_batches = collection.Batch(
+      items=all_client_path_blob_refs, size=_BLOBS_READ_BATCH_SIZE)
+
+  for client_path_blob_ref_batch in client_path_blob_ref_batches:
+    blob_id_batch = set(
+        blob_ref.blob_id for _, blob_ref in client_path_blob_ref_batch)
+    blobs = data_store.BLOBS.ReadBlobs(blob_id_batch)
+
+    for client_path, blob_ref in client_path_blob_ref_batch:
+      blob = blobs[blob_ref.blob_id]
+      if blob is None:
+        message = "Could not find one of referenced blobs: {}".format(
+            blob_ref.blob_id)
+        raise BlobNotFoundError(message)
+
+      offset = client_path_offset[client_path]
+      if blob_ref.size != len(blob):
+        raise ValueError(
+            "Got conflicting size information for blob %s: %d vs %d." %
+            (blob_ref.blob_id, blob_ref.size, len(blob)))
+      if blob_ref.offset != offset:
+        raise ValueError(
+            "Got conflicting offset information for blob %s: %d vs %d." %
+            (blob_ref.blob_id, blob_ref.offset, offset))
+
+      verified_client_path_blob_refs[client_path].append(blob_ref)
+      client_path_offset[client_path] = offset + len(blob)
+      client_path_sha256[client_path].update(blob)
+
+  for client_path in iterkeys(client_path_sha256):
+    sha256 = client_path_sha256[client_path].digest()
+    hash_id = rdf_objects.SHA256HashID.FromBytes(sha256)
+
+    client_path_hash_id[client_path] = hash_id
+    hash_id_blob_refs[hash_id] = verified_client_path_blob_refs[client_path]
+
+  data_store.REL_DB.WriteHashBlobReferences(hash_id_blob_refs)
+
+  for client_path in iterkeys(verified_client_path_blob_refs):
+    metadatas[client_path_hash_id[client_path]] = FileMetadata(
+        client_path=client_path,
+        blob_refs=verified_client_path_blob_refs[client_path])
+  EXTERNAL_FILE_STORE.AddFiles(metadatas)
+
+  return client_path_hash_id
+
+
+def AddFileWithUnknownHash(client_path, blob_refs):
   """Add a new file consisting of given blob IDs."""
-
-  blob_refs = []
-  offset = 0
-  sha256 = hashlib.sha256()
-  for blob_ids_batch in collection.Batch(blob_ids, _BLOBS_READ_BATCH_SIZE):
-    unique_ids = set(blob_ids_batch)
-    data = data_store.BLOBS.ReadBlobs(unique_ids)
-    for k, v in iteritems(data):
-      if v is None:
-        raise BlobNotFound("Couldn't find one of referenced blobs: %s" % k)
-
-    for blob_id in blob_ids_batch:
-      blob_data = data[blob_id]
-      blob_refs.append(
-          rdf_objects.BlobReference(
-              offset=offset,
-              size=len(blob_data),
-              blob_id=blob_id,
-          ))
-      offset += len(blob_data)
-
-      sha256.update(blob_data)
-
-  hash_id = rdf_objects.SHA256HashID.FromBytes(sha256.digest())
-  data_store.REL_DB.WriteHashBlobReferences({hash_id: blob_refs})
-
-  return hash_id
+  precondition.AssertType(client_path, db.ClientPath)
+  precondition.AssertIterableType(blob_refs, rdf_objects.BlobReference)
+  return AddFilesWithUnknownHashes({client_path: blob_refs})[client_path]
 
 
 def CheckHashes(hash_ids):
@@ -267,26 +372,26 @@ def OpenFile(client_path, max_timestamp=None):
     A file like object with random access support.
 
   Raises:
-    FileHasNoContent: if the file was never collected.
-    MissingBlobReferences: if one of the blobs was not found.
+    FileHasNoContentError: if the file was never collected.
+    MissingBlobReferencesError: if one of the blobs was not found.
   """
 
   path_info = data_store.REL_DB.ReadLatestPathInfosWithHashBlobReferences(
       [client_path], max_timestamp=max_timestamp)[client_path]
 
   if path_info is None:
-    raise FileHasNoContent("File was never collected.")
+    raise FileHasNoContentError(client_path)
 
   hash_id = rdf_objects.SHA256HashID.FromBytes(
       path_info.hash_entry.sha256.AsBytes())
   blob_references = data_store.REL_DB.ReadHashBlobReferences([hash_id])[hash_id]
 
   if blob_references is None:
-    raise MissingBlobReferences(
+    raise MissingBlobReferencesError(
         "File hash was expected to have corresponding "
         "blob references, but they were not found: %r" % hash_id)
 
-  return BlobStream(blob_references, hash_id)
+  return BlobStream(client_path, blob_references, hash_id)
 
 
 STREAM_CHUNKS_READ_AHEAD = 500
@@ -316,7 +421,7 @@ class StreamedFileChunk(object):
     self.total_chunks = total_chunks
 
 
-def StreamFilesChunks(client_paths, max_timestamp=None):
+def StreamFilesChunks(client_paths, max_timestamp=None, max_size=None):
   """Streams contents of given files.
 
   Args:
@@ -325,6 +430,8 @@ def StreamFilesChunks(client_paths, max_timestamp=None):
       last collected version of the file with a timestamp equal or lower than
       max_timestamp. If not specified, will simply open a latest version for
       each file.
+    max_size: If specified, only the chunks covering max_size bytes will be
+      returned.
 
   Yields:
     StreamedFileChunk objects for every file read. Chunks will be returned
@@ -362,8 +469,13 @@ def StreamFilesChunks(client_paths, max_timestamp=None):
     for ref in blob_refs:
       total_size += ref.size
 
+    cur_size = 0
     for i, ref in enumerate(blob_refs):
       all_chunks.append((cp, ref.blob_id, i, num_blobs, ref.offset, total_size))
+
+      cur_size += ref.size
+      if max_size is not None and cur_size >= max_size:
+        break
 
   for batch in collection.Batch(all_chunks, STREAM_CHUNKS_READ_AHEAD):
     blobs = data_store.BLOBS.ReadBlobs(

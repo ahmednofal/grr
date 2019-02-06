@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-# -*- mode: python; encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 """Tests Hunt ACLs."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 
@@ -9,15 +10,13 @@ from grr_response_core.lib import flags
 
 from grr_response_core.lib.rdfvalues import file_finder as rdf_file_finder
 from grr_response_server import access_control
-from grr_response_server import flow
 from grr_response_server.flows.general import file_finder
 from grr_response_server.gui import gui_test_lib
-from grr_response_server.hunts import implementation
-from grr_response_server.hunts import standard
 from grr_response_server.rdfvalues import flow_runner as rdf_flow_runner
 from grr_response_server.rdfvalues import hunts as rdf_hunts
 from grr_response_server.rdfvalues import output_plugin as rdf_output_plugin
 from grr.test_lib import db_test_lib
+from grr.test_lib import flow_test_lib
 from grr.test_lib import test_lib
 
 
@@ -27,28 +26,16 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
   # can't correctly enter Unicode text into forms.
   reason = "Felt like it!"
 
-  def CreateSampleHunt(self, token=None):
-
-    with implementation.StartHunt(
-        hunt_name=standard.SampleHunt.__name__,
-        client_rate=100,
-        filename="TestFilename",
-        client_rule_set=self._CreateForemanClientRuleSet(),
-        token=token or self.token) as hunt:
-
-      return hunt.session_id
-
   def testHuntACLWorkflow(self):
-    hunt_id = self.CreateSampleHunt()
+    hunt_id = self.StartHunt(paused=True, token=self.token)
 
     # Open up and click on View Hunts.
     self.Open("/")
     self.WaitUntil(self.IsElementPresent, "client_query")
     self.Click("css=a[grrtarget=hunts]")
-    self.WaitUntil(self.IsTextPresent, "SampleHunt")
 
     # Select a Hunt.
-    self.Click("css=td:contains('SampleHunt')")
+    self.Click("css=td:contains('%s')" % hunt_id.Basename())
 
     # Click on Run and wait for dialog again.
     self.Click("css=button[name=RunHunt]")
@@ -72,7 +59,7 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
     # "Request Approval" dialog should go away
     self.WaitUntilNot(self.IsVisible, "css=.modal-open")
 
-    self.WaitForNotification("aff4:/users/%s" % self.token.username)
+    self.WaitForNotification(self.token.username)
     self.Open("/")
 
     self.WaitUntil(lambda: self.GetText("notification_button") != "0")
@@ -86,14 +73,13 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
                    "The user %s has requested" % self.token.username)
 
     # Hunt overview should be visible
-    self.WaitUntil(self.IsTextPresent, "SampleHunt")
     self.WaitUntil(self.IsTextPresent, "Hunt ID")
     self.WaitUntil(self.IsTextPresent, "Clients Scheduled")
 
     self.Click("css=button:contains('Approve')")
     self.WaitUntil(self.IsTextPresent, "Approval granted.")
 
-    self.WaitForNotification("aff4:/users/%s" % self.token.username)
+    self.WaitForNotification(self.token.username)
     self.Open("/")
 
     # We should be notified that we have an approval
@@ -102,9 +88,6 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
     self.WaitUntil(self.GetText,
                    "css=td:contains('has granted you access to hunt')")
     self.Click("css=tr:contains('has granted you access') a")
-
-    # Run SampleHunt (it should be selected by default).
-    self.WaitUntil(self.IsTextPresent, "SampleHunt")
 
     # Click on Run and wait for dialog again.
     self.Click("css=button[name=RunHunt]:not([disabled])")
@@ -126,7 +109,7 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
         requestor=self.token.username,
         admin=False)
 
-    self.WaitForNotification("aff4:/users/%s" % self.token.username)
+    self.WaitForNotification(self.token.username)
     self.Open("/")
 
     # We should be notified that we have an approval
@@ -136,10 +119,8 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
     # Wait for modal backdrop to go away.
     self.WaitUntilNot(self.IsVisible, "css=.modal-open")
 
-    self.WaitUntil(self.IsTextPresent, "SampleHunt")
-
-    # Run SampleHunt (it should be selected by default).
-    self.Click("css=button[name=RunHunt]")
+    # Run the hunt (it should be selected by default).
+    self.Click("css=button[name=RunHunt]:not([disabled])")
     self.WaitUntil(self.IsTextPresent,
                    "Are you sure you want to run this hunt?")
     # Click on "Proceed" and wait for authorization dialog to appear.
@@ -166,14 +147,12 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
     self.Open("/")
     self.WaitUntil(self.IsElementPresent, "client_query")
     self.Click("css=a[grrtarget=hunts]")
-    self.WaitUntil(self.IsTextPresent, "SampleHunt")
 
-    # Select and run SampleHunt.
-    self.Click("css=td:contains('SampleHunt')")
+    # Select and run the hunt.
+    self.Click("css=td:contains('%s')" % hunt_id.Basename())
 
-    # Run SampleHunt (it should be selected by default).
-    self.WaitUntil(self.IsTextPresent, "SampleHunt")
-    self.Click("css=button[name=RunHunt]")
+    # Run the hunt (it should be selected by default).
+    self.Click("css=button[name=RunHunt]:not([disabled])")
     self.WaitUntil(self.IsTextPresent,
                    "Are you sure you want to run this hunt?")
     # Click on "Proceed" and wait for the success status message.
@@ -184,9 +163,10 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
   def Create2HuntsForDifferentUsers(self):
     # Create 2 hunts. Hunt1 by "otheruser" and hunt2 by us.
     # Both hunts will be approved by user "approver".
-    hunt1_id = self.CreateSampleHunt(
-        token=access_control.ACLToken(username=u"otheruser"))
-    hunt2_id = self.CreateSampleHunt(
+    hunt1_id = self.StartHunt(
+        paused=True, token=access_control.ACLToken(username=u"otheruser"))
+    hunt2_id = self.StartHunt(
+        paused=True,
         token=access_control.ACLToken(username=self.token.username))
     self.CreateAdminUser(u"approver")
 
@@ -201,18 +181,20 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
         approver=u"approver",
         requestor=self.token.username)
 
+    return hunt1_id, hunt2_id
+
   def testHuntApprovalsArePerHunt(self):
-    self.Create2HuntsForDifferentUsers()
+    hunt1_id, hunt2_id = self.Create2HuntsForDifferentUsers()
 
     self.Open("/")
     self.WaitUntil(self.IsElementPresent, "client_query")
     self.Click("css=a[grrtarget=hunts]")
-    self.WaitUntil(self.IsTextPresent, "SampleHunt")
 
     #
     # Check that test user can't start/stop/modify hunt1.
     #
-    self.Click("css=tr:contains('SampleHunt') td:contains('otheruser')")
+    self.Click(
+        "css=tr:contains('%s') td:contains('otheruser')" % hunt1_id.Basename())
 
     # Run hunt
 
@@ -257,8 +239,8 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
     #
     # Check that test user can start/stop/modify hunt2.
     #
-    self.Click(
-        "css=tr:contains('SampleHunt') td:contains('%s')" % self.token.username)
+    self.Click("css=tr:contains('%s') td:contains('%s')" %
+               (hunt2_id.Basename(), self.token.username))
 
     # Modify hunt
 
@@ -321,14 +303,14 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
         approver=self.token.username,
         requestor=self.token.username)
 
-    self.WaitForNotification("aff4:/users/%s" % self.token.username)
+    self.WaitForNotification(self.token.username)
     self.Open("/")
     self.WaitUntil(lambda: self.GetText("notification_button") != "0")
     self.Click("notification_button")
     self.Click("css=td:contains('Please grant access to hunt')")
 
   def testWarningIsShownIfReviewedHuntIsNotACopy(self):
-    hunt_id = self.CreateSampleHunt()
+    hunt_id = self.StartHunt(paused=True, token=self.token)
     self._RequestAndOpenApprovalFromSelf(hunt_id)
 
     self.WaitUntil(self.IsTextPresent,
@@ -344,16 +326,11 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
     flow_args = rdf_file_finder.FileFinderArgs(
         paths=["a/*", "b/*"],
         action=rdf_file_finder.FileFinderAction(action_type="STAT"))
-    flow_runner_args = rdf_flow_runner.FlowRunnerArgs(
-        flow_name=file_finder.FileFinder.__name__)
-    flow_urn = flow.StartAFF4Flow(
-        client_id=self.client_id,
-        args=flow_args,
-        runner_args=flow_runner_args,
-        token=self.token)
+    session_id = flow_test_lib.StartFlow(
+        file_finder.FileFinder, client_id=self.client_id, flow_args=flow_args)
 
     ref = rdf_hunts.FlowLikeObjectReference.FromFlowIdAndClientId(
-        flow_urn.Basename(), self.client_id.Basename())
+        session_id, self.client_id.Basename())
     # Modify flow_args so that there are differences.
     flow_args.paths = ["b/*", "c/*"]
     flow_args.action.action_type = "DOWNLOAD"
@@ -362,14 +339,15 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
             condition_type="SIZE",
             size=rdf_file_finder.FileFinderSizeCondition(min_file_size=42))
     ]
-    return self.CreateHunt(
+    return self.StartHunt(
         flow_args=flow_args,
-        flow_runner_args=flow_runner_args,
-        original_object=ref), flow_urn
+        flow_runner_args=rdf_flow_runner.FlowRunnerArgs(
+            flow_name=file_finder.FileFinder.__name__),
+        original_object=ref), session_id
 
   def testFlowDiffIsShownIfHuntCreatedFromFlow(self):
-    h, _ = self._CreateHuntFromFlow()
-    self._RequestAndOpenApprovalFromSelf(h.urn)
+    h_urn, _ = self._CreateHuntFromFlow()
+    self._RequestAndOpenApprovalFromSelf(h_urn)
 
     self.WaitUntil(self.IsTextPresent, "This hunt was created from a flow")
     # Make sure that only the correct message appears and the others are not
@@ -391,12 +369,12 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
         ":contains('42')")
 
   def testOriginalFlowLinkIsShownIfHuntCreatedFromFlow(self):
-    h, flow_urn = self._CreateHuntFromFlow()
+    h_urn, flow_id = self._CreateHuntFromFlow()
     self.RequestAndGrantClientApproval(self.client_id)
-    self._RequestAndOpenApprovalFromSelf(h.urn)
+    self._RequestAndOpenApprovalFromSelf(h_urn)
 
     self.WaitUntil(self.IsTextPresent, "This hunt was created from a flow")
-    self.Click("css=a:contains('%s')" % flow_urn.Basename())
+    self.Click("css=a:contains('%s')" % flow_id)
 
     self.WaitUntil(self.IsElementPresent, "css=grr-client-flows-view")
 
@@ -407,13 +385,14 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
     flow_runner_args = rdf_flow_runner.FlowRunnerArgs(
         flow_name=file_finder.FileFinder.__name__)
     client_rule_set = self._CreateForemanClientRuleSet()
-    source_h = self.CreateHunt(
+    source_h = self.StartHunt(
         flow_args=flow_args,
         flow_runner_args=flow_runner_args,
         description="foo-description",
-        client_rule_set=client_rule_set)
+        client_rule_set=client_rule_set,
+        paused=True)
 
-    ref = rdf_hunts.FlowLikeObjectReference.FromHuntId(source_h.urn.Basename())
+    ref = rdf_hunts.FlowLikeObjectReference.FromHuntId(source_h.Basename())
 
     # Modify flow_args so that there are differences.
     flow_args.paths = ["b/*", "c/*"]
@@ -421,19 +400,20 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
     output_plugins = [
         rdf_output_plugin.OutputPluginDescriptor(plugin_name="TestOutputPlugin")
     ]
-    new_h = self.CreateHunt(
+    new_h = self.StartHunt(
         flow_args=flow_args,
         flow_runner_args=flow_runner_args,
         description="bar-description",
         client_rule_set=client_rule_set,
         output_plugins=output_plugins,
-        original_object=ref)
+        original_object=ref,
+        paused=True)
 
     return new_h, source_h
 
   def testHuntDiffIsShownIfHuntIsCopied(self):
-    new_h, _ = self._CreateHuntFromHunt()
-    self._RequestAndOpenApprovalFromSelf(new_h.urn)
+    new_h_urn, _ = self._CreateHuntFromHunt()
+    self._RequestAndOpenApprovalFromSelf(new_h_urn)
 
     self.WaitUntil(self.IsTextPresent, "This hunt was copied from")
     # Make sure that only the correct message appears and the others are not
@@ -463,11 +443,11 @@ class TestHuntACLWorkflow(gui_test_lib.GRRSeleniumHuntTest):
         "contains('REGEX'):contains('FQDN')")
 
   def testOriginalHuntLinkIsShownIfHuntCreatedFromHunt(self):
-    new_h, source_h = self._CreateHuntFromHunt()
-    self._RequestAndOpenApprovalFromSelf(new_h.urn)
+    new_h_urn, source_h_urn = self._CreateHuntFromHunt()
+    self._RequestAndOpenApprovalFromSelf(new_h_urn)
 
     self.WaitUntil(self.IsTextPresent, "This hunt was copied from")
-    self.Click("css=a:contains('%s')" % source_h.urn.Basename())
+    self.Click("css=a:contains('%s')" % source_h_urn.Basename())
 
     self.WaitUntil(self.IsElementPresent, "css=grr-hunts-view")
 

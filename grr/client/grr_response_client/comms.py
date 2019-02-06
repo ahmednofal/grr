@@ -88,8 +88,6 @@ import psutil
 import queue
 import requests
 
-from google.protobuf import json_format
-
 from grr_response_client import actions
 from grr_response_client import client_stats
 from grr_response_client import client_utils
@@ -105,7 +103,6 @@ from grr_response_core.lib.rdfvalues import client as rdf_client
 from grr_response_core.lib.rdfvalues import crypto as rdf_crypto
 from grr_response_core.lib.rdfvalues import flows as rdf_flows
 from grr_response_core.lib.rdfvalues import protodict as rdf_protodict
-from grr_response_core.lib.rdfvalues import rekall_types as rdf_rekall_types
 from grr_response_core.stats import stats_collector_instance
 
 
@@ -672,18 +669,6 @@ class GRRClientWorker(threading.Thread):
       # keep going.
       logging.info("Queue is full, dropping messages.")
 
-  def GetRekallProfile(self, profile_name, version="v1.0"):
-    response = self.http_manager.OpenServerEndpoint(
-        u"/rekall_profiles/%s/%s" % (version, profile_name))
-
-    if response.code != 200:
-      return None
-
-    pb = rdf_rekall_types.RekallProfile.protobuf()
-    json_format.Parse(response.data.lstrip(")]}'\n"), pb)
-    return rdf_rekall_types.RekallProfile.FromSerializedString(
-        pb.SerializeToString())
-
   @utils.Synchronized
   def ChargeBytesToSession(self, session_id, length, limit=0):
     self.sent_bytes_per_flow.setdefault(session_id, 0)
@@ -917,6 +902,7 @@ class SizeLimitedQueue(object):
       ret = rdf_flows.MessageList()
       ret_size = 0
       for message in self._Generate():
+        self._total_size -= len(message)
         ret.job.append(rdf_flows.GrrMessage.FromSerializedString(message))
         ret_size += len(message)
         if soft_size_limit is not None and ret_size > soft_size_limit:
@@ -1416,5 +1402,5 @@ class ClientCommunicator(communicator.Communicator):
     if common_name == self.server_name:
       return self.server_public_key
 
-    raise communicator.UnknownClientCert(
+    raise communicator.UnknownClientCertError(
         "Client wants to talk to %s, not %s" % (common_name, self.server_name))

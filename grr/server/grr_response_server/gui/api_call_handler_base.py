@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 """The base class for ApiCallHandlers."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 
 from future.utils import with_metaclass
+from typing import Text
 
 from grr_response_core.lib import registry
 from grr_response_core.lib.util import precondition
@@ -34,7 +36,7 @@ class ApiBinaryStream(object):
     Raises:
       ValueError: if content_generator is None.
     """
-    precondition.AssertType(filename, unicode)
+    precondition.AssertType(filename, Text)
     self.filename = filename
     self.content_length = content_length
 

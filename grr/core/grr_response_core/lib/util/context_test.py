@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import functools
 import io
 
+from absl.testing import absltest
 from future.builtins import map
 
-import unittest
 from grr_response_core.lib.util import context
-from grr.test_lib import temp
+from grr_response_core.lib.util import temp
 
 
-class NullContextTest(unittest.TestCase):
+class NullContextTest(absltest.TestCase):
 
   def testIntegerValue(self):
     with context.NullContext(42) as value:
@@ -29,7 +30,7 @@ class NullContextTest(unittest.TestCase):
     self.assertEqual(buf.getvalue(), b"foobarbaz")
 
 
-class MultiContextTest(unittest.TestCase):
+class MultiContextTest(absltest.TestCase):
 
   def testEmpty(self):
     with context.MultiContext([]) as values:
@@ -49,14 +50,14 @@ class MultiContextTest(unittest.TestCase):
     baz = temp.AutoTempFilePath(suffix="baz")
 
     with context.MultiContext([foo, bar, baz]) as filepaths:
-      self.assertEqual(len(filepaths), 3)
-      self.assertTrue(filepaths[0].endswith("foo"))
-      self.assertTrue(filepaths[1].endswith("bar"))
-      self.assertTrue(filepaths[2].endswith("baz"))
+      self.assertLen(filepaths, 3)
+      self.assertEndsWith(filepaths[0], "foo")
+      self.assertEndsWith(filepaths[1], "bar")
+      self.assertEndsWith(filepaths[2], "baz")
 
       wbopen = functools.partial(io.open, mode="wb")
       with context.MultiContext(map(wbopen, filepaths)) as filedescs:
-        self.assertEqual(len(filedescs), 3)
+        self.assertLen(filedescs, 3)
         filedescs[0].write(b"FOO")
         filedescs[1].write(b"BAR")
         filedescs[2].write(b"BAZ")
@@ -66,11 +67,11 @@ class MultiContextTest(unittest.TestCase):
 
       rbopen = functools.partial(io.open, mode="rb")
       with context.MultiContext(map(rbopen, filepaths)) as filedescs:
-        self.assertEqual(len(filedescs), 3)
+        self.assertLen(filedescs, 3)
         self.assertEqual(filedescs[0].read(), b"FOO")
         self.assertEqual(filedescs[1].read(), b"BAR")
         self.assertEqual(filedescs[2].read(), b"BAZ")
 
 
 if __name__ == "__main__":
-  unittest.main()
+  absltest.main()

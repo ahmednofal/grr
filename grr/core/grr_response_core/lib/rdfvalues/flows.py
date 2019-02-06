@@ -2,6 +2,7 @@
 """RDFValue implementations related to flow scheduling."""
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import threading
@@ -118,6 +119,11 @@ class GrrMessage(rdf_structs.RDFProtoStruct):
     # pylint: enable=protected-access
 
     self.args_rdf_name = value.__class__.__name__
+
+  def ClearPayload(self):
+    self.args_rdf_name = None
+    self.Set("args", None)
+    self.args_age = None
 
 
 class GrrStatus(rdf_structs.RDFProtoStruct):

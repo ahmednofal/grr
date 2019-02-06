@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Tests for API client and approvals-related API calls."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import threading
@@ -26,9 +27,8 @@ class ApiClientLibApprovalsTest(api_e2e_test_lib.ApiE2ETest,
     cls = (api_call_router_with_approval_checks.ApiCallRouterWithApprovalChecks)
     cls.ClearCache()
 
-    self.config_overrider = test_lib.ConfigOverrider({
-        "API.DefaultRouter": cls.__name__
-    })
+    self.config_overrider = test_lib.ConfigOverrider(
+        {"API.DefaultRouter": cls.__name__})
     self.config_overrider.Start()
 
     # Force creation of new APIAuthorizationManager, so that configuration
@@ -64,40 +64,47 @@ class ApiClientLibApprovalsTest(api_e2e_test_lib.ApiE2ETest,
           approval_id=approval.approval_id,
           approver=u"foo")
 
-    threading.Thread(target=ProcessApproval).start()
-
-    result_approval = approval.WaitUntilValid()
-    self.assertTrue(result_approval.data.is_valid)
+    thread = threading.Thread(name="ProcessApprover", target=ProcessApproval)
+    thread.start()
+    try:
+      result_approval = approval.WaitUntilValid()
+      self.assertTrue(result_approval.data.is_valid)
+    finally:
+      thread.join()
 
   def testCreateHuntApproval(self):
-    h = self.CreateHunt()
+    h_urn = self.StartHunt()
 
-    approval = self.api.Hunt(h.urn.Basename()).CreateApproval(
+    approval = self.api.Hunt(h_urn.Basename()).CreateApproval(
         reason="blah", notified_users=[u"foo"])
-    self.assertEqual(approval.hunt_id, h.urn.Basename())
-    self.assertEqual(approval.data.subject.hunt_id, h.urn.Basename())
+    self.assertEqual(approval.hunt_id, h_urn.Basename())
+    self.assertEqual(approval.data.subject.hunt_id, h_urn.Basename())
     self.assertEqual(approval.data.reason, "blah")
     self.assertFalse(approval.data.is_valid)
 
   def testWaitUntilHuntApprovalValid(self):
-    h = self.CreateHunt()
+    h_urn = self.StartHunt()
 
-    approval = self.api.Hunt(h.urn.Basename()).CreateApproval(
+    approval = self.api.Hunt(h_urn.Basename()).CreateApproval(
         reason="blah", notified_users=[u"approver"])
     self.assertFalse(approval.data.is_valid)
 
     def ProcessApproval():
       time.sleep(1)
       self.GrantHuntApproval(
-          h.urn.Basename(),
+          h_urn.Basename(),
           requestor=self.token.username,
           approval_id=approval.approval_id,
           approver=u"approver")
 
     ProcessApproval()
-    threading.Thread(target=ProcessApproval).start()
-    result_approval = approval.WaitUntilValid()
-    self.assertTrue(result_approval.data.is_valid)
+    thread = threading.Thread(name="HuntApprover", target=ProcessApproval)
+    thread.start()
+    try:
+      result_approval = approval.WaitUntilValid()
+      self.assertTrue(result_approval.data.is_valid)
+    finally:
+      thread.join()
 
 
 def main(argv):

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Utils common to macOS and Linux."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import logging
@@ -8,8 +9,9 @@ import os
 import threading
 import time
 
-from builtins import range  # pylint: disable=redefined-builtin
+from future.builtins import range
 import psutil
+from typing import Text
 import xattr
 
 from google.protobuf import message
@@ -76,7 +78,7 @@ def GetExtAttrs(filepath):
   # `xattr` has decoded. Additionally, because the decoding that `xattr` does
   # may fail, we additionally guard against such exceptions.
   def EncodeUtf8(attr_name):
-    if isinstance(attr_name, unicode):
+    if isinstance(attr_name, Text):
       return attr_name.encode("utf-8")
     if isinstance(attr_name, bytes):
       return attr_name
@@ -102,7 +104,7 @@ class NannyThread(threading.Thread):
 
     Args:
       unresponsive_kill_period: The time in seconds which we wait for a
-      heartbeat.
+        heartbeat.
     """
     super(NannyThread, self).__init__(name="Nanny")
     self.last_heart_beat_time = time.time()
@@ -112,25 +114,24 @@ class NannyThread(threading.Thread):
     self.proc = psutil.Process()
     self.memory_quota = config.CONFIG["Client.rss_max_hard"] * 1024 * 1024
 
+  def _CheckHeartbeatDeadline(self, deadline):
+    if time.time() > deadline:
+      # Missed the deadline, we need to die.
+      msg = "Suicide by nanny thread."
+      logging.error(msg)
+      self.WriteNannyStatus(msg)
+
+      # Die hard here to prevent hangs due to non daemonized threads.
+      os._exit(-1)  # pylint: disable=protected-access
+
   def run(self):
     self.WriteNannyStatus("Nanny running.")
     while self.running:
-      now = time.time()
+      next_deadline = self.last_heart_beat_time + self.unresponsive_kill_period
+      self._CheckHeartbeatDeadline(next_deadline)
 
-      # When should we check the next heartbeat?
-      check_time = self.last_heart_beat_time + self.unresponsive_kill_period
-
-      # Missed the deadline, we need to die.
-      if check_time < now:
-        msg = "Suicide by nanny thread."
-        logging.error(msg)
-        self.WriteNannyStatus(msg)
-
-        # Die hard here to prevent hangs due to non daemonized threads.
-        os._exit(-1)  # pylint: disable=protected-access
-      else:
-        # Sleep until the next heartbeat is due.
-        self.Sleep(check_time - now)
+      # Sleep until the next heartbeat is due.
+      self.Sleep(next_deadline - time.time())
 
   def Sleep(self, seconds):
     """Sleep a given time in 1 second intervals.
@@ -154,6 +155,8 @@ class NannyThread(threading.Thread):
       # Check that we do not exceeded our memory allowance.
       if self.GetMemoryUsage() > self.memory_quota:
         raise MemoryError("Exceeded memory allowance.")
+      if not self.running:
+        break
 
   def Stop(self):
     """Exits the main thread."""
@@ -194,6 +197,7 @@ class NannyController(object):
   def StopNanny(self):
     if NannyController.nanny:
       NannyController.nanny.Stop()
+      NannyController.nanny.join()
       NannyController.nanny = None
 
   def Heartbeat(self):

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """This is a development server for running the UI."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
@@ -44,7 +45,7 @@ def main(_):
       "Context applied when running the admin user interface GUI.")
   server_startup.Init()
 
-  if (not os.path.exists(
+  if not config.CONFIG["AdminUI.headless"] and (not os.path.exists(
       os.path.join(config.CONFIG["AdminUI.document_root"],
                    "dist/grr-ui.bundle.js")) or not os.path.exists(
                        os.path.join(config.CONFIG["AdminUI.document_root"],

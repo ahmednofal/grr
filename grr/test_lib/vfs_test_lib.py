@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """VFS-related test classes."""
 from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
 
 import io
 import os
@@ -15,7 +17,7 @@ from grr_response_client import vfs
 # TODO(hanuszczak): This import is required because otherwise VFS handler
 # classes are not registered correctly and things start to fail. This is
 # terrible and has to be fixed as soon as possible.
-from grr_response_client.vfs_handlers import files  # pylint: disable=unused-import
+from grr_response_client.vfs_handlers import registry_init  # pylint: disable=unused-import
 from grr_response_core import config
 from grr_response_core.lib import rdfvalue
 from grr_response_core.lib import utils
@@ -407,6 +409,26 @@ class RegistryFake(FakeRegistryVFSHandler):
     return sorted(res)
 
 
+class FakeWinreg(object):
+  """A class to replace the _winreg module.
+
+  _winreg is only available on Windows so we use this class in tests instead.
+  """
+
+  REG_NONE = 0
+  REG_SZ = 1
+  REG_EXPAND_SZ = 2
+  REG_BINARY = 3
+  REG_DWORD = 4
+  REG_DWORD_LITTLE_ENDIAN = 4
+  REG_DWORD_BIG_ENDIAN = 5
+  REG_LINK = 6
+  REG_MULTI_SZ = 7
+
+  HKEY_USERS = "HKEY_USERS"
+  HKEY_LOCAL_MACHINE = "HKEY_LOCAL_MACHINE"
+
+
 class RegistryVFSStubber(object):
   """Stubber helper for tests that have to emulate registry VFS handler."""
 
@@ -421,7 +443,7 @@ class RegistryVFSStubber(object):
     """Install the stubs."""
 
     modules = {
-        "_winreg": mock.MagicMock(),
+        "_winreg": FakeWinreg(),
         "ctypes": mock.MagicMock(),
         "ctypes.wintypes": mock.MagicMock(),
     }
@@ -431,7 +453,6 @@ class RegistryVFSStubber(object):
 
     # pylint: disable= g-import-not-at-top
     from grr_response_client.vfs_handlers import registry
-    import _winreg
     # pylint: enable=g-import-not-at-top
 
     fixture = RegistryFake()
@@ -447,8 +468,6 @@ class RegistryVFSStubber(object):
 
     # Add the Registry handler to the vfs.
     vfs.VFSInit().Run()
-    _winreg.HKEY_USERS = "HKEY_USERS"
-    _winreg.HKEY_LOCAL_MACHINE = "HKEY_LOCAL_MACHINE"
 
   def Stop(self):
     """Uninstall the stubs."""
@@ -470,38 +489,75 @@ def CreateFile(client_path, content=b"", token=None):
 
   blob_id = rdf_objects.BlobID.FromBlobData(content)
 
+  stat_entry = rdf_client_fs.StatEntry(
+      pathspec=rdf_paths.PathSpec(
+          pathtype=client_path.path_type,
+          path="/".join(client_path.components)),
+      st_mode=33206,
+      st_size=len(content))
+
   if data_store.RelationalDBWriteEnabled():
     data_store.BLOBS.WriteBlobs({blob_id: content})
-    hash_id = file_store.AddFileWithUnknownHash([blob_id])
+    blob_ref = rdf_objects.BlobReference(
+        size=len(content), offset=0, blob_id=blob_id)
+    hash_id = file_store.AddFileWithUnknownHash(client_path, [blob_ref])
 
     path_info = rdf_objects.PathInfo()
     path_info.path_type = client_path.path_type
     path_info.components = client_path.components
     path_info.hash_entry.num_bytes = len(content)
     path_info.hash_entry.sha256 = hash_id.AsBytes()
+    path_info.stat_entry = stat_entry
 
     data_store.REL_DB.WritePathInfos(client_path.client_id, [path_info])
 
-  urn = aff4.ROOT_URN.Add(client_path.client_id).Add(client_path.vfs_path)
-  with aff4.FACTORY.Create(urn, aff4_grr.VFSBlobImage, token=token) as filedesc:
-    bio = io.BytesIO()
-    bio.write(content)
-    bio.seek(0)
+  if data_store.AFF4Enabled():
+    urn = aff4.ROOT_URN.Add(client_path.client_id).Add(client_path.vfs_path)
+    with aff4.FACTORY.Create(
+        urn, aff4_grr.VFSBlobImage, token=token) as filedesc:
+      bio = io.BytesIO()
+      bio.write(content)
+      bio.seek(0)
 
-    filedesc.AppendContent(bio)
-    filedesc.Set(
-        filedesc.Schema.STAT,
-        rdf_client_fs.StatEntry(
-            pathspec=rdf_paths.PathSpec(
-                pathtype=client_path.path_type,
-                path="/".join(client_path.components)),
-            st_mode=16877,
-            st_size=len(content)))
+      filedesc.AppendContent(bio)
+      filedesc.Set(filedesc.Schema.STAT, stat_entry)
 
-    filedesc.Set(
-        filedesc.Schema.HASH,
-        rdf_crypto.Hash(
-            sha256=rdf_objects.SHA256HashID.FromData(content).AsBytes(),
-            num_bytes=len(content)))
+      filedesc.Set(
+          filedesc.Schema.HASH,
+          rdf_crypto.Hash(
+              sha256=rdf_objects.SHA256HashID.FromData(content).AsBytes(),
+              num_bytes=len(content)))
 
-    filedesc.Set(filedesc.Schema.CONTENT_LAST, rdfvalue.RDFDatetime.Now())
+      filedesc.Set(filedesc.Schema.CONTENT_LAST, rdfvalue.RDFDatetime.Now())
+
+
+def CreateDirectory(client_path, token=None):
+  """Creates a directory in datastore-agnostic way.
+
+  Args:
+    client_path: A `ClientPath` instance specifying location of the file.
+    token: A GRR token for accessing the data store.
+  """
+  precondition.AssertType(client_path, db.ClientPath)
+
+  stat_entry = rdf_client_fs.StatEntry(
+      pathspec=rdf_paths.PathSpec(
+          pathtype=client_path.path_type,
+          path="/".join(client_path.components)),
+      st_mode=16895)
+
+  if data_store.RelationalDBWriteEnabled():
+
+    path_info = rdf_objects.PathInfo()
+    path_info.path_type = client_path.path_type
+    path_info.components = client_path.components
+    path_info.stat_entry = stat_entry
+
+    data_store.REL_DB.WritePathInfos(client_path.client_id, [path_info])
+
+  if data_store.AFF4Enabled():
+    urn = aff4.ROOT_URN.Add(client_path.client_id).Add(client_path.vfs_path)
+    with aff4.FACTORY.Create(
+        urn, aff4_standard.VFSDirectory, token=token) as filedesc:
+      filedesc.Set(filedesc.Schema.STAT, stat_entry)
+      filedesc.Set(filedesc.Schema.PATHSPEC, stat_entry.pathspec)

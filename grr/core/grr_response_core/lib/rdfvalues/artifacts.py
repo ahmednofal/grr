@@ -2,14 +2,17 @@
 """rdf value representation for artifact collector parameters."""
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
+import collections
 import json
 
 
+from future.builtins import str
 from future.utils import iteritems
 from future.utils import iterkeys
-import yaml
+from future.utils import string_types
 
 from grr_response_core.lib import rdfvalue
 from grr_response_core.lib import utils
@@ -17,6 +20,7 @@ from grr_response_core.lib.rdfvalues import client as rdf_client
 from grr_response_core.lib.rdfvalues import paths as rdf_paths
 from grr_response_core.lib.rdfvalues import protodict as rdf_protodict
 from grr_response_core.lib.rdfvalues import structs as rdf_structs
+from grr_response_core.lib.util import yaml
 from grr_response_proto import artifact_pb2
 from grr_response_proto import flows_pb2
 
@@ -134,6 +138,9 @@ class ArtifactSource(rdf_structs.RDFProtoStruct):
           "required_attributes": ["cmd", "args"],
           "output_type": "ExecuteResponse"
       },
+      # Running Rekall plugins is deprecated, we keep the type alive so we are
+      # not surprised if an old artifact is encountered.
+      # TODO(amoser): Remove this.
       artifact_pb2.ArtifactSource.REKALL_PLUGIN: {
           "required_attributes": ["plugin"],
           "output_type": "RekallResponse"
@@ -202,7 +209,7 @@ class ArtifactSource(rdf_structs.RDFProtoStruct):
     # TODO(hanuszczak): It looks like no collector is using `path` attribute.
     # Is this really necessary?
     path = self.attributes.GetItem("path")
-    if path and not isinstance(path, basestring):
+    if path and not isinstance(path, string_types):
       raise ArtifactSourceSyntaxError(self, "`path` is not a string")
 
   def _ValidateType(self):
@@ -260,50 +267,31 @@ class Artifact(rdf_structs.RDFProtoStruct):
   # Labels are used to logicaly group Artifacts for ease of use.
 
   ARTIFACT_LABELS = {
-      "Antivirus":
-          "Antivirus related artifacts, e.g. quarantine files.",
-      "Authentication":
-          "Authentication artifacts.",
-      "Browser":
-          "Web Browser artifacts.",
-      "Cloud":
-          "Cloud applications artifacts.",
-      "Cloud Storage":
-          "Cloud Storage artifacts.",
-      "Configuration Files":
-          "Configuration files artifacts.",
-      "Execution":
-          "Contain execution events.",
+      "Antivirus": "Antivirus related artifacts, e.g. quarantine files.",
+      "Authentication": "Authentication artifacts.",
+      "Browser": "Web Browser artifacts.",
+      "Cloud": "Cloud applications artifacts.",
+      "Cloud Storage": "Cloud Storage artifacts.",
+      "Configuration Files": "Configuration files artifacts.",
+      "Docker": "Docker artifacts.",
+      "Execution": "Contain execution events.",
       "ExternalAccount": ("Information about any users\' account, e.g."
                           " username, account ID, etc."),
-      "External Media":
-          "Contain external media data / events e.g. USB drives.",
-      "History Files":
-          "History files artifacts e.g. .bash_history.",
-      "IM":
-          "Instant Messaging / Chat applications artifacts.",
-      "iOS":
-          "Artifacts related to iOS devices connected to the system.",
-      "KnowledgeBase":
-          "Artifacts used in knowledgebase generation.",
-      "Logs":
-          "Contain log files.",
-      "Mail":
-          "Mail client applications artifacts.",
-      "Memory":
-          "Artifacts retrieved from Memory.",
-      "Network":
-          "Describe networking state.",
-      "Processes":
-          "Describe running processes.",
-      "Software":
-          "Installed software.",
-      "System":
-          "Core system artifacts.",
-      "Users":
-          "Information about users.",
-      "Rekall":
-          "Artifacts using the Rekall memory forensics framework.",
+      "External Media": "Contain external media data / events e.g. USB drives.",
+      "Hadoop": "Hadoop artifacts.",
+      "History Files": "History files artifacts e.g. .bash_history.",
+      "IM": "Instant Messaging / Chat applications artifacts.",
+      "iOS": "Artifacts related to iOS devices connected to the system.",
+      "KnowledgeBase": "Artifacts used in knowledgebase generation.",
+      "Logs": "Contain log files.",
+      "Mail": "Mail client applications artifacts.",
+      "Memory": "Artifacts retrieved from Memory.",
+      "Network": "Describe networking state.",
+      "Processes": "Describe running processes.",
+      "Software": "Installed software.",
+      "System": "Core system artifacts.",
+      "Users": "Information about users.",
+      "Rekall": "Artifacts using the Rekall memory forensics framework.",
   }
 
   SUPPORTED_OS_LIST = ["Windows", "Linux", "Darwin"]
@@ -351,13 +339,15 @@ class Artifact(rdf_structs.RDFProtoStruct):
     sources_dict = artifact_dict.get("sources")
     if sources_dict:
       artifact_dict["sources"] = [ReduceDict(c) for c in sources_dict]
+
     # Do some clunky stuff to put the name and doc first in the YAML.
     # Unfortunately PYYaml makes doing this difficult in other ways.
-    name = artifact_dict.pop("name")
-    doc = artifact_dict.pop("doc")
-    doc_str = yaml.safe_dump({"doc": doc}, allow_unicode=True, width=80)[1:-2]
-    yaml_str = yaml.safe_dump(artifact_dict, allow_unicode=True, width=80)
-    return "name: %s\n%s\n%s" % (name, doc_str, yaml_str)
+    ordered_artifact_dict = collections.OrderedDict()
+    ordered_artifact_dict["name"] = artifact_dict.pop("name")
+    ordered_artifact_dict["doc"] = artifact_dict.pop("doc")
+    ordered_artifact_dict.update(artifact_dict)
+
+    return yaml.Dump(ordered_artifact_dict)
 
 
 class ArtifactProcessorDescriptor(rdf_structs.RDFProtoStruct):

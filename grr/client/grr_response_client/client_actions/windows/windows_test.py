@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import os
@@ -10,6 +11,7 @@ import unittest
 
 from future.utils import iteritems
 from future.utils import iterkeys
+from future.utils import string_types
 import mock
 
 from grr_response_client import vfs
@@ -90,11 +92,11 @@ class WindowsActionTests(client_test_lib.OSSpecificClientTests):
     enumif.SendReply = Collect
     enumif.Run(None)
 
-    self.assertEqual(len(replies), 1)
+    self.assertLen(replies, 1)
     interface = replies[0]
-    self.assertEqual(len(interface.addresses), 4)
+    self.assertLen(interface.addresses, 4)
     addresses = [x.human_readable_address for x in interface.addresses]
-    self.assertItemsEqual(addresses, [
+    self.assertCountEqual(addresses, [
         "192.168.1.20", "ffff::ffff:aaaa:1111:aaaa",
         "dddd:0:8888:6666:bbbb:aaaa:eeee:bbbb",
         "dddd:0:8888:6666:bbbb:aaaa:ffff:bbbb"
@@ -114,25 +116,25 @@ class WindowsActionTests(client_test_lib.OSSpecificClientTests):
     wmi_obj.ExecQuery.return_value = [mock_query_result]
 
     result_list = list(self.windows.RunWMIQuery("select blah"))
-    self.assertEqual(len(result_list), 1)
+    self.assertLen(result_list, 1)
 
     result = result_list.pop()
-    self.assertTrue(isinstance(result, rdf_protodict.Dict))
+    self.assertIsInstance(result, rdf_protodict.Dict)
     nest = result["NestingTest"]
 
     self.assertEqual(nest["one"]["two"], [3, 4])
     self.assertTrue("Unsupported type" in nest["one"]["broken"])
-    self.assertTrue(isinstance(nest["one"]["three"], rdf_protodict.Dict))
+    self.assertIsInstance(nest["one"]["three"], rdf_protodict.Dict)
 
     self.assertEqual(nest["four"], [])
     self.assertEqual(nest["five"], "astring")
     self.assertEqual(nest["six"], [None, None, ""])
     self.assertEqual(nest["seven"], None)
-    self.assertItemsEqual(iterkeys(nest["rdfvalue"]), ["a"])
+    self.assertCountEqual(iterkeys(nest["rdfvalue"]), ["a"])
 
     self.assertEqual(result["GatewayCostMetric"], [0, 256])
-    self.assertTrue(isinstance(result["OpaqueObject"], basestring))
-    self.assertTrue("Unsupported type" in result["OpaqueObject"])
+    self.assertIsInstance(result["OpaqueObject"], string_types)
+    self.assertIn("Unsupported type", result["OpaqueObject"])
 
 
 class RegistryVFSTests(client_test_lib.EmptyActionTest):

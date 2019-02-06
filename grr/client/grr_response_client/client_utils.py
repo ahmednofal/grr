@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 """Client utilities."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import logging
 import sys
 
-from grr_response_core.lib import utils
 from grr_response_core.lib.rdfvalues import client_fs as rdf_client_fs
 from grr_response_core.lib.rdfvalues import paths as rdf_paths
+from grr_response_core.lib.util import filesystem
 
 # pylint: disable=g-import-not-at-top
 if sys.platform == "win32":
@@ -47,7 +48,7 @@ def StatEntryFromPath(path, pathspec, ext_attrs=True):
     `StatEntry` object.
   """
   try:
-    stat = utils.Stat(path)
+    stat = filesystem.Stat(path)
   except (IOError, OSError) as error:
     logging.error("Failed to obtain stat for '%s': %s", pathspec, error)
     return rdf_client_fs.StatEntry(pathspec=pathspec)

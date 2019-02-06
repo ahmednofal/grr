@@ -2,6 +2,7 @@
 """Parser testing lib."""
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import io
@@ -49,7 +50,7 @@ def GenTestData(paths, data, st_mode=33188):
 
 def GenXinetd(svc="test", disable="no"):
   """Generate xinetd file."""
-  defaults = br"""
+  defaults = r"""
     defaults
     {
        instances      = 60
@@ -59,11 +60,11 @@ def GenXinetd(svc="test", disable="no"):
        cps            = 25 30
     }
     includedir /etc/xinetd.d
-    """
-  tmpl = b"""
+    """.encode("utf-8")
+  tmpl = ("""
     service %s
     {
        disable         = %s
     }
-    """ % (svc, disable)
+    """ % (svc, disable)).encode("utf-8")
   return {"/etc/xinetd.conf": defaults, "/etc/xinetd.d/%s" % svc: tmpl}

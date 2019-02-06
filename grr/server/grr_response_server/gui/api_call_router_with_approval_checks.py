@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 """Implementation of a router class that has approvals-based ACL checks."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
+
+from future.builtins import str
+from typing import Text
 
 from grr_response_core.lib import utils
 from grr_response_core.lib.util import precondition
@@ -9,6 +13,7 @@ from grr_response_core.stats import stats_collector_instance
 from grr_response_server import access_control
 from grr_response_server import aff4
 from grr_response_server import data_store
+from grr_response_server import db
 from grr_response_server import flow
 from grr_response_server.aff4_objects import user_managers
 from grr_response_server.gui import api_call_handler_base
@@ -58,7 +63,7 @@ class RelDBChecker(object):
 
   def _CheckAccess(self, username, subject_id, approval_type):
     """Checks access to a given subject by a given user."""
-    precondition.AssertType(subject_id, unicode)
+    precondition.AssertType(subject_id, Text)
 
     cache_key = (username, subject_id, approval_type)
     try:
@@ -93,34 +98,32 @@ class RelDBChecker(object):
   def CheckClientAccess(self, username, client_id):
     """Checks whether a given user can access given client."""
     self._CheckAccess(
-        username, unicode(client_id),
+        username, str(client_id),
         rdf_objects.ApprovalRequest.ApprovalType.APPROVAL_TYPE_CLIENT)
 
   def CheckHuntAccess(self, username, hunt_id):
     """Checks whether a given user can access given hunt."""
 
     self._CheckAccess(
-        username, unicode(hunt_id),
+        username, str(hunt_id),
         rdf_objects.ApprovalRequest.ApprovalType.APPROVAL_TYPE_HUNT)
 
   def CheckCronJobAccess(self, username, cron_job_id):
     """Checks whether a given user can access given cron job."""
 
     self._CheckAccess(
-        username, unicode(cron_job_id),
+        username, str(cron_job_id),
         rdf_objects.ApprovalRequest.ApprovalType.APPROVAL_TYPE_CRON_JOB)
 
   def CheckIfCanStartClientFlow(self, username, flow_name):
     """Checks whether a given user can start a given flow."""
+    del username  # Unused.
 
     flow_cls = flow.GRRFlow.GetPlugin(flow_name)
 
     if not flow_cls.category:
       raise access_control.UnauthorizedAccess(
-          "Flow %s can't be started on a client by non-suid users." % flow_name)
-
-    if flow_cls.AUTHORIZED_LABELS:
-      self.CheckIfUserIsAdmin(username)
+          "Flow %s can't be started via the API." % flow_name)
 
   def CheckIfUserIsAdmin(self, username):
     """Checks whether the user is an admin."""
@@ -536,13 +539,20 @@ class ApiCallRouterWithApprovalChecks(api_call_router.ApiCallRouterStub):
     return self.delegate.ModifyHunt(args, token=token)
 
   def _GetHuntObj(self, hunt_id, token=None):
-    hunt_urn = hunt_id.ToURN()
-    try:
-      return aff4.FACTORY.Open(
-          hunt_urn, aff4_type=implementation.GRRHunt, token=token)
-    except aff4.InstantiationError:
-      raise api_call_handler_base.ResourceNotFoundError(
-          "Hunt with id %s could not be found" % hunt_id)
+    if data_store.RelationalDBReadEnabled("hunts"):
+      try:
+        return data_store.REL_DB.ReadHuntObject(str(hunt_id))
+      except db.UnknownHuntError:
+        raise api_call_handler_base.ResourceNotFoundError(
+            "Hunt with id %s could not be found" % hunt_id)
+    else:
+      hunt_urn = hunt_id.ToURN()
+      try:
+        return aff4.FACTORY.Open(
+            hunt_urn, aff4_type=implementation.GRRHunt, token=token)
+      except aff4.InstantiationError:
+        raise api_call_handler_base.ResourceNotFoundError(
+            "Hunt with id %s could not be found" % hunt_id)
 
   def DeleteHunt(self, args, token=None):
     hunt_obj = self._GetHuntObj(args.hunt_id, token=token)
@@ -676,6 +686,11 @@ class ApiCallRouterWithApprovalChecks(api_call_router.ApiCallRouterStub):
 
     return self.delegate.ListCronJobApprovals(args, token=token)
 
+  def ListApproverSuggestions(self, args, token=None):
+    # Everybody can list suggestions for approver usernames.
+
+    return self.delegate.ListApproverSuggestions(args, token=token)
+
   # User settings methods.
   # =====================
   #
@@ -714,16 +729,6 @@ class ApiCallRouterWithApprovalChecks(api_call_router.ApiCallRouterStub):
     # Everybody can update their own user settings.
 
     return self.delegate.UpdateGrrUser(args, token=token)
-
-  def ListPendingGlobalNotifications(self, args, token=None):
-    # Everybody can get their global pending notifications.
-
-    return self.delegate.ListPendingGlobalNotifications(args, token=token)
-
-  def DeletePendingGlobalNotification(self, args, token=None):
-    # Everybody can delete their global pending notifications.
-
-    return self.delegate.DeletePendingGlobalNotification(args, token=token)
 
   # Config methods.
   # ==============

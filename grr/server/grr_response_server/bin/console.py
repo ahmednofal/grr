@@ -4,6 +4,7 @@
 We can schedule a new flow for a specific client.
 """
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
@@ -53,8 +54,6 @@ from grr_response_server.aff4_objects import security
 # pylint: disable=wildcard-import
 from grr_response_server.console_utils import *
 # pylint: enable=wildcard-import
-
-from grr_response_server.flows.general import memory
 # pylint: enable=unused-import
 
 flags.DEFINE_string(

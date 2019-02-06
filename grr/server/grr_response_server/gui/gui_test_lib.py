@@ -28,7 +28,6 @@ from grr_response_core.lib.rdfvalues import client_fs as rdf_client_fs
 from grr_response_core.lib.rdfvalues import client_network as rdf_client_network
 
 from grr_response_core.lib.rdfvalues import crypto as rdf_crypto
-from grr_response_core.lib.rdfvalues import flows as rdf_flows
 from grr_response_core.lib.rdfvalues import paths as rdf_paths
 from grr_response_core.lib.rdfvalues import structs as rdf_structs
 from grr_response_core.lib.util import compatibility
@@ -36,9 +35,7 @@ from grr_response_proto import tests_pb2
 from grr_response_server import aff4
 from grr_response_server import data_store
 from grr_response_server import db
-from grr_response_server import flow
 from grr_response_server import flow_base
-from grr_response_server import foreman
 from grr_response_server import foreman_rules
 from grr_response_server import output_plugin
 from grr_response_server.aff4_objects import standard as aff4_standard
@@ -49,8 +46,6 @@ from grr_response_server.gui import api_auth_manager
 from grr_response_server.gui import api_call_router_with_approval_checks
 from grr_response_server.gui import webauth
 from grr_response_server.gui import wsgiapp_testlib
-from grr_response_server.hunts import implementation
-from grr_response_server.hunts import standard
 from grr_response_server.rdfvalues import flow_runner as rdf_flow_runner
 from grr_response_server.rdfvalues import objects as rdf_objects
 from grr.test_lib import acl_test_lib
@@ -125,12 +120,13 @@ def CreateFileVersion(client_id, path, content=b"", timestamp=None, token=None):
 def CreateFolder(client_id, path, timestamp, token=None):
   """Creates a VFS folder."""
   with test_lib.FakeTime(timestamp):
-    with aff4.FACTORY.Create(
-        client_id.Add(path),
-        aff4_type=aff4_standard.VFSDirectory,
-        mode="w",
-        token=token) as _:
-      pass
+    if data_store.AFF4Enabled():
+      with aff4.FACTORY.Create(
+          client_id.Add(path),
+          aff4_type=aff4_standard.VFSDirectory,
+          mode="w",
+          token=token):
+        pass
 
     if data_store.RelationalDBWriteEnabled():
       path_type, components = rdf_objects.ParseCategorizedPath(path)
@@ -251,11 +247,12 @@ class GRRSeleniumTest(test_lib.GRRBaseTest, acl_test_lib.AclTestMixin):
     with GRRSeleniumTest._selenium_set_up_lock:
       if not GRRSeleniumTest._selenium_set_up_done:
 
-        port = portpicker.PickUnusedPort()
+        port = portpicker.pick_unused_port()
         logging.info("Picked free AdminUI port %d.", port)
 
         # Start up a server in another thread
-        GRRSeleniumTest._server_trd = wsgiapp_testlib.ServerThread(port)
+        GRRSeleniumTest._server_trd = wsgiapp_testlib.ServerThread(
+            port, name="SeleniumServerThread")
         GRRSeleniumTest._server_trd.StartAndWaitUntilServing()
         GRRSeleniumTest._SetUpSelenium(port)
 
@@ -308,17 +305,18 @@ class GRRSeleniumTest(test_lib.GRRBaseTest, acl_test_lib.AclTestMixin):
     self.ignore_http_errors = True
     return DisabledHttpErrorChecksContextManager(self)
 
+  def GetHttpErrors(self):
+    return self.driver.execute_script(
+        "return (() => {const e = window.grrInterceptedHTTPErrors_ || []; "
+        "window.grrInterceptedHTTPErrors_ = []; return e;})();")
+
   def _CheckHttpErrors(self):
     if self.ignore_http_errors:
       return
 
-    errors = self.driver.execute_script(
-        "return (() => {const e = window.grrInterceptedHTTPErrors_ || []; "
-        "window.grrInterceptedHTTPErrors_ = []; return e;})();")
-
     msgs = []
-    for e in errors:
-      msg = "[http]: %s" % e
+    for e in self.GetHttpErrors():
+      msg = "[http]: {!r}".format(e)
       logging.error(msg)
       msgs.append(msg)
 
@@ -635,16 +633,16 @@ class GRRSeleniumTest(test_lib.GRRBaseTest, acl_test_lib.AclTestMixin):
     webauth.WEBAUTH_MANAGER.SetUserName(self.token.username)
 
     # Make the user use the advanced gui so we can test it.
-    with aff4.FACTORY.Create(
-        aff4.ROOT_URN.Add("users/%s" % self.token.username),
-        aff4_type=users.GRRUser,
-        mode="w",
-        token=self.token) as user_fd:
-      user_fd.Set(user_fd.Schema.GUI_SETTINGS(mode="ADVANCED"))
-
     if data_store.RelationalDBReadEnabled():
       data_store.REL_DB.WriteGRRUser(
           self.token.username, ui_mode=users.GUISettings.UIMode.ADVANCED)
+    else:
+      with aff4.FACTORY.Create(
+          aff4.ROOT_URN.Add("users/%s" % self.token.username),
+          aff4_type=users.GRRUser,
+          mode="w",
+          token=self.token) as user_fd:
+        user_fd.Set(user_fd.Schema.GUI_SETTINGS(mode="ADVANCED"))
 
     self._artifact_patcher = ar_test_lib.PatchDatastoreOnlyArtifactRegistry()
     self._artifact_patcher.start()
@@ -668,22 +666,29 @@ class GRRSeleniumTest(test_lib.GRRBaseTest, acl_test_lib.AclTestMixin):
     self.CheckBrowserErrors()
     super(GRRSeleniumTest, self).tearDown()
 
-  def WaitForNotification(self, user):
+  def WaitForNotification(self, username):
     sleep_time = 0.2
     iterations = 50
     for _ in range(iterations):
       try:
-        fd = aff4.FACTORY.Open(user, users.GRRUser, mode="r", token=self.token)
-        pending_notifications = fd.Get(fd.Schema.PENDING_NOTIFICATIONS)
-        if pending_notifications:
-          return
+        if data_store.RelationalDBReadEnabled():
+          pending_notifications = data_store.REL_DB.ReadUserNotifications(
+              username, state=rdf_objects.UserNotification.State.STATE_PENDING)
+          if pending_notifications:
+            return
+        else:
+          urn = "aff4:/users/%s" % username
+          fd = aff4.FACTORY.Open(urn, users.GRRUser, mode="r", token=self.token)
+          pending_notifications = fd.Get(fd.Schema.PENDING_NOTIFICATIONS)
+          if pending_notifications:
+            return
       except IOError:
         pass
       time.sleep(sleep_time)
-    self.fail("Notification for user %s never sent." % user)
+    self.fail("Notification for user %s never sent." % username)
 
 
-class GRRSeleniumHuntTest(GRRSeleniumTest, hunt_test_lib.StandardHuntTestMixin):
+class GRRSeleniumHuntTest(hunt_test_lib.StandardHuntTestMixin, GRRSeleniumTest):
   """Common functionality for hunt gui tests."""
 
   def _CreateForemanClientRuleSet(self):
@@ -698,9 +703,9 @@ class GRRSeleniumHuntTest(GRRSeleniumTest, hunt_test_lib.StandardHuntTestMixin):
     hunt = self.CreateSampleHunt(
         path=os.path.join(self.base_path, "test.plist"), client_count=1)
 
-    action_mock = action_mocks.FileFinderClientMock()
-    hunt_test_lib.TestHuntHelper(action_mock, self.client_ids, False,
-                                 self.token)
+    self.RunHunt(
+        client_ids=self.client_ids,
+        client_mock=action_mocks.FileFinderClientMock())
 
     return hunt
 
@@ -717,10 +722,9 @@ class GRRSeleniumHuntTest(GRRSeleniumTest, hunt_test_lib.StandardHuntTestMixin):
     token = token or self.token
     self.client_ids = self.SetupClients(client_count)
 
-    with implementation.StartHunt(
-        hunt_name=standard.GenericHunt.__name__,
+    self.hunt_urn = self.StartHunt(
         flow_runner_args=rdf_flow_runner.FlowRunnerArgs(
-            flow_name=transfer.GetFile.__name__),
+            flow_name=compatibility.GetName(transfer.GetFile)),
         flow_args=transfer.GetFileArgs(
             pathspec=rdf_paths.PathSpec(
                 path=path or "/tmp/evil.txt",
@@ -730,20 +734,13 @@ class GRRSeleniumHuntTest(GRRSeleniumTest, hunt_test_lib.StandardHuntTestMixin):
         output_plugins=output_plugins or [],
         client_rate=0,
         client_limit=client_limit,
-        token=token) as hunt:
-      if not stopped:
-        hunt.Run()
+        token=token,
+        paused=stopped)
 
-    foreman_obj = foreman.GetForeman(token=token)
-    for client_id in self.client_ids:
-      foreman_obj.AssignTasksToClient(client_id.Basename())
-
-    self.hunt_urn = hunt.urn
-    return aff4.FACTORY.Open(
-        hunt.urn, mode="rw", token=token, age=aff4.ALL_TIMES)
+    return self.hunt_urn
 
   def CreateGenericHuntWithCollection(self, values=None):
-    self.client_ids = self.SetupClients(10)
+    self.client_ids = self.SetupClients(1)
 
     CreateFileVersion(self.client_ids[0], "fs/os/c/bin/bash", token=self.token)
 
@@ -755,32 +752,21 @@ class GRRSeleniumHuntTest(GRRSeleniumTest, hunt_test_lib.StandardHuntTestMixin):
           rdfvalue.RDFURN("aff4:/sample/3")
       ]
 
-    with implementation.StartHunt(
-        hunt_name=standard.GenericHunt.__name__,
+    hunt_urn = self.StartHunt(
         client_rule_set=self._CreateForemanClientRuleSet(),
         output_plugins=[],
-        token=self.token) as hunt:
+        token=self.token)
 
-      runner = hunt.GetRunner()
-      runner.Start()
+    self.AddResultsToHunt(hunt_urn, self.client_ids[0], values)
 
-      collection = hunt.ResultCollection()
-      with data_store.DB.GetMutationPool() as pool:
-        for value in values:
-          collection.Add(
-              rdf_flows.GrrMessage(payload=value, source=self.client_ids[0]),
-              mutation_pool=pool)
-
-      return hunt.urn
+    return hunt_urn, self.client_ids[0]
 
 
-class SearchClientTestBase(GRRSeleniumTest):
+class SearchClientTestBase(hunt_test_lib.StandardHuntTestMixin,
+                           GRRSeleniumTest):
 
   def CreateSampleHunt(self, description, token=None):
-    return implementation.StartHunt(
-        hunt_name=standard.GenericHunt.__name__,
-        description=description,
-        token=token)
+    return self.StartHunt(description=description, paused=True, token=token)
 
 
 class RecursiveTestFlowArgs(rdf_structs.RDFProtoStruct):
@@ -806,14 +792,16 @@ class RecursiveTestFlowMixin(object):
             next_state="End")
 
 
-class FlowWithOneLogStatement(flow.GRRFlow):
+@flow_base.DualDBFlow
+class FlowWithOneLogStatementMixin(object):
   """Flow that logs a single statement."""
 
   def Start(self):
     self.Log("I do log.")
 
 
-class FlowWithOneStatEntryResult(flow.GRRFlow):
+@flow_base.DualDBFlow
+class FlowWithOneStatEntryResultMixin(object):
   """Test flow that calls SendReply once with a StatEntry value."""
 
   def Start(self):
@@ -824,14 +812,16 @@ class FlowWithOneStatEntryResult(flow.GRRFlow):
                 pathtype=rdf_paths.PathSpec.PathType.OS)))
 
 
-class FlowWithOneNetworkConnectionResult(flow.GRRFlow):
+@flow_base.DualDBFlow
+class FlowWithOneNetworkConnectionResultMixin(object):
   """Test flow that calls SendReply once with a NetworkConnection value."""
 
   def Start(self):
     self.SendReply(rdf_client_network.NetworkConnection(pid=42))
 
 
-class FlowWithOneHashEntryResult(flow.GRRFlow):
+@flow_base.DualDBFlow
+class FlowWithOneHashEntryResultMixin(object):
   """Test flow that calls SendReply once with a HashEntry value."""
 
   def Start(self):
@@ -850,5 +840,5 @@ class DummyOutputPlugin(output_plugin.OutputPlugin):
   description = "Dummy do do."
   args_type = processes.ListProcessesArgs
 
-  def ProcessResponses(self, responses):
+  def ProcessResponses(self, state, responses):
     pass

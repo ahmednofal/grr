@@ -2,11 +2,15 @@
 """Test client RDFValues."""
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import socket
 
-import unittest
+from absl.testing import absltest
+from future.builtins import int
+from future.builtins import str
+import psutil
 
 from grr_response_core.lib import flags
 from grr_response_core.lib import rdfvalue
@@ -69,25 +73,27 @@ class UserTests(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
   def testTimeEncoding(self):
     fast_proto = rdf_client.User(username="user")
 
-    # Check that we can coerce an int to an RDFDatetime.
-    fast_proto.last_logon = 1365177603180131
+    datetime = rdfvalue.RDFDatetime.FromHumanReadable("2013-04-05 16:00:03")
 
-    self.assertEqual(str(fast_proto.last_logon), "2013-04-05 16:00:03")
-    self.assertEqual(type(fast_proto.last_logon), rdfvalue.RDFDatetime)
+    # Check that we can coerce an int to an RDFDatetime.
+    # TODO(hanuszczak): Yeah, but why would we...?
+    fast_proto.last_logon = datetime.AsMicrosecondsSinceEpoch()
+
+    self.assertEqual(fast_proto.last_logon, datetime)
 
     # Check that this is backwards compatible with the old protobuf library.
     proto = knowledge_base_pb2.User()
     proto.ParseFromString(fast_proto.SerializeToString())
 
     # Old implementation should just see the last_logon field as an integer.
-    self.assertEqual(proto.last_logon, 1365177603180131)
-    self.assertEqual(type(proto.last_logon), long)
+    self.assertIsInstance(proto.last_logon, int)
+    self.assertEqual(proto.last_logon, datetime.AsMicrosecondsSinceEpoch())
 
     # fast protobufs interoperate with old serialized formats.
     serialized_data = proto.SerializeToString()
     fast_proto = rdf_client.User.FromSerializedString(serialized_data)
-    self.assertEqual(fast_proto.last_logon, 1365177603180131)
-    self.assertEqual(type(fast_proto.last_logon), rdfvalue.RDFDatetime)
+    self.assertIsInstance(fast_proto.last_logon, rdfvalue.RDFDatetime)
+    self.assertEqual(fast_proto.last_logon, datetime.AsMicrosecondsSinceEpoch())
 
   def testPrettyPrintMode(self):
 
@@ -115,7 +121,7 @@ class UserTests(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
         (33784, "-rwxrwx--T"),
     ]:
       value = rdf_client_fs.StatMode(mode)
-      self.assertEqual(unicode(value), result)
+      self.assertEqual(str(value), result)
 
 
 class ClientURNTests(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
@@ -147,7 +153,7 @@ class ClientURNTests(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
       results.append(rdf_client.ClientURN(urnstr))
       results.append(rdf_client.ClientURN("aff4:/%s" % urnstr))
 
-    self.assertEqual(len(results), len(test_set) * 2)
+    self.assertLen(results, len(test_set) * 2)
 
     # Check all are identical
     self.assertTrue(all([x == results[0] for x in results]))
@@ -221,7 +227,7 @@ class UnameTests(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
     self.assertRaises(ValueError, sample.signature)
 
 
-class CpuSampleTest(unittest.TestCase):
+class CpuSampleTest(absltest.TestCase):
 
   def testFromMany(self):
     samples = [
@@ -255,7 +261,7 @@ class CpuSampleTest(unittest.TestCase):
       rdf_client_stats.CpuSample.FromMany([])
 
 
-class IOSampleTest(unittest.TestCase):
+class IOSampleTest(absltest.TestCase):
 
   def testFromMany(self):
     samples = [
@@ -285,7 +291,7 @@ class IOSampleTest(unittest.TestCase):
       rdf_client_stats.IOSample.FromMany([])
 
 
-class ClientStatsTest(unittest.TestCase):
+class ClientStatsTest(absltest.TestCase):
 
   def testDownsampled(self):
     timestamp = rdfvalue.RDFDatetime.FromHumanReadable
@@ -366,6 +372,30 @@ class ClientStatsTest(unittest.TestCase):
         stats, interval=rdfvalue.Duration("10m"))
 
     self.assertEqual(actual, expected)
+
+
+class ProcessTest(absltest.TestCase):
+
+  def testFromPsutilProcess(self):
+
+    p = psutil.Process()
+    res = rdf_client.Process.FromPsutilProcess(p)
+
+    int_fields = [
+        "pid", "ppid", "ctime", "real_uid", "effective_uid", "saved_uid",
+        "real_gid", "effective_gid", "saved_gid", "num_threads",
+        "user_cpu_time", "system_cpu_time", "RSS_size", "VMS_size",
+        "memory_percent"
+    ]
+
+    for field in int_fields:
+      self.assertGreater(getattr(res, field), 0)
+
+    string_fields = ["name", "exe", "cmdline", "cwd", "username", "terminal"]
+    for field in string_fields:
+      self.assertNotEqual(getattr(res, field), "")
+
+    self.assertEqual(res.status, "running")
 
 
 def main(argv):

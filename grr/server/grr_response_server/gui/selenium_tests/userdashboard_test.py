@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """User dashboard tests."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 
@@ -104,7 +105,7 @@ class TestUserDashboard(gui_test_lib.SearchClientTestBase):
         "div[name=RecentlyAccessedClients]"
         ":contains('%s')" % client_id.Basename())
 
-  def testShowsClientTwiceIfTwoApprovalsWereRequested(self):
+  def testShowsClientOnceIfTwoApprovalsWereRequested(self):
     client_id = self.SetupClient(0)
     self.RequestAndGrantClientApproval(
         client_id, requestor=self.token.username, reason="foo-reason")
@@ -112,12 +113,13 @@ class TestUserDashboard(gui_test_lib.SearchClientTestBase):
         client_id, requestor=self.token.username, reason="bar-reason")
 
     self.Open("/")
-    self.WaitUntil(
-        self.IsElementPresent, "css=grr-user-dashboard "
-        "div[name=RecentlyAccessedClients]:contains('foo-reason')")
+    # Later approval request should take precedence.
     self.WaitUntil(
         self.IsElementPresent, "css=grr-user-dashboard "
         "div[name=RecentlyAccessedClients]:contains('bar-reason')")
+    self.WaitUntilNot(
+        self.IsElementPresent, "css=grr-user-dashboard "
+        "div[name=RecentlyAccessedClients]:contains('foo-reason')")
 
   def testShowsMaxOf7Clients(self):
     client_ids = self.SetupClients(10)

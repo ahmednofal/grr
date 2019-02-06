@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import os
@@ -7,19 +8,20 @@ import platform
 import subprocess
 import unittest
 
-import unittest
+from absl.testing import absltest
+
 from grr_response_client.client_actions.file_finder_utils import conditions
 from grr_response_core.lib import flags
 from grr_response_core.lib import rdfvalue
-from grr_response_core.lib import utils
 from grr_response_core.lib.rdfvalues import file_finder as rdf_file_finder
 from grr_response_core.lib.rdfvalues import standard as rdf_standard
-from grr.test_lib import client_test_lib
-from grr.test_lib import temp
+from grr_response_core.lib.util import filesystem
+from grr_response_core.lib.util import temp
+from grr.test_lib import filesystem_test_lib
 from grr.test_lib import test_lib
 
 
-class RegexMatcherTest(unittest.TestCase):
+class RegexMatcherTest(absltest.TestCase):
 
   @staticmethod
   def _RegexMatcher(string):
@@ -76,7 +78,7 @@ class RegexMatcherTest(unittest.TestCase):
     self.assertFalse(span)
 
 
-class LiteralMatcherTest(unittest.TestCase):
+class LiteralMatcherTest(absltest.TestCase):
 
   def testMatchLiteral(self):
     matcher = conditions.LiteralMatcher("bar")
@@ -124,7 +126,7 @@ class ConditionTestMixin(object):
 class MetadataConditionTestMixin(ConditionTestMixin):
 
   def Stat(self):
-    return utils.Stat(self.temp_filepath, follow_symlink=False)
+    return filesystem.Stat(self.temp_filepath, follow_symlink=False)
 
   def Touch(self, mode, date):
     self.assertIn(mode, ["-m", "-a"])
@@ -134,7 +136,7 @@ class MetadataConditionTestMixin(ConditionTestMixin):
 
 
 class ModificationTimeConditionTest(MetadataConditionTestMixin,
-                                    unittest.TestCase):
+                                    absltest.TestCase):
 
   def testDefault(self):
     params = rdf_file_finder.FileFinderCondition()
@@ -173,7 +175,7 @@ class ModificationTimeConditionTest(MetadataConditionTestMixin,
     self.assertFalse(condition.Check(self.Stat()))
 
 
-class AccessTimeConditionTest(MetadataConditionTestMixin, unittest.TestCase):
+class AccessTimeConditionTest(MetadataConditionTestMixin, absltest.TestCase):
 
   def testDefault(self):
     params = rdf_file_finder.FileFinderCondition()
@@ -204,7 +206,7 @@ class AccessTimeConditionTest(MetadataConditionTestMixin, unittest.TestCase):
     self.assertFalse(condition.Check(self.Stat()))
 
 
-class SizeConditionTest(MetadataConditionTestMixin, unittest.TestCase):
+class SizeConditionTest(MetadataConditionTestMixin, absltest.TestCase):
 
   def testDefault(self):
     params = rdf_file_finder.FileFinderCondition()
@@ -245,7 +247,7 @@ class SizeConditionTest(MetadataConditionTestMixin, unittest.TestCase):
     self.assertFalse(condition.Check(self.Stat()))
 
 
-class ExtFlagsConditionTest(MetadataConditionTestMixin, unittest.TestCase):
+class ExtFlagsConditionTest(MetadataConditionTestMixin, absltest.TestCase):
 
   # https://github.com/apple/darwin-xnu/blob/master/bsd/sys/stat.h
   UF_NODUMP = 0x00000001
@@ -368,16 +370,16 @@ class ExtFlagsConditionTest(MetadataConditionTestMixin, unittest.TestCase):
     self.assertTrue(condition.Check(self.Stat()))
 
   def _Chattr(self, attrs):
-    client_test_lib.Chattr(self.temp_filepath, attrs=attrs)
+    filesystem_test_lib.Chattr(self.temp_filepath, attrs=attrs)
 
   def _Chflags(self, flgs):
-    client_test_lib.Chflags(self.temp_filepath, flags=flgs)
+    filesystem_test_lib.Chflags(self.temp_filepath, flags=flgs)
 
 
 # TODO(hanuszczak): Write tests for the metadata change condition.
 
 
-class LiteralMatchConditionTest(ConditionTestMixin, unittest.TestCase):
+class LiteralMatchConditionTest(ConditionTestMixin, absltest.TestCase):
 
   def testNoHits(self):
     with open(self.temp_filepath, "wb") as fd:
@@ -401,7 +403,7 @@ class LiteralMatchConditionTest(ConditionTestMixin, unittest.TestCase):
     condition = conditions.LiteralMatchCondition(params)
 
     results = list(condition.Search(self.temp_filepath))
-    self.assertEqual(len(results), 2)
+    self.assertLen(results, 2)
     self.assertEqual(results[0].data, "foo")
     self.assertEqual(results[0].offset, 0)
     self.assertEqual(results[0].length, 3)
@@ -419,7 +421,7 @@ class LiteralMatchConditionTest(ConditionTestMixin, unittest.TestCase):
     condition = conditions.LiteralMatchCondition(params)
 
     results = list(condition.Search(self.temp_filepath))
-    self.assertEqual(len(results), 1)
+    self.assertLen(results, 1)
     self.assertEqual(results[0].data, "foo")
     self.assertEqual(results[0].offset, 4)
     self.assertEqual(results[0].length, 3)
@@ -436,7 +438,7 @@ class LiteralMatchConditionTest(ConditionTestMixin, unittest.TestCase):
     condition = conditions.LiteralMatchCondition(params)
 
     results = list(condition.Search(self.temp_filepath))
-    self.assertEqual(len(results), 3)
+    self.assertLen(results, 3)
     self.assertEqual(results[0].data, "foo f")
     self.assertEqual(results[0].offset, 0)
     self.assertEqual(results[0].length, 5)
@@ -458,7 +460,7 @@ class LiteralMatchConditionTest(ConditionTestMixin, unittest.TestCase):
     condition = conditions.LiteralMatchCondition(params)
 
     results = list(condition.Search(self.temp_filepath))
-    self.assertEqual(len(results), 2)
+    self.assertLen(results, 2)
     self.assertEqual(results[0].data, "ooo")
     self.assertEqual(results[0].offset, 2)
     self.assertEqual(results[0].length, 3)
@@ -467,7 +469,7 @@ class LiteralMatchConditionTest(ConditionTestMixin, unittest.TestCase):
     self.assertEqual(results[1].length, 3)
 
 
-class RegexMatchCondition(ConditionTestMixin, unittest.TestCase):
+class RegexMatchCondition(ConditionTestMixin, absltest.TestCase):
 
   def testNoHits(self):
     with open(self.temp_filepath, "wb") as fd:
@@ -491,7 +493,7 @@ class RegexMatchCondition(ConditionTestMixin, unittest.TestCase):
     condition = conditions.RegexMatchCondition(params)
 
     results = list(condition.Search(self.temp_filepath))
-    self.assertEqual(len(results), 3)
+    self.assertLen(results, 3)
     self.assertEqual(results[0].data, "7")
     self.assertEqual(results[0].offset, 4)
     self.assertEqual(results[0].length, 1)
@@ -512,7 +514,7 @@ class RegexMatchCondition(ConditionTestMixin, unittest.TestCase):
     condition = conditions.RegexMatchCondition(params)
 
     results = list(condition.Search(self.temp_filepath))
-    self.assertEqual(len(results), 1)
+    self.assertLen(results, 1)
     self.assertEqual(results[0].data, "foo")
     self.assertEqual(results[0].offset, 16)
     self.assertEqual(results[0].length, 3)
@@ -529,7 +531,7 @@ class RegexMatchCondition(ConditionTestMixin, unittest.TestCase):
     condition = conditions.RegexMatchCondition(params)
 
     results = list(condition.Search(self.temp_filepath))
-    self.assertEqual(len(results), 2)
+    self.assertLen(results, 2)
     self.assertEqual(results[0].data, "foobarbazb")
     self.assertEqual(results[0].offset, 0)
     self.assertEqual(results[0].length, 10)
@@ -548,7 +550,7 @@ class RegexMatchCondition(ConditionTestMixin, unittest.TestCase):
     condition = conditions.RegexMatchCondition(params)
 
     results = list(condition.Search(self.temp_filepath))
-    self.assertEqual(len(results), 1)
+    self.assertLen(results, 1)
     self.assertEqual(results[0].data, "oooo")
     self.assertEqual(results[0].offset, 3)
     self.assertEqual(results[0].length, 4)

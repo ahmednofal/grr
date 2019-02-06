@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """Standard actions that happen on the client."""
 from __future__ import absolute_import
+from __future__ import division
+
 from __future__ import print_function
 from __future__ import unicode_literals
 
@@ -18,6 +20,8 @@ import zlib
 
 
 import psutil
+
+from typing import Text
 
 from grr_response_client import actions
 from grr_response_client import client_utils_common
@@ -58,7 +62,7 @@ class ReadBuffer(actions.ActionPlugin):
 
       data = fd.Read(args.length)
 
-    except (IOError, OSError), e:
+    except (IOError, OSError) as e:
       self.SetStatus(rdf_flows.GrrStatus.ReturnedStatus.IOERROR, e)
       return
 
@@ -238,7 +242,7 @@ class ListDirectory(ReadBuffer):
     """Lists a directory."""
     try:
       directory = vfs.VFSOpen(args.pathspec, progress_callback=self.Progress)
-    except (IOError, OSError), e:
+    except (IOError, OSError) as e:
       self.SetStatus(rdf_flows.GrrStatus.ReturnedStatus.IOERROR, e)
       return
 
@@ -362,7 +366,7 @@ class ExecuteBinaryCommand(actions.ActionPlugin):
     try:
       if os.path.exists(path):
         os.remove(path)
-    except (OSError, IOError), e:
+    except (OSError, IOError) as e:
       logging.info("Failed to remove temporary file %s. Err: %s", path, e)
 
   def Run(self, args):
@@ -457,7 +461,7 @@ class StdOutHook(object):
     self.buf = buf
 
   def write(self, text):  # pylint: disable=invalid-name
-    precondition.AssertType(text, unicode)
+    precondition.AssertType(text, Text)
     self.buf.write(text)
 
 

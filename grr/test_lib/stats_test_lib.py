@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """Classes for stats-related testing."""
 from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
 
 from grr_response_core.stats import stats_collector_instance
 
@@ -27,10 +29,11 @@ class StatsDeltaAssertionContext(object):
     if hasattr(new_count, "count"):
       new_count = new_count.count
 
+    actual = new_count - self.prev_count
     self.test.assertEqual(
-        new_count - self.prev_count, self.delta,
-        "%s (fields=%s) expected to change with delta=%d" %
-        (self.varname, self.fields, self.delta))
+        actual, self.delta,
+        "%s (fields=%s) expected to change with delta=%d, but changed by %d" %
+        (self.varname, self.fields, self.delta, actual))
 
 
 class StatsTestMixin(object):

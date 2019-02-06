@@ -1,17 +1,20 @@
 #!/usr/bin/env python
 """A flow to run checks for a host."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
+
+from future.builtins import str
 
 from grr_response_core.lib import parsers
 from grr_response_core.lib.rdfvalues import anomaly as rdf_anomaly
 from grr_response_core.lib.rdfvalues import paths as rdf_paths
 from grr_response_core.lib.rdfvalues import structs as rdf_structs
 from grr_response_proto import flows_pb2
-from grr_response_server import aff4
 from grr_response_server import artifact
 from grr_response_server import flow
+from grr_response_server import flow_base
 from grr_response_server.check_lib import checks
 from grr_response_server.flows.general import collectors
 
@@ -26,7 +29,8 @@ class CheckFlowArgs(rdf_structs.RDFProtoStruct):
     return rdf_paths.PathSpec.PathType.OS
 
 
-class CheckRunner(flow.GRRFlow):
+@flow_base.DualDBFlow
+class CheckRunnerMixin(object):
   """This flow runs checks on a host.
 
   CheckRunner:
@@ -43,19 +47,16 @@ class CheckRunner(flow.GRRFlow):
 
   def Start(self):
     """Initialize the system check flow."""
-    self.client = aff4.FACTORY.Open(self.client_id, token=self.token)
-    self.state.knowledge_base = self.client.Get(
-        self.client.Schema.KNOWLEDGE_BASE)
-    self.state.labels = list(self.client.GetLabels())
+    self.state.knowledge_base = self.client_knowledge_base
     self.state.artifacts_wanted = {}
     self.state.artifacts_fetched = set()
     self.state.checks_run = []
     self.state.checks_with_findings = []
     self.state.results_store = None
     self.state.host_data = {}
-    self.CallStateInline(next_state="MapArtifactData")
+    self.MapArtifactData()
 
-  def MapArtifactData(self, responses):
+  def MapArtifactData(self):
     """Get processed data, mapped to artifacts.
 
     Identifies the artifacts that should be collected based on the os and labels
@@ -66,9 +67,6 @@ class CheckRunner(flow.GRRFlow):
     are used to only trigger the parsers required for the checks in cases where
     multiple parsers can be applied, and to parse the results once, rather than
     re-parse them within each check that uses the results.
-
-    Args:
-      responses: Input from previous states as an rdfvalue.Dict
     """
     self.state.artifacts_wanted = checks.CheckRegistry.SelectArtifacts(
         os_name=self.state.knowledge_base.os,
@@ -119,7 +117,7 @@ class CheckRunner(flow.GRRFlow):
     Args:
       responses: Input from previous states as an rdfvalue.Dict
     """
-    artifact_name = unicode(responses.request_data["artifact_name"])
+    artifact_name = str(responses.request_data["artifact_name"])
     # In some cases, artifacts may not find anything. We create an empty set of
     # host data so the checks still run.
     artifact_data = self.state.host_data.get(artifact_name, {})

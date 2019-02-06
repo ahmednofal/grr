@@ -17,8 +17,6 @@ itself. This allows callers to create a data store specific filter
 implementation, with no prior knowledge of the concrete implementation.
 
 In order to accommodate for the data store's basic filtering capabilities it is
-from __future__ import absolute_import
-
 important to allow the data store to store attribute values using the most
 appropriate types.
 
@@ -35,7 +33,9 @@ More complex types should be encoded into bytes and stored in the data store as
 bytes. The data store can then treat the type as an opaque type (and will not be
 able to filter it directly).
 """
+from __future__ import absolute_import
 from __future__ import division
+
 from __future__ import print_function
 from __future__ import unicode_literals
 
@@ -48,10 +48,13 @@ import sys
 import time
 
 
-from builtins import zip  # pylint: disable=redefined-builtin
+from future.builtins import str
+from future.builtins import zip
 from future.utils import iteritems
 from future.utils import iterkeys
 from future.utils import with_metaclass
+from typing import Optional
+from typing import Text
 
 from grr_response_core import config
 from grr_response_core.lib import flags
@@ -72,12 +75,19 @@ from grr_response_server.rdfvalues import flow_runner as rdf_flow_runner
 
 flags.DEFINE_bool("list_storage", False, "List all storage subsystems present.")
 
+# TODO(user): Move access to functions that never return None but raise
+# instead.
+
 # A global data store handle
-DB = None
+DB = None  # type: Optional[DataStore]
+
 # The global relational db handle.
-REL_DB = None
+# TODO: Replace with Database, as soon as pytype
+# correctly recognizes with_metaclass(abc.ABCMeta).
+REL_DB = None  # type: Optional[db.DatabaseValidationWrapper]
+
 # The global blobstore handle.
-BLOBS = None
+BLOBS = None  # type: Optional[blob_store.BlobStore]
 
 
 def RelationalDBWriteEnabled():
@@ -107,7 +117,18 @@ def RelationalDBReadEnabled(category=None):
 
 
 def RelationalDBFlowsEnabled():
-  return config.CONFIG["Database.useForReads.flows"]
+  """Returns True if relational flows are enabled.
+
+  Even with RelationalDBReadEnabled() returning True, this can be False.
+
+  Returns: True if relational flows are enabled.
+
+  """
+  return config.CONFIG["Database.useRelationalFlows"]
+
+
+def AFF4Enabled():
+  return config.CONFIG["Database.aff4_enabled"]
 
 
 # There are stub methods that don't return/yield as indicated by the docstring.
@@ -283,7 +304,7 @@ class MutationPool(object):
 
   def CollectionDelete(self, collection_id):
     for subject, _, _ in DB.ScanAttribute(
-        unicode(collection_id.Add("Results")), DataStore.COLLECTION_ATTRIBUTE):
+        str(collection_id.Add("Results")), DataStore.COLLECTION_ATTRIBUTE):
       self.DeleteSubject(subject)
       if self.Size() > 50000:
         self.Flush()
@@ -318,7 +339,7 @@ class MutationPool(object):
     filtered_count = 0
 
     for subject, values in DB.ScanAttributes(
-        unicode(queue_id.Add("Records")),
+        str(queue_id.Add("Records")),
         [DataStore.COLLECTION_ATTRIBUTE, DataStore.QUEUE_LOCK_ATTRIBUTE],
         max_records=4 * limit,
         after_urn=after_urn):
@@ -329,7 +350,7 @@ class MutationPool(object):
         self.DeleteAttributes(subject, [DataStore.QUEUE_LOCK_ATTRIBUTE])
         continue
       if DataStore.QUEUE_LOCK_ATTRIBUTE in values:
-        timestamp = rdfvalue.RDFDatetime.FromSerializedString(
+        timestamp = rdfvalue.RDFDatetime.FromMicrosecondsSinceEpoch(
             values[DataStore.QUEUE_LOCK_ATTRIBUTE][1])
         if timestamp > now:
           continue
@@ -542,7 +563,7 @@ class MutationPool(object):
 
   def AFF4AddChild(self, subject, child, extra_attributes=None):
     """Adds a child to the specified parent."""
-    precondition.AssertType(child, unicode)
+    precondition.AssertType(child, Text)
 
     attributes = {
         DataStore.AFF4_INDEX_DIR_TEMPLATE % child: [
@@ -597,7 +618,8 @@ class DataStore(with_metaclass(registry.MetaclassRegistry, object)):
   monitor_thread = None
 
   def __init__(self):
-    if self.enable_flusher_thread:
+    in_test = "Test Context" in config.CONFIG.context
+    if not in_test and self.enable_flusher_thread:
       # Start the flusher thread.
       self.flusher_thread = utils.InterruptableThread(
           name="DataStore flusher thread", target=self.Flush, sleep_time=0.5)
@@ -868,6 +890,7 @@ class DataStore(with_metaclass(registry.MetaclassRegistry, object)):
 
     return []
 
+  @abc.abstractmethod
   def ResolveMulti(self, subject, attributes, timestamp=None, limit=None):
     """Resolve multiple attributes for a subject.
 
@@ -1382,7 +1405,7 @@ class DataStore(with_metaclass(registry.MetaclassRegistry, object)):
               suffix=after_suffix or self.COLLECTION_MAX_SUFFIX)[0])
 
     for subject, timestamp, serialized_rdf_value in self.ScanAttribute(
-        unicode(collection_id.Add("Results")),
+        str(collection_id.Add("Results")),
         self.COLLECTION_ATTRIBUTE,
         after_urn=after_urn,
         max_records=limit):
@@ -1475,18 +1498,13 @@ class DataStore(with_metaclass(registry.MetaclassRegistry, object)):
         stored_value = stats_values.StatsStoreValue.FromSerializedString(
             value_string)
 
-        fields_values = []
         if metadata.fields_defs:
-          for stored_field_value in stored_value.fields_values:
-            fields_values.append(stored_field_value.value)
-
+          field_values = [v.value for v in stored_value.fields_values]
           current_dict = part_results.setdefault(metric_name, {})
-          for field_value in fields_values[:-1]:
-            new_dict = {}
-            current_dict.setdefault(field_value, new_dict)
-            current_dict = new_dict
+          for field_value in field_values[:-1]:
+            current_dict = current_dict.setdefault(field_value, {})
 
-          result_values_list = current_dict.setdefault(fields_values[-1], [])
+          result_values_list = current_dict.setdefault(field_values[-1], [])
         else:
           result_values_list = part_results.setdefault(metric_name, [])
 
@@ -1536,7 +1554,12 @@ class DataStore(with_metaclass(registry.MetaclassRegistry, object)):
     results = self.MultiResolvePrefix(
         locations, DataStore.FILE_HASH_PREFIX, timestamp=timestamp)
     for hash_obj, matches in results:
-      yield (hash_obj, [file_urn for _, file_urn, _ in matches])
+      file_urns = []
+      for _, serialized_file_run, _ in matches:
+        file_urn = rdfvalue.RDFURN.FromSerializedString(serialized_file_run)
+        file_urns.append(file_urn)
+
+      yield (hash_obj, file_urns)
 
   def AFF4FetchChildren(self, subject, timestamp=None, limit=None):
     results = self.ResolvePrefix(
@@ -1628,6 +1651,9 @@ class DBSubjectLock(object):
       self.Release()
     except Exception:  # This can raise on cleanup pylint: disable=broad-except
       pass
+
+  def ExpirationAsRDFDatetime(self):
+    return rdfvalue.RDFDatetime.FromSecondsSinceEpoch(self.expires / 1e6)
 
 
 class DataStoreInit(registry.InitHook):

@@ -2,6 +2,7 @@
 """Simple parsers for configuration files."""
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 
@@ -23,7 +24,7 @@ class ProcSysParser(parser.FileMultiParser):
     # Remove /proc/sys
     key = stat.pathspec.path.replace("/proc/sys/", "", 1)
     key = key.replace("/", "_")
-    value = file_obj.read().split()
+    value = file_obj.read().decode("utf-8").split()
     if len(value) == 1:
       value = value[0]
     return key, value

@@ -2,16 +2,18 @@
 """Common tests for stats-collector implementations."""
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import abc
 import time
 
-import builtins
+from absl.testing import absltest
+
+from future.builtins import range
+from future.builtins import str
 from future.utils import with_metaclass
 import mock
-
-import unittest
 
 from grr_response_core.lib.rdfvalues import stats as rdf_stats
 from grr_response_core.stats import stats_collector
@@ -27,12 +29,19 @@ def FakeStatsContext(fake_stats_collector):
                            fake_stats_collector)
 
 
+# TODO:
 # pytype: disable=ignored-abstractmethod
-class StatsCollectorTest(with_metaclass(abc.ABCMeta, unittest.TestCase)):
+class StatsCollectorTest(with_metaclass(abc.ABCMeta, absltest.TestCase)):
   """Stats collection tests.
 
   Each test method has uniquely-named metrics to accommodate implementations
   that do not support re-definition of metrics.
+
+  For Events, the exact boundaries of Distribution bins are not tested. For
+  these histogram metrics, it is acceptable that different implementations have
+  slightly different behavior, e.g. one uses lower or equal while another uses
+  strictly lower for bounds of bins. This allows integration with third-party
+  metric libraries.
   """
 
   def setUp(self):
@@ -47,6 +56,7 @@ class StatsCollectorTest(with_metaclass(abc.ABCMeta, unittest.TestCase)):
   def _CreateStatsCollector(self, metadata_list):
     """Creates a new stats collector with the given metadata."""
     # Return a mock stats collector to satisfy type-checking (pytype).
+    # TODO
     return mock.Mock(spec_set=stats_collector.StatsCollector)
 
   def _Sleep(self, n):
@@ -61,7 +71,7 @@ class StatsCollectorTest(with_metaclass(abc.ABCMeta, unittest.TestCase)):
 
     self.assertEqual(0, collector.GetMetricValue(counter_name))
 
-    for _ in builtins.range(5):
+    for _ in range(5):
       collector.IncrementCounter(counter_name)
     self.assertEqual(5, collector.GetMetricValue(counter_name))
 
@@ -89,7 +99,7 @@ class StatsCollectorTest(with_metaclass(abc.ABCMeta, unittest.TestCase)):
     self.assertEqual(0, collector.GetMetricValue(counter_name, fields=["a"]))
     self.assertEqual(0, collector.GetMetricValue(counter_name, fields=["b"]))
 
-    for _ in builtins.range(5):
+    for _ in range(5):
       collector.IncrementCounter(counter_name, fields=["dimension_value_1"])
     self.assertEqual(
         5, collector.GetMetricValue(counter_name, fields=["dimension_value_1"]))
@@ -107,28 +117,25 @@ class StatsCollectorTest(with_metaclass(abc.ABCMeta, unittest.TestCase)):
 
   def testSimpleGauge(self):
     int_gauge_name = "testSimpleGauge_int_gauge"
-    string_gauge_name = "testSimpleGauge_string_gauge"
+    float_gauge_name = "testSimpleGauge_float_gauge"
 
     collector = self._CreateStatsCollector([
         stats_utils.CreateGaugeMetadata(int_gauge_name, int),
-        stats_utils.CreateGaugeMetadata(string_gauge_name, str)
+        stats_utils.CreateGaugeMetadata(float_gauge_name, float)
     ])
 
     self.assertEqual(0, collector.GetMetricValue(int_gauge_name))
-    self.assertEqual("", collector.GetMetricValue(string_gauge_name))
-
+    self.assertEqual(0.0, collector.GetMetricValue(float_gauge_name))
     collector.SetGaugeValue(int_gauge_name, 42)
-    collector.SetGaugeValue(string_gauge_name, "some")
+    collector.SetGaugeValue(float_gauge_name, 42.3)
 
     self.assertEqual(42, collector.GetMetricValue(int_gauge_name))
-    self.assertEqual("some", collector.GetMetricValue(string_gauge_name))
+    self.assertAlmostEqual(42.3, collector.GetMetricValue(float_gauge_name))
 
     # At least default Python type checking is enforced in gauges:
     # we can't assign string to int
     with self.assertRaises(ValueError):
       collector.SetGaugeValue(int_gauge_name, "some")
-    # but we can assign int to string
-    collector.SetGaugeValue(string_gauge_name, 42)
 
   def testGaugeWithFields(self):
     int_gauge_name = "testGaugeWithFields_int_gauge"
@@ -157,21 +164,21 @@ class StatsCollectorTest(with_metaclass(abc.ABCMeta, unittest.TestCase)):
 
   def testGaugeWithCallback(self):
     int_gauge_name = "testGaugeWithCallback_int_gauge"
-    string_gauge_name = "testGaugeWithCallback_string_gauge"
+    float_gauge_name = "testGaugeWithCallback_float_gauge"
 
     collector = self._CreateStatsCollector([
         stats_utils.CreateGaugeMetadata(int_gauge_name, int),
-        stats_utils.CreateGaugeMetadata(string_gauge_name, str)
+        stats_utils.CreateGaugeMetadata(float_gauge_name, float)
     ])
 
     self.assertEqual(0, collector.GetMetricValue(int_gauge_name))
-    self.assertEqual("", collector.GetMetricValue(string_gauge_name))
+    self.assertEqual(0.0, collector.GetMetricValue(float_gauge_name))
 
     collector.SetGaugeCallback(int_gauge_name, lambda: 42)
-    collector.SetGaugeCallback(string_gauge_name, lambda: "some")
+    collector.SetGaugeCallback(float_gauge_name, lambda: 42.3)
 
     self.assertEqual(42, collector.GetMetricValue(int_gauge_name))
-    self.assertEqual("some", collector.GetMetricValue(string_gauge_name))
+    self.assertAlmostEqual(42.3, collector.GetMetricValue(float_gauge_name))
 
   def testSimpleEventMetric(self):
     event_metric_name = "testSimpleEventMetric_event_metric"
@@ -375,7 +382,7 @@ class StatsCollectorTest(with_metaclass(abc.ABCMeta, unittest.TestCase)):
       pass
 
     with FakeStatsContext(collector):
-      for _ in builtins.range(10):
+      for _ in range(10):
         CountedFunc()
 
     self.assertEqual(collector.GetMetricValue(counter_name), 10)
@@ -385,8 +392,7 @@ class StatsCollectorTest(with_metaclass(abc.ABCMeta, unittest.TestCase)):
     event_metric_name = "testMaps_event_metric"
 
     collector = self._CreateStatsCollector([
-        stats_utils.CreateEventMetadata(
-            event_metric_name, bins=[0.0, 0.1, 0.2])
+        stats_utils.CreateEventMetadata(event_metric_name, bins=[0, 0.1, 0.2])
     ])
 
     @stats_utils.Timed(event_metric_name)
@@ -395,24 +401,17 @@ class StatsCollectorTest(with_metaclass(abc.ABCMeta, unittest.TestCase)):
 
     with FakeStatsContext(collector):
       m = collector.GetMetricValue(event_metric_name)
-      self.assertEqual(m.bins_heights[0.0], 0)
-      self.assertEqual(m.bins_heights[0.1], 0)
-      self.assertEqual(m.bins_heights[0.2], 0)
+      self.assertEqual(m.bins_heights, {-_INF: 0, 0: 0, 0.1: 0, 0.2: 0})
 
-      for _ in builtins.range(3):
-        TimedFunc(0)
+      for _ in range(3):
+        TimedFunc(0.01)
 
       m = collector.GetMetricValue(event_metric_name)
-      self.assertEqual(m.bins_heights[0.0], 3)
-      self.assertEqual(m.bins_heights[0.1], 0)
-      self.assertEqual(m.bins_heights[0.2], 0)
+      self.assertEqual(m.bins_heights, {-_INF: 0, 0: 3, 0.1: 0, 0.2: 0})
 
       TimedFunc(0.11)
       m = collector.GetMetricValue(event_metric_name)
-
-      self.assertEqual(m.bins_heights[0.0], 3)
-      self.assertEqual(m.bins_heights[0.1], 1)
-      self.assertEqual(m.bins_heights[0.2], 0)
+      self.assertEqual(m.bins_heights, {-_INF: 0, 0: 3, 0.1: 1, 0.2: 0})
 
   def testCombiningDecorators(self):
     """Test combining decorators."""
@@ -435,9 +434,7 @@ class StatsCollectorTest(with_metaclass(abc.ABCMeta, unittest.TestCase)):
 
     # Check if all vars get updated
     m = collector.GetMetricValue(event_metric_name)
-    self.assertEqual(m.bins_heights[0.0], 1)
-    self.assertEqual(m.bins_heights[0.1], 0)
-    self.assertEqual(m.bins_heights[0.2], 0)
+    self.assertEqual(m.bins_heights, {-_INF: 0, 0: 1, 0.1: 0, 0.2: 0})
 
     self.assertEqual(collector.GetMetricValue(counter_name), 1)
 
@@ -448,8 +445,7 @@ class StatsCollectorTest(with_metaclass(abc.ABCMeta, unittest.TestCase)):
 
     collector = self._CreateStatsCollector([
         stats_utils.CreateCounterMetadata(counter_name),
-        stats_utils.CreateEventMetadata(
-            event_metric_name, bins=[0.0, 0.1, 0.2])
+        stats_utils.CreateEventMetadata(event_metric_name, bins=[0, 0.1, 0.2])
     ])
 
     @stats_utils.Timed(event_metric_name)
@@ -463,9 +459,7 @@ class StatsCollectorTest(with_metaclass(abc.ABCMeta, unittest.TestCase)):
 
     # Check if all vars get updated
     m = collector.GetMetricValue(event_metric_name)
-    self.assertEqual(m.bins_heights[0.0], 0)
-    self.assertEqual(m.bins_heights[0.1], 1)
-    self.assertEqual(m.bins_heights[0.2], 0)
+    self.assertEqual(m.bins_heights, {-_INF: 0, 0: 0, 0.1: 1, 0.2: 0})
 
     self.assertEqual(collector.GetMetricValue(counter_name), 1)
 
@@ -496,13 +490,15 @@ class StatsCollectorTest(with_metaclass(abc.ABCMeta, unittest.TestCase)):
       self._Sleep(n)
 
     with FakeStatsContext(collector):
-      Func1(0)
-      Func2(0)
+      Func1(0.1)
+      Func2(0.1)
       self.assertEqual(collector.GetMetricValue(counter_name), 2)
 
-      Func3(0)
-      Func4(1)
+      Func3(0.1)
+      Func4(1.1)
       m = collector.GetMetricValue(event_metric_name)
-      self.assertEqual(m.bins_heights[0.0], 1)
-      self.assertEqual(m.bins_heights[1], 1)
-      self.assertEqual(m.bins_heights[2], 0)
+      self.assertEqual(m.bins_heights, {-_INF: 0, 0: 1, 1: 1, 2: 0})
+
+
+# TODO:
+# pytype: enable=ignored-abstractmethod

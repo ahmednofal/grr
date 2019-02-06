@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Tests for clients with special approval logic."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import os
@@ -63,7 +64,9 @@ class ApprovalByLabelE2ETest(api_e2e_test_lib.ApiE2ETest):
   def setUp(self):
     super(ApprovalByLabelE2ETest, self).setUp()
 
-    self.SetUpLegacy()
+    if data_store.AFF4Enabled():
+      self.SetUpLegacy()
+
     if data_store.RelationalDBReadEnabled():
       self.SetUpRelationalDB()
 

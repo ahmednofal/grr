@@ -1,45 +1,15 @@
 #!/usr/bin/env python
 """Configuration parameters for client builder and server packaging."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import os
 import time
 
 from grr_response_core.lib import config_lib
-from grr_response_core.lib import rdfvalue
 from grr_response_core.lib import type_info
-
-config_lib.DEFINE_option(
-    type_info.RDFValueType(
-        rdfclass=rdfvalue.RDFURN,
-        name="Config.aff4_root",
-        default="aff4:/config/",
-        description=("The path where the configs are stored in the aff4 "
-                     "namespace.")))
-
-config_lib.DEFINE_option(
-    type_info.RDFValueType(
-        rdfclass=rdfvalue.RDFURN,
-        name="Config.python_hack_root",
-        default="%(Config.aff4_root)/python_hacks",
-        description=("The path where python hacks are stored in the aff4 "
-                     "namespace.")))
-
-# Executables must be signed and uploaded to their dedicated AFF4 namespace.
-config_lib.DEFINE_option(
-    type_info.RDFValueType(
-        rdfclass=rdfvalue.RDFURN,
-        name="Executables.aff4_path",
-        description="The aff4 path to signed executables.",
-        default="%(Config.aff4_root)/executables/%(Client.platform)"))
-
-config_lib.DEFINE_string(
-    name="Executables.installer",
-    default=("%(Executables.aff4_path)/installers/"
-             "%(ClientRepacker.output_basename)"
-             "%(ClientBuilder.output_extension)"),
-    help="The location of the generated installer in the config directory.")
+from grr_response_core.lib.util import compatibility
 
 config_lib.DEFINE_string(
     name="ClientBuilder.output_extension",
@@ -47,7 +17,9 @@ config_lib.DEFINE_string(
     help="The file extension for the client (OS dependent).")
 
 config_lib.DEFINE_string(
-    name="ClientBuilder.package_dir", default=None, help="OSX package name.")
+    name="ClientBuilder.package_dir",
+    default="%(ClientBuilder.build_root_dir)/%(Client.name)-pkg",
+    help="OSX package name.")
 
 config_lib.DEFINE_string(
     "ClientBuilder.private_config_validator_class",
@@ -116,7 +88,6 @@ config_lib.DEFINE_string(
     name="PyInstaller.spec",
     help="The spec file contents to use for building the client.",
     default=r"""
-import capstone
 import glob
 import os
 import platform
@@ -167,19 +138,6 @@ exe = EXE\(
     version=os.path.join\(r"%(PyInstaller.build_dir)", "version.txt"\),
     icon=os.path.join\(r"%(PyInstaller.build_dir)", "grr.ico"\)\)
 
-LIBCAPSTONE = None
-for name in ["capstone", "libcapstone"]:
-  for ext in [".so", ".dylib", ".dll"]:
-    for path in [
-      os.path.join\(capstone.__path__[0], name + ext\),
-      os.path.join\(os.path.dirname\(capstone.__path__[0]\), name + ext\)
-    ]:
-      if os.path.exists\(path\):
-        LIBCAPSTONE = path
-
-if not LIBCAPSTONE:
-  raise RuntimeError\("Can't find libcasptone"\)
-
 CHIPSEC_LIBS = []
 if platform.system\(\).lower\(\) == 'linux':
   import chipsec
@@ -192,21 +150,10 @@ RESOURCES_PREFIX = os.path.join\(sys.prefix, "resources"\)
 
 coll = COLLECT\(
     exe,
-    # Forcing PyInstaller to see libcapstone built by rekall-capstone
-    # and chipsec.
-    a.binaries + [\(os.path.basename\(LIBCAPSTONE\), LIBCAPSTONE, "BINARY"\)] +
-      [\(os.path.basename\(x\), x, "BINARY"\) for x in CHIPSEC_LIBS],
+    # Forcing PyInstaller to see chipsec.
+    a.binaries + [\(os.path.basename\(x\), x, "BINARY"\) for x in CHIPSEC_LIBS],
     a.zipfiles,
-    # Forcing PyInstaller to copy Pmem drivers from Rekall resources.
-    a.datas + [\(os.path.join\("resources", "MacPmem.kext.tgz"\),
-                 os.path.join\(RESOURCES_PREFIX, "MacPmem.kext.tgz"\),
-                 "DATA"\),
-               \(os.path.join\("resources", "WinPmem", "winpmem_x64.sys"\),
-                 os.path.join\(RESOURCES_PREFIX, "WinPmem", "winpmem_x64.sys"\),
-                 "DATA"\),
-               \(os.path.join\("resources", "WinPmem", "winpmem_x86.sys"\),
-                 os.path.join\(RESOURCES_PREFIX, "WinPmem", "winpmem_x86.sys"\),
-                 "DATA"\)],
+    a.datas,
     strip=False,
     upx=False,
     name="grr-client"
@@ -414,13 +361,14 @@ config_lib.DEFINE_string(
 
 config_lib.DEFINE_string(
     name="ClientBuilder.debian_build_time",
-    default=time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime()),
+    default=compatibility.FormatTime("%a, %d %b %Y %H:%M:%S +0000",
+                                     time.gmtime()),
     help="The build time put into the debian package. Needs to be formatted"
     " like the output of 'date -R'.")
 
 config_lib.DEFINE_string(
     name="ClientBuilder.rpm_build_time",
-    default=time.strftime("%a %b %d %Y", time.gmtime()),
+    default=compatibility.FormatTime("%a %b %d %Y", time.gmtime()),
     help="The build time put into the rpm package. Needs to be formatted"
     " according to the rpm specs.")
 
@@ -457,7 +405,7 @@ config_lib.DEFINE_string(
 
 config_lib.DEFINE_string(
     "ClientBuilder.vs_dir",
-    default=None,
+    default=r"%{C:\Program Files (x86)\Microsoft Visual Studio 12.0}",
     help="Path to visual studio installation dir.")
 
 config_lib.DEFINE_string(
@@ -475,9 +423,11 @@ config_lib.DEFINE_string(
     default="/usr/lib/%(Client.name)",
     help="Target installation directory for client builds.")
 
+# Needed for package maker. Do not touch.
 config_lib.DEFINE_string(
     "ClientBuilder.mangled_output_basename",
-    default=None,
+    default="%(Client.name)_%(Source.version_major)."
+    "%(Source.version_minor).%(Source.version_revision)",
     help="OS X package maker mangled name.")
 
 config_lib.DEFINE_string(
@@ -492,7 +442,7 @@ config_lib.DEFINE_string(
 
 config_lib.DEFINE_string(
     "ClientBuilder.signing_keychain_file",
-    default=None,
+    default="%(HOME|env)/Library/Keychains/MacApplicationSigning.keychain",
     help="Path to a keychain file to be used to sign Darwin binaries.")
 
 config_lib.DEFINE_string(
@@ -502,7 +452,7 @@ config_lib.DEFINE_string(
 
 config_lib.DEFINE_string(
     "ClientBuilder.daemon_link",
-    default=None,
+    default="/usr/sbin/%(Client.binary_name)",
     help="The installer package will create a link in the system to the "
     "installed binary.")
 

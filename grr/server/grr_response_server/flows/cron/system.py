@@ -1,29 +1,28 @@
 #!/usr/bin/env python
 """These flows are system-specific GRR cron flows."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import bisect
 import logging
-import time
 
 
 from builtins import zip  # pylint: disable=redefined-builtin
 from future.utils import iteritems
 from future.utils import itervalues
-from future.utils import viewkeys
 
-from fleetspeak.src.server.proto.fleetspeak_server import admin_pb2
+from grr_response_core import config
 from grr_response_core.lib import rdfvalue
 from grr_response_core.lib import utils
 from grr_response_core.lib.rdfvalues import stats as rdf_stats
 from grr_response_core.lib.util import collection
 from grr_response_server import aff4
+from grr_response_server import client_report_utils
 from grr_response_server import cronjobs
 from grr_response_server import data_store
+from grr_response_server import db
 from grr_response_server import export_utils
-from grr_response_server import fleetspeak_connector
-from grr_response_server import fleetspeak_utils
 from grr_response_server.aff4_objects import aff4_grr
 from grr_response_server.aff4_objects import cronjobs as aff4_cronjobs
 from grr_response_server.aff4_objects import stats as aff4_stats
@@ -31,6 +30,12 @@ from grr_response_server.flows.general import discovery as flows_discovery
 from grr_response_server.hunts import implementation as hunts_implementation
 from grr_response_server.hunts import standard as hunts_standard
 from grr_response_server.rdfvalues import flow_runner as rdf_flow_runner
+
+# Maximum number of old stats entries to delete in a single db call.
+_STATS_DELETION_BATCH_SIZE = 10000
+
+# How often to save progress to the DB when deleting stats.
+_stats_checkpoint_period = rdfvalue.Duration("15m")
 
 
 class _ActiveCounter(object):
@@ -44,13 +49,14 @@ class _ActiveCounter(object):
 
   active_days = [1, 7, 14, 30]
 
-  def __init__(self, attribute):
+  def __init__(self, report_type):
     """Constructor.
 
     Args:
-       attribute: The histogram object will be stored in this attribute.
+       report_type: rdf_stats.ClientGraphSeries.ReportType for the client stats
+         to track.
     """
-    self.attribute = attribute
+    self._report_type = report_type
     self.categories = dict([(x, {}) for x in self.active_days])
 
   def Add(self, category, label, age):
@@ -75,101 +81,58 @@ class _ActiveCounter(object):
         self.categories[active_time][label][
             category] = self.categories[active_time][label].get(category, 0) + 1
 
-  def Save(self, cron_flow):
+  def Save(self, token=None):
     """Generate a histogram object and store in the specified attribute."""
-    histograms = {}
+    graph_series_by_label = {}
     for active_time in self.active_days:
       for label in self.categories[active_time]:
-        histograms.setdefault(label, self.attribute())
-        graph = rdf_stats.Graph(title="%s day actives for %s label" %
-                                (active_time, label))
+        graphs_for_label = graph_series_by_label.setdefault(
+            label, rdf_stats.ClientGraphSeries(report_type=self._report_type))
+        graph = rdf_stats.Graph(
+            title="%s day actives for %s label" % (active_time, label))
         for k, v in sorted(iteritems(self.categories[active_time][label])):
           graph.Append(label=k, y_value=v)
+        graphs_for_label.graphs.Append(graph)
 
-        histograms[label].Append(graph)
-
-    for label, histogram in iteritems(histograms):
-      # Add an additional instance of this histogram (without removing previous
-      # instances).
-      # pylint: disable=protected-access
-      cron_flow._StatsForLabel(label).AddAttribute(histogram)
-      # pylint: enable=protected-access
-
-
-def _GetLastContactFromFleetspeak(client_ids):
-  """Fetches last contact times for the given clients from Fleetspeak.
-
-  Args:
-    client_ids: Iterable containing GRR client ids.
-
-  Returns:
-    A dict mapping the given client ids to timestamps representing when
-    Fleetspeak last contacted the clients.
-  """
-  if not fleetspeak_connector.CONN or not fleetspeak_connector.CONN.outgoing:
-    logging.warning(
-        "Tried to get last-contact timestamps for Fleetspeak clients "
-        "without an active connection to Fleetspeak.")
-    return {}
-  fs_ids = [fleetspeak_utils.GRRIDToFleetspeakID(cid) for cid in client_ids]
-  fs_result = fleetspeak_connector.CONN.outgoing.ListClients(
-      admin_pb2.ListClientsRequest(client_ids=fs_ids))
-  if len(client_ids) != len(fs_result.clients):
-    logging.error("Expected %d results from Fleetspeak; got %d instead.",
-                  len(client_ids), len(fs_result.clients))
-  last_contact_times = {}
-  for fs_client in fs_result.clients:
-    grr_id = fleetspeak_utils.FleetspeakIDToGRRID(fs_client.client_id)
-    last_contact_times[grr_id] = fleetspeak_utils.TSToRDFDatetime(
-        fs_client.last_contact_time)
-  return last_contact_times
+    for label, graph_series in iteritems(graph_series_by_label):
+      client_report_utils.WriteGraphSeries(graph_series, label, token=token)
 
 
 CLIENT_READ_BATCH_SIZE = 50000
 
 
-def _IterateAllClients():
-  """Fetches client data from the relational db."""
-  all_client_ids = data_store.REL_DB.ReadAllClientIDs()
-  for batch in collection.Batch(all_client_ids, CLIENT_READ_BATCH_SIZE):
-    client_map = data_store.REL_DB.MultiReadClientFullInfo(batch)
-    fs_client_ids = [
-        cid for (cid, client) in iteritems(client_map)
-        if client.metadata.fleetspeak_enabled
-    ]
-    last_contact_times = _GetLastContactFromFleetspeak(fs_client_ids)
-    for cid, last_contact in iteritems(last_contact_times):
-      client_map[cid].metadata.ping = last_contact
-    for client in itervalues(client_map):
-      yield client
+def _IterateAllClients(recency_window=None):
+  """Fetches client data from the relational db.
 
+  Args:
+    recency_window: An rdfvalue.Duration specifying a window of last-ping
+      timestamps to consider. Clients that haven't communicated with GRR servers
+      longer than the given period will be skipped. If recency_window is None,
+      all clients will be iterated.
 
-def _IterateAllLegacyClients(token):
-  """Fetches client data from the legacy db."""
-  root_children = aff4.FACTORY.Open(
-      aff4.ROOT_URN, token=token).OpenChildren(mode="r")
-  for batch in collection.Batch(root_children, CLIENT_READ_BATCH_SIZE):
-    fs_client_map = {}
-    non_fs_clients = []
-    for child in batch:
-      if not isinstance(child, aff4_grr.VFSGRRClient):
-        continue
-      if child.Get(child.Schema.FLEETSPEAK_ENABLED):
-        fs_client_map[child.urn.Basename()] = child
-      else:
-        non_fs_clients.append(child)
-    last_contact_times = _GetLastContactFromFleetspeak(viewkeys(fs_client_map))
-    for client in non_fs_clients:
-      yield client.Get(client.Schema.PING), client
-    for cid, client in iteritems(fs_client_map):
-      last_contact = last_contact_times.get(cid, client.Get(client.Schema.PING))
-      yield last_contact, client
+  Yields:
+    Batches (lists) of ClientFullInfo objects.
+  """
+  if recency_window is None:
+    min_last_ping = None
+  else:
+    min_last_ping = rdfvalue.RDFDatetime.Now() - recency_window
+  client_ids = data_store.REL_DB.ReadAllClientIDs(min_last_ping=min_last_ping)
+  for client_id_batch in collection.Batch(client_ids, CLIENT_READ_BATCH_SIZE):
+    client_info_dict = data_store.REL_DB.MultiReadClientFullInfo(
+        client_id_batch)
+    yield list(itervalues(client_info_dict))
 
 
 class AbstractClientStatsCronJob(cronjobs.SystemCronJobBase):
   """Base class for all stats processing cron jobs."""
 
   CLIENT_STATS_URN = rdfvalue.RDFURN("aff4:/stats/ClientFleetStats")
+
+  # An rdfvalue.Duration specifying a window of last-ping
+  # timestamps to analyze. Clients that haven't communicated with GRR servers
+  # longer than the given period will be skipped.
+  recency_window = None
 
   def BeginProcessing(self):
     pass
@@ -202,11 +165,13 @@ class AbstractClientStatsCronJob(cronjobs.SystemCronJobBase):
       self.BeginProcessing()
 
       processed_count = 0
-      for client in _IterateAllClients():
-        self.ProcessClientFullInfo(client)
-        processed_count += 1
 
-        # This flow is not dead: we don't want to run out of lease time.
+      for client_info_batch in _IterateAllClients(
+          recency_window=self.recency_window):
+        for client_info in client_info_batch:
+          self.ProcessClientFullInfo(client_info)
+        processed_count += len(client_info_batch)
+        self.Log("Processed %d clients.", processed_count)
         self.HeartBeat()
 
       self.FinishProcessing()
@@ -223,15 +188,16 @@ class AbstractClientStatsCronJob(cronjobs.SystemCronJobBase):
 class GRRVersionBreakDownCronJob(AbstractClientStatsCronJob):
   """Records relative ratios of GRR versions in 7 day actives."""
 
-  frequency = rdfvalue.Duration("4h")
-  lifetime = rdfvalue.Duration("4h")
+  frequency = rdfvalue.Duration("6h")
+  lifetime = rdfvalue.Duration("6h")
+  recency_window = rdfvalue.Duration("30d")
 
   def BeginProcessing(self):
     self.counter = _ActiveCounter(
-        aff4_stats.ClientFleetStats.SchemaCls.GRRVERSION_HISTOGRAM)
+        rdf_stats.ClientGraphSeries.ReportType.GRR_VERSION)
 
   def FinishProcessing(self):
-    self.counter.Save(self)
+    self.counter.Save(token=self.token)
 
   def ProcessClientFullInfo(self, client_full_info):
     c_info = client_full_info.last_startup_info.client_info
@@ -255,17 +221,18 @@ class OSBreakDownCronJob(AbstractClientStatsCronJob):
 
   frequency = rdfvalue.Duration("1d")
   lifetime = rdfvalue.Duration("20h")
+  recency_window = rdfvalue.Duration("30d")
 
   def BeginProcessing(self):
     self.counters = [
-        _ActiveCounter(aff4_stats.ClientFleetStats.SchemaCls.OS_HISTOGRAM),
-        _ActiveCounter(aff4_stats.ClientFleetStats.SchemaCls.RELEASE_HISTOGRAM),
+        _ActiveCounter(rdf_stats.ClientGraphSeries.ReportType.OS_TYPE),
+        _ActiveCounter(rdf_stats.ClientGraphSeries.ReportType.OS_RELEASE),
     ]
 
   def FinishProcessing(self):
     # Write all the counter attributes.
     for counter in self.counters:
-      counter.Save(self)
+      counter.Save(token=self.token)
 
   def ProcessClientFullInfo(self, client_full_info):
     labels = self._GetClientLabelsList(client_full_info)
@@ -290,6 +257,7 @@ class LastAccessStatsCronJob(AbstractClientStatsCronJob):
 
   frequency = rdfvalue.Duration("1d")
   lifetime = rdfvalue.Duration("20h")
+  recency_window = rdfvalue.Duration("60d")
 
   # The number of clients fall into these bins (number of days ago)
   _bins = [1, 2, 3, 7, 14, 30, 60]
@@ -308,12 +276,14 @@ class LastAccessStatsCronJob(AbstractClientStatsCronJob):
     # Build and store the graph now. Day actives are cumulative.
     for label in self.values:
       cumulative_count = 0
-      graph = aff4_stats.ClientFleetStats.SchemaCls.LAST_CONTACTED_HISTOGRAM()
+      graph_series = rdf_stats.ClientGraphSeries(
+          report_type=rdf_stats.ClientGraphSeries.ReportType.N_DAY_ACTIVE)
+      graph_series.graphs.Append(rdf_stats.Graph())
       for x, y in zip(self._bins, self.values[label]):
         cumulative_count += y
-        graph.Append(x_value=x, y_value=cumulative_count)
-
-      self._StatsForLabel(label).AddAttribute(graph)
+        graph_series.graphs[0].Append(x_value=x, y_value=cumulative_count)
+      client_report_utils.WriteGraphSeries(
+          graph_series, label, token=self.token)
 
   def ProcessClientFullInfo(self, client_full_info):
     labels = self._GetClientLabelsList(client_full_info)
@@ -341,6 +311,11 @@ class AbstractClientStatsCronFlow(aff4_cronjobs.SystemCronFlow):
   """
 
   CLIENT_STATS_URN = rdfvalue.RDFURN("aff4:/stats/ClientFleetStats")
+
+  # An rdfvalue.Duration specifying a window of last-ping
+  # timestamps to analyze. Clients that haven't communicated with GRR servers
+  # longer than the given period will be skipped.
+  recency_window = None
 
   def BeginProcessing(self):
     pass
@@ -376,18 +351,29 @@ class AbstractClientStatsCronFlow(aff4_cronjobs.SystemCronFlow):
       self.BeginProcessing()
 
       processed_count = 0
+
       if data_store.RelationalDBReadEnabled():
-        for client in _IterateAllClients():
-          self.ProcessClientFullInfo(client)
-          processed_count += 1
-          # This flow is not dead: we don't want to run out of lease time.
+        for client_info_batch in _IterateAllClients(
+            recency_window=self.recency_window):
+          for client_info in client_info_batch:
+            self.ProcessClientFullInfo(client_info)
+          processed_count += len(client_info_batch)
+          self.Log("Processed %d clients.", processed_count)
           self.HeartBeat()
       else:
-        for ping, client in _IterateAllLegacyClients(self.token):
-          self.ProcessLegacyClient(ping, client)
-          processed_count += 1
-          # This flow is not dead: we don't want to run out of lease time.
-          self.HeartBeat()
+        root_children = aff4.FACTORY.Open(
+            aff4.ROOT_URN, token=self.token).OpenChildren(mode="r")
+        for batch in collection.Batch(root_children, CLIENT_READ_BATCH_SIZE):
+          for child in batch:
+            if not isinstance(child, aff4_grr.VFSGRRClient):
+              continue
+
+            last_ping = child.Get(child.Schema.PING)
+
+            self.ProcessLegacyClient(last_ping, child)
+            processed_count += 1
+            # This flow is not dead: we don't want to run out of lease time.
+            self.HeartBeat()
 
       self.FinishProcessing()
       for fd in itervalues(self.stats):
@@ -404,13 +390,14 @@ class GRRVersionBreakDown(AbstractClientStatsCronFlow):
   """Records relative ratios of GRR versions in 7 day actives."""
 
   frequency = rdfvalue.Duration("4h")
+  recency_window = rdfvalue.Duration("30d")
 
   def BeginProcessing(self):
     self.counter = _ActiveCounter(
-        aff4_stats.ClientFleetStats.SchemaCls.GRRVERSION_HISTOGRAM)
+        rdf_stats.ClientGraphSeries.ReportType.GRR_VERSION)
 
   def FinishProcessing(self):
-    self.counter.Save(self)
+    self.counter.Save(token=self.token)
 
   def _Process(self, labels, c_info, ping):
     if not (c_info and ping):
@@ -441,16 +428,18 @@ class GRRVersionBreakDown(AbstractClientStatsCronFlow):
 class OSBreakDown(AbstractClientStatsCronFlow):
   """Records relative ratios of OS versions in 7 day actives."""
 
+  recency_window = rdfvalue.Duration("30d")
+
   def BeginProcessing(self):
     self.counters = [
-        _ActiveCounter(aff4_stats.ClientFleetStats.SchemaCls.OS_HISTOGRAM),
-        _ActiveCounter(aff4_stats.ClientFleetStats.SchemaCls.RELEASE_HISTOGRAM),
+        _ActiveCounter(rdf_stats.ClientGraphSeries.ReportType.OS_TYPE),
+        _ActiveCounter(rdf_stats.ClientGraphSeries.ReportType.OS_RELEASE),
     ]
 
   def FinishProcessing(self):
     # Write all the counter attributes.
     for counter in self.counters:
-      counter.Save(self)
+      counter.Save(self.token)
 
   def _Process(self, labels, ping, system, uname):
     if not ping:
@@ -484,6 +473,8 @@ class OSBreakDown(AbstractClientStatsCronFlow):
 class LastAccessStats(AbstractClientStatsCronFlow):
   """Calculates a histogram statistics of clients last contacted times."""
 
+  recency_window = rdfvalue.Duration("60d")
+
   # The number of clients fall into these bins (number of hours ago)
   _bins = [1, 2, 3, 7, 14, 30, 60]
 
@@ -501,12 +492,14 @@ class LastAccessStats(AbstractClientStatsCronFlow):
     # Build and store the graph now. Day actives are cumulative.
     for label in self.values:
       cumulative_count = 0
-      graph = aff4_stats.ClientFleetStats.SchemaCls.LAST_CONTACTED_HISTOGRAM()
+      graph_series = rdf_stats.ClientGraphSeries(
+          report_type=rdf_stats.ClientGraphSeries.ReportType.N_DAY_ACTIVE)
+      graph_series.graphs.Append(rdf_stats.Graph())
       for x, y in zip(self._bins, self.values[label]):
         cumulative_count += y
-        graph.Append(x_value=x, y_value=cumulative_count)
-
-      self._StatsForLabel(label).AddAttribute(graph)
+        graph_series.graphs[0].Append(x_value=x, y_value=cumulative_count)
+      client_report_utils.WriteGraphSeries(
+          graph_series, label, token=self.token)
 
   def _Process(self, labels, ping):
     if not ping:
@@ -601,9 +594,6 @@ class PurgeClientStats(aff4_cronjobs.SystemCronFlow):
 
   frequency = rdfvalue.Duration("1w")
 
-  # Keep stats for one month.
-  MAX_AGE = 31 * 24 * 3600
-
   def Start(self):
     """Calls "Process" state to avoid spending too much time in Start."""
     self.CallState(next_state="ProcessClients")
@@ -611,9 +601,8 @@ class PurgeClientStats(aff4_cronjobs.SystemCronFlow):
   def ProcessClients(self, responses):
     """Does the work."""
     del responses
-    self.start = 0
-    self.end = int(1e6 * (time.time() - self.MAX_AGE))
 
+    end = rdfvalue.RDFDatetime.Now() - db.CLIENT_STATS_RETENTION
     client_urns = export_utils.GetAllClients(token=self.token)
 
     for batch in collection.Batch(client_urns, 10000):
@@ -621,9 +610,18 @@ class PurgeClientStats(aff4_cronjobs.SystemCronFlow):
         for client_urn in batch:
           mutation_pool.DeleteAttributes(
               client_urn.Add("stats"), [u"aff4:stats"],
-              start=self.start,
-              end=self.end)
+              start=0,
+              end=end.AsMicrosecondsSinceEpoch())
       self.HeartBeat()
+
+    if data_store.RelationalDBWriteEnabled():
+      total_deleted_count = 0
+      for deleted_count in data_store.REL_DB.DeleteOldClientStats(
+          yield_after_count=_STATS_DELETION_BATCH_SIZE, retention_time=end):
+        self.HeartBeat()
+        total_deleted_count += deleted_count
+      self.Log("Deleted %d ClientStats that expired before %s",
+               total_deleted_count, end)
 
 
 class PurgeClientStatsCronJob(cronjobs.SystemCronJobBase):
@@ -632,20 +630,66 @@ class PurgeClientStatsCronJob(cronjobs.SystemCronJobBase):
   frequency = rdfvalue.Duration("1w")
   lifetime = rdfvalue.Duration("20h")
 
-  # Keep stats for one month.
-  MAX_AGE = 31 * 24 * 3600
+  def Run(self):
+    end = rdfvalue.RDFDatetime.Now() - db.CLIENT_STATS_RETENTION
+
+    if data_store.AFF4Enabled():
+      client_urns = export_utils.GetAllClients(token=self.token)
+      for batch in collection.Batch(client_urns, 10000):
+        with data_store.DB.GetMutationPool() as mutation_pool:
+          for client_urn in batch:
+            mutation_pool.DeleteAttributes(
+                client_urn.Add("stats"), [u"aff4:stats"],
+                start=0,
+                end=end.AsMicrosecondsSinceEpoch())
+        self.HeartBeat()
+
+    if data_store.RelationalDBWriteEnabled():
+      total_deleted_count = 0
+      for deleted_count in data_store.REL_DB.DeleteOldClientStats(
+          yield_after_count=_STATS_DELETION_BATCH_SIZE, retention_time=end):
+        self.HeartBeat()
+        total_deleted_count += deleted_count
+        self.Log("Deleted %d ClientStats that expired before %s",
+                 total_deleted_count, end)
+
+
+class PurgeServerStatsCronJob(cronjobs.SystemCronJobBase):
+  """Cronjob that deletes old stats entries from the relational DB."""
+
+  frequency = rdfvalue.Duration("3h")
+  lifetime = rdfvalue.Duration("2h")
 
   def Run(self):
-    self.start = 0
-    self.end = int(1e6 * (time.time() - self.MAX_AGE))
+    # Old stats in the legacy datastore get deleted after every write.
+    if not data_store.RelationalDBReadEnabled(category="stats"):
+      return
+    stats_ttl = (
+        rdfvalue.Duration("1h") * config.CONFIG["StatsStore.stats_ttl_hours"])
+    cutoff = rdfvalue.RDFDatetime.Now() - stats_ttl
+    total_entries_deleted = 0
+    last_checkpoint = None
+    while True:
+      num_entries_deleted = data_store.REL_DB.DeleteStatsStoreEntriesOlderThan(
+          cutoff, _STATS_DELETION_BATCH_SIZE)
+      total_entries_deleted += num_entries_deleted
 
-    client_urns = export_utils.GetAllClients(token=self.token)
+      if num_entries_deleted < _STATS_DELETION_BATCH_SIZE:
+        # Delete remaining stats-entries and exit.
+        num_entries_deleted = (
+            data_store.REL_DB.DeleteStatsStoreEntriesOlderThan(
+                cutoff, _STATS_DELETION_BATCH_SIZE))
+        if num_entries_deleted > 0:
+          total_entries_deleted += num_entries_deleted
+          self.Log("Deleted %d stats entries.", total_entries_deleted)
+        return
 
-    for batch in collection.Batch(client_urns, 10000):
-      with data_store.DB.GetMutationPool() as mutation_pool:
-        for client_urn in batch:
-          mutation_pool.DeleteAttributes(
-              client_urn.Add("stats"), [u"aff4:stats"],
-              start=self.start,
-              end=self.end)
-      self.HeartBeat()
+      if last_checkpoint is None:
+        time_since_last_checkpoint = rdfvalue.Duration(0)
+      else:
+        time_since_last_checkpoint = (
+            rdfvalue.RDFDatetime.Now() - last_checkpoint)
+      if time_since_last_checkpoint >= _stats_checkpoint_period:
+        self.Log("Deleted %d stats entries.", total_entries_deleted)
+        last_checkpoint = rdfvalue.RDFDatetime.Now()
+      self.HeartBeat()  # Terminate cron-run if lifetime has been exceeded.

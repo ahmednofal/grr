@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Module with GRRWorker implementation."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import logging
@@ -22,7 +23,9 @@ from grr_response_core.lib.util import collection
 from grr_response_core.stats import stats_collector_instance
 from grr_response_server import aff4
 from grr_response_server import data_store
+from grr_response_server import db
 from grr_response_server import flow
+from grr_response_server import flow_base
 from grr_response_server import handler_registry
 from grr_response_server import master
 from grr_response_server import queue_manager as queue_manager_lib
@@ -56,9 +59,6 @@ class GRRWorker(object):
   # target maximum time to spend on RunOnce
   RUN_ONCE_MAX_SECONDS = 300
 
-  # A class global threadpool to be used for all workers.
-  thread_pool = None
-
   # Duration of a flow lease time in seconds.
   flow_lease_time = 3600
   # Duration of a well known flow lease time in seconds.
@@ -91,15 +91,13 @@ class GRRWorker(object):
     if token is None:
       raise RuntimeError("A valid ACLToken is required.")
 
-    # Make the thread pool a global so it can be reused for all workers.
-    if self.__class__.thread_pool is None:
-      if threadpool_size is None:
-        threadpool_size = config.CONFIG["Threadpool.size"]
+    if threadpool_size is None:
+      threadpool_size = config.CONFIG["Threadpool.size"]
 
-      self.__class__.thread_pool = threadpool.ThreadPool.Factory(
-          threadpool_prefix, min_threads=2, max_threads=threadpool_size)
+    self.thread_pool = threadpool.ThreadPool.Factory(
+        threadpool_prefix, min_threads=2, max_threads=threadpool_size)
 
-      self.__class__.thread_pool.Start()
+    self.thread_pool.Start()
 
     self.token = token
     self.last_active = 0
@@ -107,6 +105,9 @@ class GRRWorker(object):
 
     # Well known flows are just instantiated.
     self.well_known_flows = flow.WellKnownFlow.GetAllWellKnownFlows(token=token)
+
+  def Shutdown(self):
+    self.thread_pool.Stop()
 
   def Run(self):
     """Event loop."""
@@ -144,7 +145,7 @@ class GRRWorker(object):
 
     except KeyboardInterrupt:
       logging.info("Caught interrupt, exiting.")
-      self.__class__.thread_pool.Join()
+      self.thread_pool.Join()
 
   def _ProcessMessageHandlerRequests(self, requests):
     """Processes message handler requests."""
@@ -157,13 +158,16 @@ class GRRWorker(object):
         logging.error("Unknown message handler: %s", handler_name)
         continue
 
+      stats_collector_instance.Get().IncrementCounter(
+          "well_known_flow_requests", fields=[handler_name])
+
       try:
         logging.debug("Running %d messages for handler %s",
                       len(requests_for_handler), handler_name)
         handler_cls(token=self.token).ProcessMessages(requests_for_handler)
-      except Exception:  # pylint: disable=broad-except
-        logging.exception("Exception while processing message handler %s",
-                          handler_name)
+      except Exception as e:  # pylint: disable=broad-except
+        logging.exception("Exception while processing message handler %s: %s",
+                          handler_name, e)
 
     logging.debug("Deleting message handler request ids: %s", ",".join(
         str(r.request_id) for r in requests))
@@ -282,7 +286,7 @@ class GRRWorker(object):
 
         processed += 1
         self.queued_flows.Put(notification.session_id, 1)
-        self.__class__.thread_pool.AddTask(
+        self.thread_pool.AddTask(
             target=self._ProcessMessages,
             args=(notification, queue_manager.Copy()),
             name=self.__class__.__name__)
@@ -302,7 +306,7 @@ class GRRWorker(object):
 
     runner = flow_obj.GetRunner()
     try:
-      runner.ProcessCompletedRequests(notification, self.__class__.thread_pool)
+      runner.ProcessCompletedRequests(notification, self.thread_pool)
     except Exception as e:  # pylint: disable=broad-except
       # Something went wrong - log it in the flow.
       runner.context.state = rdf_flow_runner.FlowContext.State.ERROR
@@ -355,7 +359,7 @@ class GRRWorker(object):
         with flow_obj:
           responses = flow_obj.FetchAndRemoveRequestsAndResponses(session_id)
 
-        flow_obj.ProcessResponses(responses, self.__class__.thread_pool)
+        flow_obj.ProcessResponses(responses, self.thread_pool)
 
       else:
         with flow_obj:
@@ -406,13 +410,19 @@ class GRRWorker(object):
   def ProcessFlow(self, flow_processing_request):
     """The callback for the flow processing queue."""
 
-    data_store.REL_DB.AckFlowProcessingRequests([flow_processing_request])
-
     client_id = flow_processing_request.client_id
     flow_id = flow_processing_request.flow_id
 
-    rdf_flow = data_store.REL_DB.ReadFlowForProcessing(
-        client_id, flow_id, processing_time=rdfvalue.Duration("6h"))
+    logging.info("Processing flow %s/%s.", client_id, flow_id)
+
+    data_store.REL_DB.AckFlowProcessingRequests([flow_processing_request])
+
+    try:
+      rdf_flow = data_store.REL_DB.ReadFlowForProcessing(
+          client_id, flow_id, processing_time=rdfvalue.Duration("6h"))
+    except db.ParentHuntIsNotRunningError:
+      flow_base.TerminateFlow(client_id, flow_id, "Parent hunt stopped.")
+      return
 
     flow_cls = registry.FlowRegistry.FlowClassByName(rdf_flow.flow_class_name)
     flow_obj = flow_cls(rdf_flow)
@@ -431,5 +441,7 @@ class GRRWorker(object):
     while not self._ReturnProcessedFlow(flow_obj):
       processed = flow_obj.ProcessAllReadyRequests()
       if processed == 0:
-        raise ValueError("ReturnProcessedFlow returned false but no request "
-                         "could be processed.")
+        raise ValueError(
+            "%s/%s: ReturnProcessedFlow returned false but no "
+            "request could be processed (next req: %d)." %
+            (client_id, flow_id, flow_obj.rdf_flow.next_request_to_process))

@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 """Central registry for artifacts."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
+import io
 import logging
 import os
 import threading
 
 
+from future.builtins import str
 from future.utils import iteritems
 from future.utils import itervalues
-import yaml
 
 from grr_response_core import config
 from grr_response_core.lib import artifact_utils
@@ -21,6 +23,7 @@ from grr_response_core.lib import type_info
 from grr_response_core.lib import utils
 from grr_response_core.lib.rdfvalues import artifacts as rdf_artifacts
 from grr_response_core.lib.rdfvalues import client as rdf_client
+from grr_response_core.lib.util import yaml
 from grr_response_server import aff4
 from grr_response_server import data_store
 from grr_response_server import sequential_collection
@@ -144,7 +147,13 @@ class ArtifactRegistry(object):
 
     for artifact_coll_urn in self._sources.GetDatastores():
       artifact_coll = ArtifactCollection(artifact_coll_urn)
-      for artifact_value in artifact_coll:
+
+      if data_store.RelationalDBReadEnabled(category="artifacts"):
+        artifact_list = data_store.REL_DB.ReadAllArtifacts()
+      else:
+        artifact_list = list(artifact_coll)
+
+      for artifact_value in artifact_list:
         try:
           self.RegisterArtifact(
               artifact_value,
@@ -189,7 +198,7 @@ class ArtifactRegistry(object):
   @utils.Synchronized
   def ArtifactsFromYaml(self, yaml_content):
     """Get a list of Artifacts from yaml."""
-    raw_list = list(yaml.safe_load_all(yaml_content))
+    raw_list = yaml.ParseMany(yaml_content)
 
     # TODO(hanuszczak): I am very sceptical about that "doing the right thing"
     # below. What are the real use cases?
@@ -223,7 +232,7 @@ class ArtifactRegistry(object):
     loaded_artifacts = []
     for file_path in file_paths:
       try:
-        with open(file_path, mode="rb") as fh:
+        with io.open(file_path, mode="r", encoding="utf-8") as fh:
           logging.debug("Loading artifacts from %s", file_path)
           for artifact_val in self.ArtifactsFromYaml(fh.read()):
             self.RegisterArtifact(
@@ -552,6 +561,10 @@ def DeleteArtifactsFromDatastore(artifact_names, reload_artifacts=True):
   with data_store.DB.GetMutationPool() as pool:
     for artifact_value in filtered_artifacts:
       store.Add(artifact_value, mutation_pool=pool)
+
+  if data_store.RelationalDBWriteEnabled():
+    for artifact_name in to_delete:
+      data_store.REL_DB.DeleteArtifact(str(artifact_name))
 
   for artifact_value in to_delete:
     REGISTRY.UnregisterArtifact(artifact_value)

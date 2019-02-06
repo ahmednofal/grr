@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Implementation of client-side file-finder subactions."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import abc
@@ -55,7 +56,9 @@ class StatAction(Action):
   def Execute(self, filepath, result):
     stat_cache = self.flow.stat_cache
 
-    stat = stat_cache.Get(filepath, follow_symlink=self.opts.resolve_links)
+    # TODO: `self.opts.resolve_links` is `RDFBool`, not `bool`.
+    stat = stat_cache.Get(
+        filepath, follow_symlink=bool(self.opts.resolve_links))
     result.stat_entry = client_utils.StatEntryFromStatPathSpec(
         stat, ext_attrs=self.opts.collect_ext_attrs)
 

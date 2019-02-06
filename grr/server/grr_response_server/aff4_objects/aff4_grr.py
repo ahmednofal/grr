@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """GRR specific AFF4 objects."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import io
@@ -10,8 +11,9 @@ import re
 import time
 
 
-from builtins import map  # pylint: disable=redefined-builtin
-from builtins import range  # pylint: disable=redefined-builtin
+from future.builtins import map
+from future.builtins import range
+from future.builtins import str
 from future.utils import iteritems
 
 from grr_response_core.lib import rdfvalue
@@ -24,7 +26,6 @@ from grr_response_core.lib.rdfvalues import crypto as rdf_crypto
 from grr_response_core.lib.rdfvalues import flows as rdf_flows
 from grr_response_core.lib.rdfvalues import paths as rdf_paths
 from grr_response_core.lib.rdfvalues import protodict as rdf_protodict
-from grr_response_core.lib.rdfvalues import rekall_types as rdf_rekall_types
 from grr_response_core.lib.rdfvalues import structs as rdf_structs
 from grr_response_core.lib.util import collection
 from grr_response_proto import flows_pb2
@@ -46,6 +47,9 @@ class SpaceSeparatedStringArray(rdfvalue.RDFString):
   def __iter__(self):
     for value in self._value.split():
       yield value
+
+  def __len__(self):
+    return len(self._value.split())
 
 
 class VFSGRRClient(standard.VFSDirectory):
@@ -253,14 +257,20 @@ class VFSGRRClient(standard.VFSDirectory):
 
   def Update(self, attribute=None):
     if attribute == "CONTAINS":
-      flow_id = flow.StartAFF4Flow(
-          client_id=self.client_id,
-          # TODO(user): dependency loop with flows/general/discover.py
-          # flow_name=discovery.Interrogate.__name__,
-          flow_name="Interrogate",
-          token=self.token)
-
-      return flow_id
+      if data_store.RelationalDBFlowsEnabled():
+        # TODO(user): dependency loop with flows/general/discover.py
+        flow_cls = registry.FlowRegistry.FlowClassByName("Interrogate")
+        return flow.StartFlow(
+            client_id=self.client_id.Basename(),
+            flow_cls=flow_cls,
+            creator=self.token.username if self.token else None)
+      else:
+        return flow.StartAFF4Flow(
+            client_id=self.client_id,
+            # TODO(user): dependency loop with flows/general/discover.py
+            # flow_name=discovery.Interrogate.__name__,
+            flow_name="Interrogate",
+            token=self.token)
 
   @staticmethod
   def ClientURNFromURN(urn):
@@ -864,6 +874,10 @@ class VFSBlobImage(VFSFile):
 
     return None
 
+  def Path(self):
+    """Compatibility layer with rel db file objects."""
+    return str(self.urn)
+
   class SchemaCls(VFSFile.SchemaCls):
     """The schema for Blob Images."""
     HASHES = aff4.Attribute("aff4:hashes", standard.HashList,
@@ -873,14 +887,6 @@ class VFSBlobImage(VFSFile):
         "aff4:finalized", rdfvalue.RDFBool,
         "Once a blobimage is finalized, further writes"
         " will raise exceptions.")
-
-
-class AFF4RekallProfile(aff4.AFF4Object):
-  """A Rekall profile in the AFF4 namespace."""
-
-  class SchemaCls(aff4.AFF4Object.SchemaCls):
-    PROFILE = aff4.Attribute("aff4:profile", rdf_rekall_types.RekallProfile,
-                             "A Rekall profile.")
 
 
 class TempKnowledgeBase(standard.VFSDirectory):

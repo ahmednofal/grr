@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
+from absl.testing import absltest
 from future.builtins import map
 
 import mock
 
-import unittest
 from grr_response_core.lib import factory
 from grr_response_core.lib import flags
 from grr_response_core.lib import parser
@@ -14,7 +15,7 @@ from grr_response_core.lib import parsers
 from grr.test_lib import test_lib
 
 
-class ArtifactParserFactoryTest(unittest.TestCase):
+class ArtifactParserFactoryTest(absltest.TestCase):
 
   @mock.patch.object(parsers, "SINGLE_RESPONSE_PARSER_FACTORY",
                      factory.Factory(parser.SingleResponseParser))
@@ -47,15 +48,15 @@ class ArtifactParserFactoryTest(unittest.TestCase):
 
     quux_factory = parsers.ArtifactParserFactory("Quux")
     quux_parsers = quux_factory.SingleResponseParsers()
-    self.assertItemsEqual(map(type, quux_parsers), [FooParser, BazParser])
+    self.assertCountEqual(map(type, quux_parsers), [FooParser, BazParser])
 
     norf_factory = parsers.ArtifactParserFactory("Norf")
     norf_parsers = norf_factory.SingleResponseParsers()
-    self.assertItemsEqual(map(type, norf_parsers), [FooParser, BarParser])
+    self.assertCountEqual(map(type, norf_parsers), [FooParser, BarParser])
 
     thud_factory = parsers.ArtifactParserFactory("Thud")
     thud_parsers = thud_factory.SingleResponseParsers()
-    self.assertItemsEqual(map(type, thud_parsers), [BarParser, BazParser])
+    self.assertCountEqual(map(type, thud_parsers), [BarParser, BazParser])
 
   @mock.patch.object(parsers, "MULTI_RESPONSE_PARSER_FACTORY",
                      factory.Factory(parser.MultiResponseParser))
@@ -80,11 +81,11 @@ class ArtifactParserFactoryTest(unittest.TestCase):
 
     foo_factory = parsers.ArtifactParserFactory("Foo")
     foo_parsers = foo_factory.MultiResponseParsers()
-    self.assertItemsEqual(map(type, foo_parsers), [FooParser])
+    self.assertCountEqual(map(type, foo_parsers), [FooParser])
 
     bar_factory = parsers.ArtifactParserFactory("Bar")
     bar_parsers = bar_factory.MultiResponseParsers()
-    self.assertItemsEqual(map(type, bar_parsers), [BarParser])
+    self.assertCountEqual(map(type, bar_parsers), [BarParser])
 
   @mock.patch.object(parsers, "SINGLE_FILE_PARSER_FACTORY",
                      factory.Factory(parser.SingleFileParser))
@@ -101,11 +102,11 @@ class ArtifactParserFactoryTest(unittest.TestCase):
 
     bar_factory = parsers.ArtifactParserFactory("Bar")
     bar_parsers = bar_factory.SingleFileParsers()
-    self.assertItemsEqual(map(type, bar_parsers), [FooParser])
+    self.assertCountEqual(map(type, bar_parsers), [FooParser])
 
     baz_factory = parsers.ArtifactParserFactory("Baz")
     baz_parsers = baz_factory.SingleFileParsers()
-    self.assertItemsEqual(map(type, baz_parsers), [])
+    self.assertCountEqual(map(type, baz_parsers), [])
 
   @mock.patch.object(parsers, "MULTI_FILE_PARSER_FACTORY",
                      factory.Factory(parser.MultiFileParser))
@@ -130,15 +131,15 @@ class ArtifactParserFactoryTest(unittest.TestCase):
 
     quux_factory = parsers.ArtifactParserFactory("Quux")
     quux_parsers = quux_factory.MultiFileParsers()
-    self.assertItemsEqual(map(type, quux_parsers), [FooParser, BarParser])
+    self.assertCountEqual(map(type, quux_parsers), [FooParser, BarParser])
 
     norf_factory = parsers.ArtifactParserFactory("Norf")
     norf_parsers = norf_factory.MultiFileParsers()
-    self.assertItemsEqual(map(type, norf_parsers), [FooParser])
+    self.assertCountEqual(map(type, norf_parsers), [FooParser])
 
     thud_factory = parsers.ArtifactParserFactory("Thud")
     thud_parsers = thud_factory.MultiFileParsers()
-    self.assertItemsEqual(map(type, thud_parsers), [BarParser])
+    self.assertCountEqual(map(type, thud_parsers), [BarParser])
 
 
 if __name__ == "__main__":

@@ -1,15 +1,15 @@
 #!/usr/bin/env python
-# -*- mode: python; encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 """Tests for artifacts."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
-import gzip
+import io
 import logging
 import os
 import subprocess
 
-from grr_response_client.client_actions import file_fingerprint
 from grr_response_client.client_actions import searching
 from grr_response_client.client_actions import standard
 from grr_response_core import config
@@ -18,7 +18,6 @@ from grr_response_core.lib import parser
 from grr_response_core.lib import rdfvalue
 from grr_response_core.lib import utils
 from grr_response_core.lib.parsers import linux_file_parser
-from grr_response_core.lib.parsers import rekall_artifact_parser
 from grr_response_core.lib.parsers import wmi_parser
 from grr_response_core.lib.rdfvalues import anomaly as rdf_anomaly
 from grr_response_core.lib.rdfvalues import artifacts as rdf_artifacts
@@ -26,22 +25,23 @@ from grr_response_core.lib.rdfvalues import client as rdf_client
 from grr_response_core.lib.rdfvalues import client_fs as rdf_client_fs
 from grr_response_core.lib.rdfvalues import paths as rdf_paths
 from grr_response_core.lib.rdfvalues import protodict as rdf_protodict
-from grr_response_core.lib.rdfvalues import rekall_types as rdf_rekall_types
 from grr_response_server import aff4
 from grr_response_server import aff4_flows
 from grr_response_server import artifact
 from grr_response_server import artifact_registry
-from grr_response_server import server_stubs
+from grr_response_server import data_store
+from grr_response_server import db
+from grr_response_server import file_store
 from grr_response_server.aff4_objects import aff4_grr
 from grr_response_server.flows.general import collectors
 from grr_response_server.flows.general import filesystem
+from grr_response_server.rdfvalues import objects as rdf_objects
 from grr.test_lib import action_mocks
 from grr.test_lib import artifact_test_lib
 from grr.test_lib import client_test_lib
 from grr.test_lib import db_test_lib
 from grr.test_lib import flow_test_lib
 from grr.test_lib import parser_test_lib
-from grr.test_lib import rekall_test_lib
 from grr.test_lib import test_lib
 from grr.test_lib import vfs_test_lib
 
@@ -132,28 +132,7 @@ class MultiProvideParser(parser.RegistryValueParser):
     yield rdf_protodict.Dict(test_dict)
 
 
-class RekallMock(action_mocks.MemoryClientMock):
-
-  def __init__(self, client_id, result_filename, *args, **kwargs):
-    super(RekallMock, self).__init__(*args, **kwargs)
-
-    self.result_filename = result_filename
-    self.client_id = client_id
-
-  def RekallAction(self, _):
-    # Generate this file with:
-    # rekal --output data -f win7_trial_64bit.raw \
-    # pslist | gzip - > rekall_pslist_result.dat.gz
-    ps_list_file = os.path.join(config.CONFIG["Test.data_dir"],
-                                self.result_filename)
-    result = rdf_rekall_types.RekallResponse(
-        json_messages=gzip.open(ps_list_file).read(),
-        plugin="pslist",
-        client_urn=self.client_id)
-
-    return [result]
-
-
+@db_test_lib.DualDBTest
 class ArtifactTest(flow_test_lib.FlowTestsBaseclass):
   """Helper class for tests using artifacts."""
 
@@ -162,10 +141,8 @@ class ArtifactTest(flow_test_lib.FlowTestsBaseclass):
     super(ArtifactTest, self).setUp()
     # Common group of mocks used by lots of tests.
     self.client_mock = action_mocks.ActionMock(
-        file_fingerprint.FingerprintFile,
         searching.Find,
         searching.Grep,
-        server_stubs.WmiQuery,
         standard.HashBuffer,
         standard.HashFile,
         standard.ListDirectory,
@@ -211,6 +188,7 @@ class ArtifactTest(flow_test_lib.FlowTestsBaseclass):
     return flow_test_lib.GetFlowResults(client_id, session_id)
 
 
+@db_test_lib.DualDBTest
 class GRRArtifactTest(ArtifactTest):
 
   def testUploadArtifactYamlFileAndDumpToYaml(self):
@@ -222,8 +200,9 @@ class GRRArtifactTest(ArtifactTest):
 
       test_artifacts_file = os.path.join(config.CONFIG["Test.data_dir"],
                                          "artifacts", "test_artifacts.json")
-      filecontent = open(test_artifacts_file, "rb").read()
-      artifact.UploadArtifactYamlFile(filecontent)
+
+      with io.open(test_artifacts_file, mode="r", encoding="utf-8") as filedesc:
+        artifact.UploadArtifactYamlFile(filedesc.read())
       loaded_artifacts = artifact_registry.REGISTRY.GetArtifacts()
       self.assertGreaterEqual(len(loaded_artifacts), 20)
       self.assertIn("DepsWindirRegex", [a.name for a in loaded_artifacts])
@@ -232,12 +211,12 @@ class GRRArtifactTest(ArtifactTest):
       yaml_data = artifact_registry.REGISTRY.DumpArtifactsToYaml()
       for snippet in [
           "name: TestFilesArtifact",
-          "urls: ['https://msdn.microsoft.com/en-us/library/aa384749%28v=vs.85",
-          "returned_types: [SoftwarePackage]",
-          "args: [--list]",
+          "urls:\\s*- https://msdn.microsoft.com/en-us/library/",
+          "returned_types:\\s*- SoftwarePackage",
+          "args:\\s*- --list",
           "cmd: /usr/bin/dpkg",
       ]:
-        self.assertIn(snippet, yaml_data)
+        self.assertRegexpMatches(yaml_data, snippet)
     finally:
       artifact.ArtifactLoader().RunOnce()
 
@@ -350,7 +329,7 @@ supported_os: [Linux]
                   artifact_registry.REGISTRY._artifacts)
     artifact_obj = artifact_registry.REGISTRY.GetArtifact(
         "WMIActiveScriptEventConsumer")
-    self.assertTrue(artifact_obj.loaded_from.startswith("file:"))
+    self.assertStartsWith(artifact_obj.loaded_from, "file:")
 
     # The artifact is gone from the collection.
     coll = artifact_registry.ArtifactCollection(artifact_store_urn)
@@ -370,22 +349,20 @@ sources:
       artifact.UploadArtifactYamlFile(yaml_artifact)
 
 
+@db_test_lib.DualDBTest
 class ArtifactFlowLinuxTest(ArtifactTest):
 
   def setUp(self):
     """Make sure things are initialized."""
     super(ArtifactFlowLinuxTest, self).setUp()
-    with aff4.FACTORY.Open(
-        self.SetupClient(0, system="Linux", os_version="12.04"),
-        mode="rw",
-        token=self.token) as fd:
-
-      # Add some users
-      kb = fd.Get(fd.Schema.KNOWLEDGE_BASE)
-      kb.MergeOrAddUser(rdf_client.User(username="gogol"))
-      kb.MergeOrAddUser(rdf_client.User(username="gevulot"))
-      kb.MergeOrAddUser(rdf_client.User(username="exomemory"))
-      fd.Set(kb)
+    users = [
+        rdf_client.User(username="gogol"),
+        rdf_client.User(username="gevulot"),
+        rdf_client.User(username="exomemory"),
+        rdf_client.User(username="user1"),
+        rdf_client.User(username="user2"),
+    ]
+    self.SetupClient(0, system="Linux", os_version="12.04", users=users)
 
     self.LoadTestArtifacts()
 
@@ -404,12 +381,12 @@ class ArtifactFlowLinuxTest(ArtifactTest):
           token=self.token)
 
     results = flow_test_lib.GetFlowResults(client_id, session_id)
-    self.assertEqual(len(results), 3)
+    self.assertLen(results, 3)
     packages = [p for p in results if isinstance(p, rdf_client.SoftwarePackage)]
-    self.assertEqual(len(packages), 2)
+    self.assertLen(packages, 2)
 
     anomalies = [a for a in results if isinstance(a, rdf_anomaly.Anomaly)]
-    self.assertEqual(len(anomalies), 1)
+    self.assertLen(anomalies, 1)
     self.assertIn("gremlin", anomalies[0].symptom)
 
   def testFilesArtifact(self):
@@ -419,8 +396,14 @@ class ArtifactFlowLinuxTest(ArtifactTest):
       self.RunCollectorAndGetCollection(["TestFilesArtifact"],
                                         client_mock=self.client_mock,
                                         client_id=client_id)
-      urn = client_id.Add("fs/os/").Add("var/log/auth.log")
-      aff4.FACTORY.Open(urn, aff4_type=aff4_grr.VFSBlobImage, token=self.token)
+      if data_store.RelationalDBReadEnabled(category="vfs"):
+        cp = db.ClientPath.OS(client_id.Basename(), ("var", "log", "auth.log"))
+        fd = file_store.OpenFile(cp)
+        self.assertNotEmpty(fd.read())
+      else:
+        urn = client_id.Add("fs/os/").Add("var/log/auth.log")
+        aff4.FACTORY.Open(
+            urn, aff4_type=aff4_grr.VFSBlobImage, token=self.token)
 
   @parser_test_lib.WithParser("Passwd", linux_file_parser.PasswdBufferParser)
   def testLinuxPasswdHomedirsArtifact(self):
@@ -430,8 +413,8 @@ class ArtifactFlowLinuxTest(ArtifactTest):
                                              client_mock=self.client_mock,
                                              client_id=test_lib.TEST_CLIENT_ID)
 
-      self.assertEqual(len(fd), 5)
-      self.assertItemsEqual(
+      self.assertLen(fd, 5)
+      self.assertCountEqual(
           [x.username for x in fd],
           [u"exomemory", u"gevulot", u"gogol", u"user1", u"user2"])
       for user in fd:
@@ -470,11 +453,7 @@ class ArtifactFlowLinuxTest(ArtifactTest):
         raise RuntimeError("0 responses should have been returned")
 
 
-class RelFlowsArtifactFlowLinuxTest(db_test_lib.RelationalFlowsEnabledMixin,
-                                    ArtifactFlowLinuxTest):
-  pass
-
-
+@db_test_lib.DualDBTest
 class ArtifactFlowWindowsTest(ArtifactTest):
 
   def setUp(self):
@@ -487,67 +466,14 @@ class ArtifactFlowWindowsTest(ArtifactTest):
                               wmi_parser.WMIInstalledSoftwareParser)
   def testWMIQueryArtifact(self):
     """Check we can run WMI based artifacts."""
+    client_id = self.SetupClient(
+        0, system="Windows", os_version="6.2", arch="AMD64")
     col = self.RunCollectorAndGetCollection(["WMIInstalledSoftware"],
-                                            client_id=test_lib.TEST_CLIENT_ID)
+                                            client_id=client_id)
 
-    self.assertEqual(len(col), 3)
+    self.assertLen(col, 3)
     descriptions = [package.description for package in col]
     self.assertIn("Google Chrome", descriptions)
-
-  @parser_test_lib.WithParser("RekallPsList",
-                              rekall_artifact_parser.RekallPsListParser)
-  def testRekallPsListArtifact(self):
-    """Check we can run Rekall based artifacts."""
-    client_id = test_lib.TEST_CLIENT_ID
-    with test_lib.ConfigOverrider({
-        "Rekall.enabled":
-            True,
-        "Rekall.profile_server":
-            rekall_test_lib.TestRekallRepositoryProfileServer.__name__
-    }):
-      fd = self.RunCollectorAndGetCollection(["RekallPsList"],
-                                             RekallMock(
-                                                 client_id,
-                                                 "rekall_pslist_result.dat.gz"),
-                                             client_id=client_id)
-
-    self.assertEqual(len(fd), 35)
-    self.assertEqual(fd[0].exe, "System")
-    self.assertEqual(fd[0].pid, 4)
-    self.assertIn("DumpIt.exe", [x.exe for x in fd])
-
-  @parser_test_lib.WithParser("RekallVad",
-                              rekall_artifact_parser.RekallVADParser)
-  def testRekallVadArtifact(self):
-    """Check we can run Rekall based artifacts."""
-    client_id = test_lib.TEST_CLIENT_ID
-    # The client should now be populated with the data we care about.
-    with aff4.FACTORY.Open(client_id, mode="rw", token=self.token) as fd:
-      fd.Set(fd.Schema.KNOWLEDGE_BASE(os="Windows", environ_systemdrive=r"c:"))
-
-    with test_lib.ConfigOverrider({
-        "Rekall.enabled":
-            True,
-        "Rekall.profile_server":
-            rekall_test_lib.TestRekallRepositoryProfileServer.__name__
-    }):
-      fd = self.RunCollectorAndGetCollection(["FullVADBinaryList"],
-                                             RekallMock(
-                                                 client_id,
-                                                 "rekall_vad_result.dat.gz"),
-                                             client_id=client_id)
-
-    self.assertEqual(len(fd), 1705)
-    self.assertEqual(fd[0].path, u"c:\\Windows\\System32\\ntdll.dll")
-    for x in fd:
-      self.assertEqual(x.pathtype, "OS")
-      extension = x.path.lower().split(".")[-1]
-      self.assertIn(extension, ["exe", "dll", "pyd", "drv", "mui", "cpl"])
-
-
-class RelFlowsArtifactFlowWindowsTest(db_test_lib.RelationalFlowsEnabledMixin,
-                                      ArtifactFlowWindowsTest):
-  pass
 
 
 class GrrKbTest(ArtifactTest):
@@ -561,10 +487,11 @@ class GrrKbTest(ArtifactTest):
         **kw)
 
     results = flow_test_lib.GetFlowResults(test_lib.TEST_CLIENT_ID, session_id)
-    self.assertEqual(len(results), 1)
+    self.assertLen(results, 1)
     return results[0]
 
 
+@db_test_lib.DualDBTest
 class GrrKbWindowsTest(GrrKbTest):
 
   def setUp(self):
@@ -603,7 +530,7 @@ class GrrKbWindowsTest(GrrKbTest):
     self.assertEqual(kb.environ_temp, "C:\\Windows\\TEMP")
     self.assertEqual(kb.environ_systemdrive, "C:")
 
-    self.assertItemsEqual([x.username for x in kb.users], ["jim", "kovacs"])
+    self.assertCountEqual([x.username for x in kb.users], ["jim", "kovacs"])
     user = kb.GetUser(username="jim")
     self.assertEqual(user.username, "jim")
     self.assertEqual(user.sid, "S-1-5-21-702227068-2140022151-3110739409-1000")
@@ -613,9 +540,8 @@ class GrrKbWindowsTest(GrrKbTest):
     """Check we can handle multi-provides."""
     # Replace some artifacts with test one that will run the MultiProvideParser.
     self.LoadTestArtifacts()
-    with test_lib.ConfigOverrider({
-        "Artifacts.knowledge_base": ["DepsProvidesMultiple"]
-    }):
+    with test_lib.ConfigOverrider(
+        {"Artifacts.knowledge_base": ["DepsProvidesMultiple"]}):
       kb = self._RunKBI()
 
       self.assertEqual(kb.environ_temp, "tempvalue")
@@ -640,11 +566,20 @@ class GrrKbWindowsTest(GrrKbTest):
         token=self.token)
     path = paths[0].replace("\\", "/")
 
-    fd = aff4.FACTORY.Open(
-        client_id.Add("registry").Add(path), token=self.token)
-    self.assertEqual(fd.__class__.__name__, "VFSFile")
-    self.assertEqual(
-        fd.Get(fd.Schema.STAT).registry_data.GetValue(), "%SystemDrive%\\Users")
+    if data_store.RelationalDBReadEnabled(category="vfs"):
+      path_info = data_store.REL_DB.ReadPathInfo(
+          client_id.Basename(),
+          rdf_objects.PathInfo.PathType.REGISTRY,
+          components=tuple(path.split("/")))
+      self.assertEqual(path_info.stat_entry.registry_data.GetValue(),
+                       "%SystemDrive%\\Users")
+    else:
+      fd = aff4.FACTORY.Open(
+          client_id.Add("registry").Add(path), token=self.token)
+      self.assertEqual(fd.__class__.__name__, "VFSFile")
+      self.assertEqual(
+          fd.Get(fd.Schema.STAT).registry_data.GetValue(),
+          "%SystemDrive%\\Users")
 
   @parser_test_lib.WithAllParsers
   def testGetKBDependencies(self):
@@ -673,12 +608,12 @@ class GrrKbWindowsTest(GrrKbTest):
         kb_init.state["knowledge_base"] = rdf_client.KnowledgeBase(os="Windows")
         no_deps = kb_init.GetFirstFlowsForCollection()
 
-        self.assertItemsEqual(no_deps, ["DepsControlSet", "DepsHomedir2"])
-        self.assertItemsEqual(kb_init.state.all_deps, [
+        self.assertCountEqual(no_deps, ["DepsControlSet", "DepsHomedir2"])
+        self.assertCountEqual(kb_init.state.all_deps, [
             "users.homedir", "users.desktop", "users.username",
             "environ_windir", "current_control_set"
         ])
-        self.assertItemsEqual(
+        self.assertCountEqual(
             kb_init.state.awaiting_deps_artifacts,
             ["DepsParent", "DepsDesktop", "DepsHomedir", "DepsWindirRegex"])
     finally:
@@ -712,11 +647,7 @@ class GrrKbWindowsTest(GrrKbTest):
     self.assertIn("multiple provides clauses", context.exception.message)
 
 
-class RelGrrKbWindowsTest(db_test_lib.RelationalFlowsEnabledMixin,
-                          GrrKbWindowsTest):
-  pass
-
-
+@db_test_lib.DualDBTest
 class GrrKbLinuxTest(GrrKbTest):
 
   def setUp(self):
@@ -735,12 +666,13 @@ class GrrKbLinuxTest(GrrKbTest):
         "Artifacts.netgroup_user_blacklist": ["isaac"]
     }):
       with vfs_test_lib.FakeTestDataVFSOverrider():
-        kb = self._RunKBI()
+        with test_lib.SuppressLogs():
+          kb = self._RunKBI()
 
     self.assertEqual(kb.os_major_version, 14)
     self.assertEqual(kb.os_minor_version, 4)
     # user 1,2,3 from wtmp. yagharek from netgroup.
-    self.assertItemsEqual([x.username for x in kb.users],
+    self.assertCountEqual([x.username for x in kb.users],
                           ["user1", "user2", "user3", "yagharek"])
     user = kb.GetUser(username="user1")
     self.assertEqual(user.last_logon.AsSecondsSinceEpoch(), 1296552099)
@@ -757,12 +689,13 @@ class GrrKbLinuxTest(GrrKbTest):
           "Artifacts.knowledge_base_additions": [],
           "Artifacts.knowledge_base_skip": []
       }):
-        kb = self._RunKBI()
+        with test_lib.SuppressLogs():
+          kb = self._RunKBI()
 
     self.assertEqual(kb.os_major_version, 14)
     self.assertEqual(kb.os_minor_version, 4)
     # user 1,2,3 from wtmp.
-    self.assertItemsEqual([x.username for x in kb.users],
+    self.assertCountEqual([x.username for x in kb.users],
                           ["user1", "user2", "user3"])
     user = kb.GetUser(username="user1")
     self.assertEqual(user.last_logon.AsSecondsSinceEpoch(), 1296552099)
@@ -784,20 +717,16 @@ class GrrKbLinuxTest(GrrKbTest):
         ],
         "Artifacts.netgroup_filter_regexes": ["^doesntexist$"]
     }):
-
       with vfs_test_lib.FakeTestDataVFSOverrider():
-        kb = self._RunKBI(require_complete=False)
+        with test_lib.SuppressLogs():
+          kb = self._RunKBI(require_complete=False)
 
     self.assertEqual(kb.os_major_version, 14)
     self.assertEqual(kb.os_minor_version, 4)
-    self.assertItemsEqual([x.username for x in kb.users], [])
+    self.assertCountEqual([x.username for x in kb.users], [])
 
 
-class RelGrrKbLinuxTest(db_test_lib.RelationalFlowsEnabledMixin,
-                        GrrKbLinuxTest):
-  pass
-
-
+@db_test_lib.DualDBTest
 class GrrKbDarwinTest(GrrKbTest):
 
   def setUp(self):
@@ -815,14 +744,9 @@ class GrrKbDarwinTest(GrrKbTest):
     self.assertEqual(kb.os_major_version, 10)
     self.assertEqual(kb.os_minor_version, 9)
     # scalzi from /Users dir listing.
-    self.assertItemsEqual([x.username for x in kb.users], ["scalzi"])
+    self.assertCountEqual([x.username for x in kb.users], ["scalzi"])
     user = kb.GetUser(username="scalzi")
     self.assertEqual(user.homedir, "/Users/scalzi")
-
-
-class RelGrrKbDarwinTest(db_test_lib.RelationalFlowsEnabledMixin,
-                         GrrKbDarwinTest):
-  pass
 
 
 def main(argv):

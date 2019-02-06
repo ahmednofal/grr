@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-# -*- mode: python; encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 """Tests email links."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import re
@@ -19,8 +20,6 @@ from grr_response_server import email_alerts
 from grr_response_server.aff4_objects import cronjobs as aff4_cronjobs
 from grr_response_server.flows.cron import system as cron_system
 from grr_response_server.gui import gui_test_lib
-from grr_response_server.hunts import implementation
-from grr_response_server.hunts import standard
 from grr.test_lib import db_test_lib
 from grr.test_lib import test_lib
 
@@ -53,17 +52,6 @@ class TestEmailLinks(gui_test_lib.GRRSeleniumHuntTest):
     link = urlparse.urlparse(m.group(1))
     return link.path + "/" + "#" + link.fragment
 
-  def CreateSampleHunt(self, token=None):
-
-    with implementation.StartHunt(
-        hunt_name=standard.SampleHunt.__name__,
-        client_rate=100,
-        filename="TestFilename",
-        client_rule_set=self._CreateForemanClientRuleSet(),
-        token=token or self.token) as hunt:
-
-      return hunt.session_id
-
   def testEmailClientApprovalRequestLinkLeadsToACorrectPage(self):
     client_id = self.SetupClient(0)
 
@@ -73,7 +61,7 @@ class TestEmailLinks(gui_test_lib.GRRSeleniumHuntTest):
         approver=self.GRANTOR_USERNAME,
         requestor=self.token.username)
 
-    self.assertEqual(len(self.messages_sent), 1)
+    self.assertLen(self.messages_sent, 1)
     message = self.messages_sent[0]
 
     self.assertIn(self.APPROVAL_REASON, message)
@@ -100,7 +88,7 @@ class TestEmailLinks(gui_test_lib.GRRSeleniumHuntTest):
 
     # There should be 1 message for approval request and 1 message
     # for approval grant notification.
-    self.assertEqual(len(self.messages_sent), 2)
+    self.assertLen(self.messages_sent, 2)
 
     message = self.messages_sent[1]
 
@@ -118,7 +106,7 @@ class TestEmailLinks(gui_test_lib.GRRSeleniumHuntTest):
     self.WaitUntil(self.IsTextPresent, self.APPROVAL_REASON)
 
   def testEmailHuntApprovalRequestLinkLeadsToACorrectPage(self):
-    hunt_id = self.CreateSampleHunt()
+    hunt_id = self.StartHunt(description="foobar")
 
     # Request hunt approval, it will trigger an email message.
     self.RequestHuntApproval(
@@ -127,7 +115,7 @@ class TestEmailLinks(gui_test_lib.GRRSeleniumHuntTest):
         approver=self.GRANTOR_USERNAME,
         requestor=self.token.username)
 
-    self.assertEqual(len(self.messages_sent), 1)
+    self.assertLen(self.messages_sent, 1)
     message = self.messages_sent[0]
 
     self.assertIn(self.APPROVAL_REASON, message)
@@ -141,10 +129,10 @@ class TestEmailLinks(gui_test_lib.GRRSeleniumHuntTest):
     self.WaitUntil(self.IsTextPresent, self.APPROVAL_REASON)
     # Check that host information is displayed.
     self.WaitUntil(self.IsTextPresent, hunt_id.Basename())
-    self.WaitUntil(self.IsTextPresent, "SampleHunt")
+    self.WaitUntil(self.IsTextPresent, "foobar")
 
   def testEmailHuntApprovalGrantNotificationLinkLeadsToCorrectPage(self):
-    hunt_id = self.CreateSampleHunt()
+    hunt_id = self.StartHunt()
 
     self.RequestAndGrantHuntApproval(
         hunt_id.Basename(),
@@ -154,7 +142,7 @@ class TestEmailLinks(gui_test_lib.GRRSeleniumHuntTest):
 
     # There should be 1 message for approval request and 1 message
     # for approval grant notification.
-    self.assertEqual(len(self.messages_sent), 2)
+    self.assertLen(self.messages_sent, 2)
 
     message = self.messages_sent[1]
     self.assertIn(self.APPROVAL_REASON, message)
@@ -167,7 +155,7 @@ class TestEmailLinks(gui_test_lib.GRRSeleniumHuntTest):
     self.WaitUntil(self.IsTextPresent, hunt_id.Basename())
 
   def _CreateOSBreakDownCronJobApproval(self):
-    if data_store.RelationalDBReadEnabled():
+    if data_store.RelationalDBReadEnabled("cronjobs"):
       job_name = compatibility.GetName(cron_system.OSBreakDownCronJob)
       cronjobs.ScheduleSystemCronJobs(names=[job_name])
     else:
@@ -186,7 +174,7 @@ class TestEmailLinks(gui_test_lib.GRRSeleniumHuntTest):
         approver=self.GRANTOR_USERNAME,
         requestor=self.token.username)
 
-    self.assertEqual(len(self.messages_sent), 1)
+    self.assertLen(self.messages_sent, 1)
     message = self.messages_sent[0]
 
     self.assertIn(self.APPROVAL_REASON, message)
@@ -215,7 +203,7 @@ class TestEmailLinks(gui_test_lib.GRRSeleniumHuntTest):
 
     # There should be 1 message for approval request and 1 message
     # for approval grant notification.
-    self.assertEqual(len(self.messages_sent), 2)
+    self.assertLen(self.messages_sent, 2)
     message = self.messages_sent[1]
     self.assertIn(self.APPROVAL_REASON, message)
     self.assertIn(self.GRANTOR_USERNAME, message)

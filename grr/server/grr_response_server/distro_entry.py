@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """This file defines the entry points for typical installations."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 from grr_response_core.lib import flags
@@ -20,7 +21,7 @@ def ApiShellRawAccess():
 
 def ConfigUpdater():
   from grr_response_server.bin import config_updater
-  flags.StartMain(config_updater.main)
+  config_updater.Run()
 
 
 def GrrServer():

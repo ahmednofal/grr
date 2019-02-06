@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import logging
@@ -9,13 +10,14 @@ import string
 import threading
 import unittest
 
+from absl.testing import absltest
 from builtins import range  # pylint: disable=redefined-builtin
 import MySQLdb  # TODO(hanuszczak): This should be imported conditionally.
 
-import unittest
 from grr_response_core.lib import flags
 from grr_response_server import db_test_mixin
 from grr_response_server.databases import mysql
+from grr_response_server.databases import mysql_utils
 from grr.test_lib import stats_test_lib
 from grr.test_lib import test_lib
 
@@ -28,35 +30,35 @@ def _GetEnvironOrSkip(key):
 
 
 class TestMysqlDB(stats_test_lib.StatsTestMixin,
-                  db_test_mixin.DatabaseTestMixin, unittest.TestCase):
+                  db_test_mixin.DatabaseTestMixin, absltest.TestCase):
   """Test the mysql.MysqlDB class.
 
   Most of the tests in this suite are general blackbox tests of the db.Database
   interface brought in by the db_test.DatabaseTestMixin.
   """
 
+  flow_processing_req_func = "_WriteFlowProcessingRequests"
+
+
   def CreateDatabase(self):
-    # pylint: disable=unreachable
+
     user = _GetEnvironOrSkip("MYSQL_TEST_USER")
     host = _GetEnvironOrSkip("MYSQL_TEST_HOST")
     port = _GetEnvironOrSkip("MYSQL_TEST_PORT")
-    passwd = _GetEnvironOrSkip("MYSQL_TEST_PASS")
-    dbname = "".join(
+    password = _GetEnvironOrSkip("MYSQL_TEST_PASS")
+    database = "".join(
         random.choice(string.ascii_uppercase + string.digits)
         for _ in range(10))
 
-    connection = MySQLdb.Connect(host=host, port=port, user=user, passwd=passwd)
-    cursor = connection.cursor()
-    cursor.execute("CREATE DATABASE " + dbname)
-    logging.info("Created test database: %s", dbname)
-
     conn = mysql.MysqlDB(
-        host=host, port=port, user=user, passwd=passwd, db=dbname)
+        host=host, port=port, user=user, password=password, database=database)
+    logging.info("Created test database: %s", database)
+
+    def _Drop(cursor):
+      cursor.execute("DROP DATABASE {}".format(database))
 
     def Fin():
-      cursor.execute("DROP DATABASE " + dbname)
-      cursor.close()
-      connection.close()
+      conn._RunInTransaction(_Drop)
       conn.Close()
 
     return conn, Fin
@@ -82,10 +84,11 @@ class TestMysqlDB(stats_test_lib.StatsTestMixin,
             MySQLdb.OperationalError(
                 1637, "Too many active concurrent transactions")))
 
-  def AddUser(self, connection, user, passwd):
+  def AddUser(self, connection, user, password):
     cursor = connection.cursor()
-    cursor.execute("INSERT INTO grr_users (username, password) VALUES (%s, %s)",
-                   (user, bytes(passwd)))
+    cursor.execute(
+        "INSERT INTO grr_users (username, username_hash, password) "
+        "VALUES (%s, %s, %s)", (user, mysql_utils.Hash(user), bytes(password)))
     cursor.close()
 
   def ListUsers(self, connection):
@@ -96,8 +99,11 @@ class TestMysqlDB(stats_test_lib.StatsTestMixin,
     return ret
 
   def testRunInTransaction(self):
-    self.db.delegate._RunInTransaction(
-        lambda con: self.AddUser(con, "AzureDiamond", "hunter2"))
+
+    def AddUserFn(con):
+      self.AddUser(con, "AzureDiamond", "hunter2")
+
+    self.db.delegate._RunInTransaction(AddUserFn)
 
     users = self.db.delegate._RunInTransaction(self.ListUsers, readonly=True)
     self.assertEqual(users, ((u"AzureDiamond", "hunter2"),))
@@ -105,10 +111,14 @@ class TestMysqlDB(stats_test_lib.StatsTestMixin,
   def testRunInTransactionDeadlock(self):
     """A deadlock error should be retried."""
 
-    self.db.delegate._RunInTransaction(
-        lambda con: self.AddUser(con, "user1", "pw1"))
-    self.db.delegate._RunInTransaction(
-        lambda con: self.AddUser(con, "user2", "pw2"))
+    def AddUserFn1(con):
+      self.AddUser(con, "user1", "pw1")
+
+    def AddUserFn2(con):
+      self.AddUser(con, "user2", "pw2")
+
+    self.db.delegate._RunInTransaction(AddUserFn1)
+    self.db.delegate._RunInTransaction(AddUserFn2)
 
     # We'll start two transactions which read/modify rows in different orders.
     # This should force (at least) one to fail with a deadlock, which should be
@@ -162,10 +172,11 @@ class TestMysqlDB(stats_test_lib.StatsTestMixin,
 
   def testSuccessfulCallsAreCorrectlyAccounted(self):
     with self.assertStatsCounterDelta(
-        1, "db_request_latency", fields=["ReadAllGRRUsers"]):
-      self.db.ReadAllGRRUsers()
+        1, "db_request_latency", fields=["ReadGRRUsers"]):
+      self.db.ReadGRRUsers()
 
   # Tests that we don't expect to pass yet.
+
   # TODO(user): Finish implementation and enable these tests.
   def testWritePathInfosRawValidates(self):
     pass
@@ -272,7 +283,22 @@ class TestMysqlDB(stats_test_lib.StatsTestMixin,
   def testListDescendentPathInfosLimitedDirectory(self):
     pass
 
+  def testListDescendentPathInfosTimestampNow(self):
+    pass
+
+  def testListDescendentPathInfosTimestampMultiple(self):
+    pass
+
+  def testListDescendentPathInfosTimestampStatValue(self):
+    pass
+
+  def testListDescendentPathInfosTimestampHashValue(self):
+    pass
+
   def testListChildPathInfosRoot(self):
+    pass
+
+  def testListChildPathInfosRootDeeper(self):
     pass
 
   def testListChildPathInfosDetails(self):
@@ -281,10 +307,19 @@ class TestMysqlDB(stats_test_lib.StatsTestMixin,
   def testListChildPathInfosDeepSorted(self):
     pass
 
+  def testListChildPathInfosTimestamp(self):
+    pass
+
+  def testListChildPathInfosTimestampStatAndHashValue(self):
+    pass
+
   # TODO(hanuszczak): Remove these once support for storing file hashes in
   # the MySQL backend is ready.
 
   def testWritePathInfosHashEntry(self):
+    pass
+
+  def testWriteMultiplePathInfosHashEntry(self):
     pass
 
   def testWritePathInfosHashAndStatEntry(self):
@@ -297,33 +332,6 @@ class TestMysqlDB(stats_test_lib.StatsTestMixin,
     pass
 
   def testReadPathInfoTimestampStatAndHashEntry(self):
-    pass
-
-  def testReadingNonExistentBlobReturnsNone(self):
-    pass
-
-  def testSingleBlobCanBeWrittenAndThenRead(self):
-    pass
-
-  def testMultipleBlobsCanBeWrittenAndThenRead(self):
-    pass
-
-  def testWriting80MbOfBlobsWithSingleCallWorks(self):
-    pass
-
-  def testCheckBlobsExistCorrectlyReportsPresentAndMissingBlobs(self):
-    pass
-
-  def testHashBlobReferenceCanBeWrittenAndReadBack(self):
-    pass
-
-  def testReportsNonExistingHashesAsNone(self):
-    pass
-
-  def testCorrectlyHandlesRequestWithOneExistingAndOneMissingHash(self):
-    pass
-
-  def testMultipleHashBlobReferencesCanBeWrittenAndReadBack(self):
     pass
 
   def testReadPathInfoOlder(self):
@@ -398,99 +406,6 @@ class TestMysqlDB(stats_test_lib.StatsTestMixin,
   def testMultiClearPathHistoryClearsMultipleHistories(self):
     pass
 
-  def testFlowWriting(self):
-    pass
-
-  def testReadAllFlowObjects(self):
-    pass
-
-  def testFlowWritingUnknownClient(self):
-    pass
-
-  def testPersistentDataUpdate(self):
-    pass
-
-  def testCrashInfoUpdate(self):
-    pass
-
-  def testPendingTerminationUpdate(self):
-    pass
-
-  def testProcessingInformationUpdate(self):
-    pass
-
-  def testRequestWriting(self):
-    pass
-
-  def testResponsesForUnknownFlow(self):
-    pass
-
-  def testResponsesForUnknownRequest(self):
-    pass
-
-  def testResponseWriting(self):
-    pass
-
-  def testResponsesForEarlierRequestDontTriggerFlowProcessing(self):
-    pass
-
-  def testResponsesForLaterRequestDontTriggerFlowProcessing(self):
-    pass
-
-  def testResponsesForExpectedRequestTriggerFlowProcessing(self):
-    pass
-
-  def testResponsesAnyRequestTriggerClientMessageDeletion(self):
-    pass
-
-  def testReadFlowForProcessingThatIsAlreadyBeingProcessed(self):
-    pass
-
-  def testReadFlowForProcessingAfterProcessingTimeExpiration(self):
-    pass
-
-  def testReadFlowForProcessingUpdatesFlowObjects(self):
-    pass
-
-  def testFlowLastUpateTime(self):
-    pass
-
-  def testReturnProcessedFlow(self):
-    pass
-
-  def testReadChildFlows(self):
-    pass
-
-  def testRequestWritingHighIDDoesntTriggerFlowProcessing(self):
-    pass
-
-  def testRequestWritingLowIDDoesntTriggerFlowProcessing(self):
-    pass
-
-  def testRequestWritingExpectedIDTriggersFlowProcessing(self):
-    pass
-
-  def testDeleteFlowRequests(self):
-    pass
-
-  def testDeleteAllFlowRequestsAndResponses(self):
-    pass
-
-  def testReadFlowRequestsReadyForProcessing(self):
-    pass
-
-  def testFlowProcessingRequestsQueue(self):
-    pass
-
-  def testFlowProcessingRequestsQueueWithDelay(self):
-    pass
-
-  def testAcknowledgingFlowProcessingRequestsWorks(self):
-    pass
-
-  def testStatusMessagesCanBeWrittenAndRead(self):
-    pass
-
   def testWritesAndReadsSingleFlowResultOfSingleType(self):
     pass
 
@@ -554,6 +469,9 @@ class TestMysqlDB(stats_test_lib.StatsTestMixin,
   def testReadLatestPathInfosReturnsNothingForNonExistingPaths(self):
     pass
 
+  def testFlowLogsAndErrorsForUnknownFlowsRaise(self):
+    pass
+
   def testReadLatestPathInfosReturnsNothingWhenNoFilesCollected(self):
     pass
 
@@ -574,6 +492,199 @@ class TestMysqlDB(stats_test_lib.StatsTestMixin,
 
   def testReadLatestPathInfosIncludesStatEntryIfThereIsOneWithSameTimestamp(
       self):
+    pass
+
+  def testWriteStatsStoreEntriesValidation(self):
+    pass
+
+  def testDuplicateStatsEntryWrite_SingleDimensional(self):
+    pass
+
+  def testDuplicateStatsEntryWrite_MultiDimensional(self):
+    pass
+
+  def testReadAllStatsEntries_UnknownPrefix(self):
+    pass
+
+  def testReadAllStatsEntries_UnknownMetric(self):
+    pass
+
+  def testReadAllStatsEntries_PrefixMatch(self):
+    pass
+
+  def testReadStatsEntriesLimitMaxResults(self):
+    pass
+
+  def testReadStatsEntriesLimitTimeRange(self):
+    pass
+
+  def testDeleteStatsEntries_HighLimit(self):
+    pass
+
+  def testDeleteStatsEntries_LowLimit(self):
+    pass
+
+  # TODO(user): implement hunts support for MySQL
+  def testReadFlowForProcessingRaisesIfParentHuntIsStoppedOrCompleted(self):
+    pass
+
+  def testWritingAndReadingHuntObjectWorks(self):
+    pass
+
+  def testHuntObjectCanBeOverwritten(self):
+    pass
+
+  def testReadingNonExistentHuntObjectRaises(self):
+    pass
+
+  def testUpdateHuntObjectRaisesIfHuntDoesNotExist(self):
+    pass
+
+  def testUpdateHuntObjectCorrectlyUpdatesHuntObject(self):
+    pass
+
+  def testUpdateHuntObjectIsAtomic(self):
+    pass
+
+  def testUpdateHuntObjectPropagatesExceptions(self):
+    pass
+
+  def testDeletingHuntObjectWorks(self):
+    pass
+
+  def testReadAllHuntObjectsReturnsEmptyListWhenNoHunts(self):
+    pass
+
+  def testReadAllHuntObjectsReturnsAllWrittenObjects(self):
+    pass
+
+  def testReadHuntLogEntriesReturnsEntryFromSingleHuntFlow(self):
+    pass
+
+  def testReadHuntLogEntriesReturnsEntryFromMultipleHuntFlows(self):
+    pass
+
+  def testReadHuntLogEntriesCorrectlyAppliesOffsetAndCountFilters(self):
+    pass
+
+  def testReadHuntLogEntriesCorrectlyAppliesWithSubstringFilter(self):
+    pass
+
+  def testReadHuntLogEntriesCorrectlyAppliesCombinationOfFilters(self):
+    pass
+
+  def testCountHuntLogEntriesReturnsCorrectHuntLogEntriesCount(self):
+    pass
+
+  def testReadHuntResultsReadsSingleResultOfSingleType(self):
+    pass
+
+  def testReadHuntResultsReadsMultipleResultOfSingleType(self):
+    pass
+
+  def testReadHuntResultsReadsMultipleResultOfMultipleTypes(self):
+    pass
+
+  def testReadHuntResultsCorrectlyAppliedOffsetAndCountFilters(self):
+    pass
+
+  def testReadHuntResultsCorrectlyAppliesWithTagFilter(self):
+    pass
+
+  def testReadHuntResultsCorrectlyAppliesWithTypeFilter(self):
+    pass
+
+  def testReadHuntResultsCorrectlyAppliesWithSubstringFilter(self):
+    pass
+
+  def testReadHuntResultsCorrectlyAppliesVariousCombinationsOfFilters(self):
+    pass
+
+  def testReadHuntResultsReturnsPayloadWithMissingTypeAsSpecialValue(self):
+    pass
+
+  def testCountHuntResultsReturnsCorrectResultsCount(self):
+    pass
+
+  def testCountHuntResultsCorrectlyAppliesWithTagFilter(self):
+    pass
+
+  def testCountHuntResultsCorrectlyAppliesWithTypeFilter(self):
+    pass
+
+  def testCountHuntResultsCorrectlyAppliesWithTagAndWithTypeFilters(self):
+    pass
+
+  def testCountHuntResultsCorrectlyAppliesWithTimestampFilter(self):
+    pass
+
+  def testCountHuntResultsByTypeGroupsResultsCorrectly(self):
+    pass
+
+  def testReadHuntFlowsReturnsEmptyListWhenNoFlows(self):
+    pass
+
+  def testReadHuntFlowsReturnsAllHuntFlowsWhenNoFilterCondition(self):
+    pass
+
+  def testReadHuntFlowsAppliesFilterConditionCorrectly(self):
+    pass
+
+  def testReadHuntFlowsCorrectlyAppliesOffsetAndCountFilters(self):
+    pass
+
+  def testCountHuntFlowsReturnsEmptyListWhenNoFlows(self):
+    pass
+
+  def testCountHuntFlowsReturnsAllHuntFlowsWhenNoFilterCondition(self):
+    pass
+
+  def testCountHuntFlowsAppliesFilterConditionCorrectly(self):
+    pass
+
+  # Flow/hunt output plugin tests.
+  def testFlowOutputPluginLogEntriesCanBeWrittenAndThenRead(self):
+    pass
+
+  def testFlowOutputPluginLogEntryWith1MbMessageCanBeWrittenAndThenRead(self):
+    pass
+
+  def testFlowOutputPluginLogEntriesCanBeReadWithTypeFilter(self):
+    pass
+
+  def testReadFlowOutputPluginLogEntriesCorrectlyAppliesOffsetCounter(self):
+    pass
+
+  def testReadFlowOutputPluginLogEntriesAppliesOffsetCounterWithType(self):
+    pass
+
+  def testFlowOutputPluginLogEntriesCanBeCountedPerPlugin(self):
+    pass
+
+  def testCountFlowOutputPluginLogEntriesRespectsWithTypeFilter(self):
+    pass
+
+  def testReadHuntOutputPluginLogEntriesReturnsEntryFromSingleHuntFlow(self):
+    pass
+
+  def testReadHuntOutputPluginLogEntriesReturnsEntryFromMultipleHuntFlows(self):
+    pass
+
+  def testReadHuntOutputPluginLogEntriesCorrectlyAppliesOffsetAndCountFilters(
+      self):
+    pass
+
+  def testReadHuntOutputPluginLogEntriesCorrectlyAppliesWithTypeFilter(self):
+    pass
+
+  def testReadHuntOutputPluginLogEntriesCorrectlyAppliesCombinationOfFilters(
+      self):
+    pass
+
+  def testCountHuntOutputPluginLogEntriesReturnsCorrectCount(self):
+    pass
+
+  def testCountHuntOutputPluginLogEntriesRespectsWithTypeFilter(self):
     pass
 
 

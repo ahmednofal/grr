@@ -1,19 +1,20 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
+from absl.testing import absltest
 import mock
 
-import unittest
 from grr_response_core.lib import flags
 from grr_response_core.lib import rdfvalue
 from grr_response_core.lib.rdfvalues import artifacts as rdf_artifacts
+from grr_response_core.lib.util import temp
 from grr_response_server import artifact_registry as ar
-from grr.test_lib import temp
 from grr.test_lib import test_lib
 
 
-class ArtifactRegistrySourcesTest(unittest.TestCase):
+class ArtifactRegistrySourcesTest(absltest.TestCase):
 
   def setUp(self):
     super(ArtifactRegistrySourcesTest, self).setUp()
@@ -97,7 +98,7 @@ class ArtifactRegistrySourcesTest(unittest.TestCase):
       self.assertEqual(warn.call_count, 3)
 
 
-class ArtifactTest(unittest.TestCase):
+class ArtifactTest(absltest.TestCase):
 
   def testValidateSyntaxSimple(self):
     artifact = rdf_artifacts.Artifact(
@@ -195,7 +196,7 @@ class ArtifactTest(unittest.TestCase):
       ar.ValidateSyntax(artifact)
 
 
-class ArtifactSourceTest(unittest.TestCase):
+class ArtifactSourceTest(absltest.TestCase):
 
   def testValidateDirectory(self):
     source = rdf_artifacts.ArtifactSource(

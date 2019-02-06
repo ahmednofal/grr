@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
 
 import threading
 import time
 
-import unittest
+from absl.testing import absltest
 from grr_response_core.lib import rdfvalue
 from grr.test_lib import test_lib
 
 
-class FakeTimelineTest(unittest.TestCase):
+class FakeTimelineTest(absltest.TestCase):
 
   def testRunSingleSleep(self):
     log = []
@@ -19,7 +21,8 @@ class FakeTimelineTest(unittest.TestCase):
         log.append("foo")
         time.sleep(10)
 
-    with test_lib.FakeTimeline(threading.Thread(target=foo)) as foo_timeline:
+    thread = threading.Thread(name="foo-thread", target=foo)
+    with test_lib.FakeTimeline(thread) as foo_timeline:
       log.append("start")
       foo_timeline.Run(duration=rdfvalue.Duration("5s"))
       log.append("5 seconds have passed")
@@ -52,7 +55,8 @@ class FakeTimelineTest(unittest.TestCase):
         time.sleep(5)
         log.append("baz")
 
-    with test_lib.FakeTimeline(threading.Thread(target=barz)) as barz_timeline:
+    thread = threading.Thread(name="barz=thread", target=barz)
+    with test_lib.FakeTimeline(thread) as barz_timeline:
       log.append("start")
       barz_timeline.Run(duration=rdfvalue.Duration("5s"))
       log.append("5 seconds have passed")
@@ -89,7 +93,8 @@ class FakeTimelineTest(unittest.TestCase):
       time.sleep(0)
       log.append("norf")
 
-    with test_lib.FakeTimeline(threading.Thread(target=norf)) as norf_timeline:
+    thread = threading.Thread(name="norf-thread", target=norf)
+    with test_lib.FakeTimeline(thread) as norf_timeline:
       log.append("start")
       norf_timeline.Run(duration=rdfvalue.Duration("0s"))
       log.append("rest")
@@ -114,7 +119,8 @@ class FakeTimelineTest(unittest.TestCase):
       time.sleep(10)
       raise Exception("bar")
 
-    with test_lib.FakeTimeline(threading.Thread(target=quux)) as quux_timeline:
+    thread = threading.Thread(name="quux-thread", target=quux)
+    with test_lib.FakeTimeline(thread) as quux_timeline:
       log.append("start")
       quux_timeline.Run(duration=rdfvalue.Duration("6s"))
       log.append("6 seconds have passed")
@@ -140,7 +146,8 @@ class FakeTimelineTest(unittest.TestCase):
     def thud():
       log.append("thud")
 
-    with test_lib.FakeTimeline(threading.Thread(target=thud)):
+    with test_lib.FakeTimeline(
+        threading.Thread(name="thud-thread", target=thud)):
       pass
 
     self.assertEqual(log, [])
@@ -151,7 +158,8 @@ class FakeTimelineTest(unittest.TestCase):
     def moof():
       log.append("moof")
 
-    with test_lib.FakeTimeline(threading.Thread(target=moof)) as moof_timeline:
+    with test_lib.FakeTimeline(
+        threading.Thread(name="moof-thread", target=moof)) as moof_timeline:
       moof_timeline.Run(duration=rdfvalue.Duration("10s"))
       moof_timeline.Run(duration=rdfvalue.Duration("20s"))
       moof_timeline.Run(duration=rdfvalue.Duration("30s"))
@@ -159,7 +167,8 @@ class FakeTimelineTest(unittest.TestCase):
     self.assertEqual(log, ["moof"])
 
   def testRunWithoutContext(self):
-    weez_timeline = test_lib.FakeTimeline(threading.Thread(target=lambda: None))
+    weez_timeline = test_lib.FakeTimeline(
+        threading.Thread(name="weez-thread", target=lambda: None))
 
     with self.assertRaisesRegexp(AssertionError, "called without context"):
       weez_timeline.Run(duration=rdfvalue.Duration("10s"))
@@ -170,7 +179,8 @@ class FakeTimelineTest(unittest.TestCase):
     def blargh():
       log.append("blargh")
 
-    blargh_timeline = test_lib.FakeTimeline(threading.Thread(target=blargh))
+    blargh_timeline = test_lib.FakeTimeline(
+        threading.Thread(name="blargh-thread", target=blargh))
     with blargh_timeline:
       blargh_timeline.Run(duration=rdfvalue.Duration("5s"))
 
@@ -193,7 +203,7 @@ class FakeTimelineTest(unittest.TestCase):
       log.append(rdfvalue.RDFDatetime.Now().Format("%Y-%m-%d %H:%M:%S"))
 
     fhesh_timeline = test_lib.FakeTimeline(
-        thread=threading.Thread(target=fhesh),
+        thread=threading.Thread(name="fhesh-thread", target=fhesh),
         now=rdfvalue.RDFDatetime.FromHumanReadable("2077-01-01"))
     with fhesh_timeline:
       log.append("beep (0)")
@@ -223,4 +233,4 @@ class FakeTimelineTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-  unittest.main()
+  absltest.main()

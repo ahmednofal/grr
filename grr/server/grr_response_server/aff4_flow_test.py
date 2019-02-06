@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 """Tests for aff4 flows."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import time
 
 
-from builtins import range  # pylint: disable=redefined-builtin
+from future.builtins import range
+from future.builtins import str
 
 from grr_response_client.client_actions import standard
 from grr_response_core import config
@@ -22,8 +24,10 @@ from grr_response_core.lib.rdfvalues import structs as rdf_structs
 from grr_response_proto import tests_pb2
 from grr_response_server import access_control
 from grr_response_server import aff4
+from grr_response_server import aff4_flows
 from grr_response_server import data_store
 from grr_response_server import flow
+from grr_response_server import flow_base
 from grr_response_server import queue_manager
 from grr_response_server import server_stubs
 from grr_response_server.flows.general import transfer
@@ -142,7 +146,7 @@ class FlowCreationTest(BasicFlowTest):
     with self.assertRaises(ValueError):
       flow.StartAFF4Flow(
           client_id="hello",
-          flow_name=flow_test_lib.FlowOrderTest.__name__,
+          flow_name=aff4_flows.FlowOrderTest.__name__,
           token=self.token)
 
   def testUnknownArg(self):
@@ -151,19 +155,19 @@ class FlowCreationTest(BasicFlowTest):
         type_info.UnknownArg,
         flow.StartAFF4Flow,
         client_id=self.client_id,
-        flow_name=flow_test_lib.FlowOrderTest.__name__,
+        flow_name=aff4_flows.FlowOrderTest.__name__,
         token=self.token,
         foobar=1)
 
   def testTypeAttributeIsNotAppendedWhenFlowIsClosed(self):
     session_id = flow.StartAFF4Flow(
         client_id=self.client_id,
-        flow_name=flow_test_lib.FlowOrderTest.__name__,
+        flow_name=aff4_flows.FlowOrderTest.__name__,
         token=self.token)
 
     flow_obj = aff4.FACTORY.Open(
         session_id,
-        aff4_type=flow_test_lib.FlowOrderTest,
+        aff4_type=aff4_flows.FlowOrderTest,
         age=aff4.ALL_TIMES,
         mode="rw",
         token=self.token)
@@ -171,27 +175,27 @@ class FlowCreationTest(BasicFlowTest):
 
     flow_obj = aff4.FACTORY.Open(
         session_id,
-        aff4_type=flow_test_lib.FlowOrderTest,
+        aff4_type=aff4_flows.FlowOrderTest,
         age=aff4.ALL_TIMES,
         token=self.token)
 
     types = list(flow_obj.GetValuesForAttribute(flow_obj.Schema.TYPE))
-    self.assertEqual(len(types), 1)
+    self.assertLen(types, 1)
 
   def testFlowSerialization(self):
     """Check that we can serialize flows."""
     session_id = flow.StartAFF4Flow(
         client_id=self.client_id,
-        flow_name=flow_test_lib.FlowOrderTest.__name__,
+        flow_name=aff4_flows.FlowOrderTest.__name__,
         token=self.token)
 
     flow_obj = aff4.FACTORY.Open(
         session_id,
-        aff4_type=flow_test_lib.FlowOrderTest,
+        aff4_type=aff4_flows.FlowOrderTest,
         age=aff4.ALL_TIMES,
         token=self.token)
 
-    self.assertEqual(flow_obj.__class__, flow_test_lib.FlowOrderTest)
+    self.assertEqual(flow_obj.__class__, aff4_flows.FlowOrderTest)
 
   def testFlowSerialization2(self):
     """Check that we can serialize flows."""
@@ -221,13 +225,13 @@ class FlowCreationTest(BasicFlowTest):
   def testTerminate(self):
     session_id = flow.StartAFF4Flow(
         client_id=self.client_id,
-        flow_name=flow_test_lib.FlowOrderTest.__name__,
+        flow_name=aff4_flows.FlowOrderTest.__name__,
         token=self.token)
 
     flow.GRRFlow.TerminateAFF4Flow(session_id, token=self.token)
     flow_obj = aff4.FACTORY.Open(
         session_id,
-        aff4_type=flow_test_lib.FlowOrderTest,
+        aff4_type=aff4_flows.FlowOrderTest,
         age=aff4.ALL_TIMES,
         token=self.token)
     runner = flow_obj.GetRunner()
@@ -238,20 +242,20 @@ class FlowCreationTest(BasicFlowTest):
     reason = "no reason"
     session_id = flow.StartAFF4Flow(
         client_id=self.client_id,
-        flow_name=flow_test_lib.FlowOrderTest.__name__,
+        flow_name=aff4_flows.FlowOrderTest.__name__,
         token=self.token)
     flow.GRRFlow.TerminateAFF4Flow(session_id, reason=reason, token=self.token)
 
     flow_obj = aff4.FACTORY.Open(
         session_id,
-        aff4_type=flow_test_lib.FlowOrderTest,
+        aff4_type=aff4_flows.FlowOrderTest,
         age=aff4.ALL_TIMES,
         token=self.token)
     runner = flow_obj.GetRunner()
     self.assertEqual(runner.IsRunning(), False)
     self.assertEqual(runner.context.state,
                      rdf_flow_runner.FlowContext.State.ERROR)
-    self.assertTrue(reason in runner.context.status)
+    self.assertIn(reason, runner.context.status)
 
   def testChildTermination(self):
     session_id = flow.StartAFF4Flow(
@@ -264,7 +268,7 @@ class FlowCreationTest(BasicFlowTest):
 
     children = list(
         obj for obj in flow_obj.OpenChildren() if isinstance(obj, flow.GRRFlow))
-    self.assertEqual(len(children), 1)
+    self.assertLen(children, 1)
 
     reason = "just so"
 
@@ -278,8 +282,8 @@ class FlowCreationTest(BasicFlowTest):
     self.assertEqual(runner.context.state,
                      rdf_flow_runner.FlowContext.State.ERROR)
 
-    self.assertTrue("user test" in runner.context.status)
-    self.assertTrue(reason in runner.context.status)
+    self.assertIn("user test", runner.context.status)
+    self.assertIn(reason, runner.context.status)
 
     child = aff4.FACTORY.Open(
         children[0].urn, aff4_type=CallClientChildFlow, token=self.token)
@@ -288,8 +292,8 @@ class FlowCreationTest(BasicFlowTest):
     self.assertEqual(runner.context.state,
                      rdf_flow_runner.FlowContext.State.ERROR)
 
-    self.assertTrue("user test" in runner.context.status)
-    self.assertTrue("Parent flow terminated." in runner.context.status)
+    self.assertIn("user test", runner.context.status)
+    self.assertIn("Parent flow terminated.", runner.context.status)
 
   notifications = {}
 
@@ -348,8 +352,8 @@ class FlowCreationTest(BasicFlowTest):
           flow_name="CallClientParentFlow",
           token=self.token)
 
-    self.assertEqual(len(close_call_times), 1)
-    self.assertEqual(len(qst_call_times), 1)
+    self.assertLen(close_call_times, 1)
+    self.assertLen(qst_call_times, 1)
 
     # Check that the client request was written after the flow was created.
     self.assertLess(
@@ -360,23 +364,23 @@ class FlowCreationTest(BasicFlowTest):
   def testFlowLogging(self):
     """Check that flows log correctly."""
     flow_urn = flow_test_lib.TestFlowHelper(
-        flow_test_lib.DummyLogFlow.__name__,
+        aff4_flows.DummyLogFlow.__name__,
         action_mocks.ActionMock(),
         token=self.token,
         client_id=self.client_id)
 
     log_collection = flow.GRRFlow.LogCollectionForFID(flow_urn)
-    self.assertEqual(len(log_collection), 8)
+    self.assertLen(log_collection, 8)
     for log in log_collection:
       self.assertEqual(log.client_id, self.client_id)
-      self.assertTrue(log.log_message in [
+      self.assertIn(log.log_message, [
           "First", "Second", "Third", "Fourth", "Uno", "Dos", "Tres", "Cuatro"
       ])
-      self.assertTrue(log.flow_name in [
-          flow_test_lib.DummyLogFlow.__name__, flow_test_lib.DummyLogFlowChild
-          .__name__
+      self.assertIn(log.flow_name, [
+          aff4_flows.DummyLogFlow.__name__,
+          aff4_flows.DummyLogFlowChild.__name__
       ])
-      self.assertTrue(str(flow_urn) in str(log.urn))
+      self.assertIn(str(flow_urn), str(log.urn))
 
   def testFlowStoresResultsPerType(self):
     flow_urn = flow_test_lib.TestFlowHelper(
@@ -421,7 +425,7 @@ class FlowTest(notification_test_lib.NotificationTestMixin,
     with self.assertRaises(RuntimeError):
       with test_lib.SuppressLogs():
         flow_test_lib.TestFlowHelper(
-            flow_test_lib.BrokenFlow.__name__,
+            aff4_flows.BrokenFlow.__name__,
             client_mock,
             client_id=self.client_id,
             check_flow_errors=True,
@@ -464,7 +468,7 @@ class FlowTest(notification_test_lib.NotificationTestMixin,
 
   def testReordering(self):
     """Check that out of order client messages are reordered."""
-    flow_obj = self.FlowSetup(flow_test_lib.FlowOrderTest.__name__)
+    flow_obj = self.FlowSetup(aff4_flows.FlowOrderTest.__name__)
 
     # Simulate processing messages arriving in random order
     message_ids = [2, 1, 4, 3, 5]
@@ -483,13 +487,13 @@ class FlowTest(notification_test_lib.NotificationTestMixin,
 
   def testCallClient(self):
     """Flows can send client messages using CallClient()."""
-    flow_obj = self.FlowSetup(flow_test_lib.FlowOrderTest.__name__)
+    flow_obj = self.FlowSetup(aff4_flows.FlowOrderTest.__name__)
 
     # Check that a message went out to the client
     manager = queue_manager.QueueManager(token=self.token)
     tasks = manager.Query(self.client_id, limit=100)
 
-    self.assertEqual(len(tasks), 1)
+    self.assertLen(tasks, 1)
 
     message = tasks[0]
 
@@ -499,7 +503,7 @@ class FlowTest(notification_test_lib.NotificationTestMixin,
 
   def testAuthentication1(self):
     """Test that flows refuse to processes unauthenticated messages."""
-    flow_obj = self.FlowSetup(flow_test_lib.FlowOrderTest.__name__)
+    flow_obj = self.FlowSetup(aff4_flows.FlowOrderTest.__name__)
 
     # Simulate processing messages arriving in random order
     message_ids = [2, 1, 4, 3, 5]
@@ -527,7 +531,7 @@ class FlowTest(notification_test_lib.NotificationTestMixin,
     arrive earlier. This can be an effective DoS against legitimate
     clients but would require attackers to guess session ids.
     """
-    flow_obj = self.FlowSetup(flow_test_lib.FlowOrderTest.__name__)
+    flow_obj = self.FlowSetup(aff4_flows.FlowOrderTest.__name__)
 
     # Simulate processing messages arriving in random order
     message_ids = [1, 2]
@@ -613,7 +617,7 @@ class FlowTerminationTest(BasicFlowTest):
   """Flow termination-related tests."""
 
   def testFlowMarkedForTerminationTerminatesInStateHandler(self):
-    flow_obj = self.FlowSetup(flow_test_lib.FlowOrderTest.__name__)
+    flow_obj = self.FlowSetup(aff4_flows.FlowOrderTest.__name__)
     with data_store.DB.GetMutationPool() as pool:
       flow.GRRFlow.MarkForTermination(
           flow_obj.urn, reason="because i can", mutation_pool=pool)
@@ -648,7 +652,7 @@ class FlowOutputPluginsTest(BasicFlowTest):
               path="/tmp/evil.txt", pathtype=rdf_paths.PathSpec.PathType.OS))
 
     if client_mock is None:
-      client_mock = hunt_test_lib.SampleHuntMock()
+      client_mock = hunt_test_lib.SampleHuntMock(failrate=2)
 
     return flow_test_lib.TestFlowHelper(
         flow_name,
@@ -685,8 +689,8 @@ class FlowOutputPluginsTest(BasicFlowTest):
     ])
     flow_obj = aff4.FACTORY.Open(flow_urn, token=self.token)
     log_messages = [item.log_message for item in flow_obj.GetLog()]
-    self.assertTrue(
-        "Plugin DummyFlowOutputPlugin successfully processed 1 flow replies." in
+    self.assertIn(
+        "Plugin DummyFlowOutputPlugin successfully processed 1 flow replies.",
         log_messages)
 
   def testFlowLogsFailedOutputPluginProcessing(self):
@@ -696,9 +700,9 @@ class FlowOutputPluginsTest(BasicFlowTest):
     ])
     flow_obj = aff4.FACTORY.Open(flow_urn, token=self.token)
     log_messages = [item.log_message for item in flow_obj.GetLog()]
-    self.assertTrue(
+    self.assertIn(
         "Plugin FailingDummyFlowOutputPlugin failed to process 1 replies "
-        "due to: Oh no!" in log_messages)
+        "due to: Oh no!", log_messages)
 
   def testFlowDoesNotFailWhenOutputPluginFails(self):
     flow_urn = self.RunFlow(plugins=[
@@ -801,9 +805,10 @@ class GeneralFlowsTest(BasicFlowTest):
 
     self.assertEqual(ParentFlow.success, True)
     subflows = list(
-        obj for obj in aff4.FACTORY.Open(session_id, token=self.token)
-        .OpenChildren() if isinstance(obj, flow.GRRFlow))
-    self.assertEqual(len(subflows), 1)
+        obj for obj in aff4.FACTORY.Open(session_id,
+                                         token=self.token).OpenChildren()
+        if isinstance(obj, flow.GRRFlow))
+    self.assertLen(subflows, 1)
     self.assertEqual(subflows[0].GetRunner().context.creator, "original_user")
 
   def testBrokenChainedFlow(self):
@@ -861,7 +866,7 @@ class FlowLimitTests(BasicFlowTest):
 
   def testCPULimit(self):
     """Tests that the cpu limit works."""
-    result = self.RunFlow(flow_test_lib.CPULimitFlow.__name__, cpu_limit=300)
+    result = self.RunFlow(aff4_flows.CPULimitFlow.__name__, cpu_limit=300)
     self.assertEqual(result["cpulimit"], [300, 295, 255])
 
 
@@ -942,8 +947,8 @@ class ParentFlow(flow.GRRFlow):
 
   def ParentReceiveHello(self, responses):
     responses = list(responses)
-    if (len(responses) != 2 or "Child" not in unicode(responses[0]) or
-        "Hello" not in unicode(responses[1])):
+    if (len(responses) != 2 or "Child" not in str(responses[0]) or
+        "Hello" not in str(responses[1])):
       raise RuntimeError("Messages not passed to parent")
 
     ParentFlow.success = True
@@ -1024,29 +1029,36 @@ class FlowPropertiesTest(flow_test_lib.FlowTestsBaseclass):
   # being registered, we clear the registry and restore it after each test case.
 
   def setUp(self):
+    super(FlowPropertiesTest, self).setUp()
     self._flow_classes = flow.GRRFlow.classes
+    self._flow_base_classes = flow_base.FlowBase.classes
     flow.GRRFlow.classes = {}
+    flow_base.FlowBase.classes = {}
 
   def tearDown(self):
+    super(FlowPropertiesTest, self).tearDown()
     flow.GRRFlow.classes = self._flow_classes
+    flow_base.FlowBase.classes = self._flow_base_classes
 
   def testClientId(self):
     test = self
     client_id = test.SetupClient(0)
 
-    class IdCheckerFlow(flow.GRRFlow):
+    @flow_base.DualDBFlow  # pylint: disable=unused-variable
+    class IdCheckerFlowMixin(object):
 
       def Start(self):
         test.assertEqual(self.client_id, client_id)
 
     flow_test_lib.TestFlowHelper(
-        IdCheckerFlow.__name__, client_id=client_id, token=self.token)
+        IdCheckerFlow.__name__, client_id=client_id, token=self.token)  # pylint: disable=undefined-variable
 
   def testClientVersion(self):
     test = self
     client_id = test.SetupClient(0)
 
-    class VersionCheckerFlow(flow.GRRFlow):
+    @flow_base.DualDBFlow  # pylint: disable=unused-variable
+    class VersionCheckerFlowMixin(object):
 
       def Start(self):
         version = config.CONFIG["Source.version_numeric"]
@@ -1054,20 +1066,21 @@ class FlowPropertiesTest(flow_test_lib.FlowTestsBaseclass):
         test.assertEqual(self.client_version, version)  # Force cache usage.
 
     flow_test_lib.TestFlowHelper(
-        VersionCheckerFlow.__name__, client_id=client_id, token=self.token)
+        VersionCheckerFlow.__name__, client_id=client_id, token=self.token)  # pylint: disable=undefined-variable
 
   def testClientOs(self):
     test = self
     client_id = test.SetupClient(0, system="Windows")
 
-    class OsCheckerFlow(flow.GRRFlow):
+    @flow_base.DualDBFlow  # pylint: disable=unused-variable
+    class OsCheckerFlowMixin(object):
 
       def Start(self):
         test.assertEqual(self.client_os, "Windows")
         test.assertEqual(self.client_os, "Windows")  # Force cache usage.
 
     flow_test_lib.TestFlowHelper(
-        OsCheckerFlow.__name__, client_id=client_id, token=self.token)
+        OsCheckerFlow.__name__, client_id=client_id, token=self.token)  # pylint: disable=undefined-variable
 
 
 def main(argv):

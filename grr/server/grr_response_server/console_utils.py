@@ -19,6 +19,7 @@ import time
 from builtins import input  # pylint: disable=redefined-builtin
 from builtins import range  # pylint: disable=redefined-builtin
 from future.utils import iteritems
+from future.utils import string_types
 
 from grr_response_core.lib import rdfvalue
 from grr_response_core.lib import type_info
@@ -26,6 +27,7 @@ from grr_response_core.lib import utils
 from grr_response_core.lib.rdfvalues import client as rdf_client
 from grr_response_core.lib.rdfvalues import flows as rdf_flows
 from grr_response_core.lib.util import collection
+from grr_response_core.lib.util import compatibility
 from grr_response_core.lib.util import csv
 from grr_response_server import access_control
 from grr_response_server import aff4
@@ -41,7 +43,7 @@ from grr_response_server.aff4_objects import users
 
 def FormatISOTime(t):
   """Format a time in epoch notation to ISO UTC."""
-  return time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(t / 1e6))
+  return compatibility.FormatTime("%Y-%m-%d %H:%M:%S", time.gmtime(t / 1e6))
 
 
 def SearchClients(query_str, token=None, limit=1000):
@@ -253,7 +255,7 @@ def ApprovalCreateRaw(aff4_path,
   super_token = access_control.ACLToken(username="raw-approval-superuser")
   super_token.supervisor = True
 
-  if isinstance(approval_type, basestring):
+  if isinstance(approval_type, string_types):
     approval_type_cls = aff4.AFF4Object.classes[approval_type]
   else:
     approval_type_cls = approval_type

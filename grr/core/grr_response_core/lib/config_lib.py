@@ -4,6 +4,7 @@
 This handles opening and parsing of config files.
 """
 from __future__ import absolute_import
+from __future__ import division
 
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -21,10 +22,13 @@ import traceback
 
 
 import configparser
+from future.builtins import str
 from future.utils import iteritems
 from future.utils import itervalues
+from future.utils import string_types
 from future.utils import with_metaclass
-import yaml
+from typing import cast
+from typing import Text
 
 from grr_response_core.lib import flags
 from grr_response_core.lib import lexer
@@ -33,7 +37,9 @@ from grr_response_core.lib import registry
 from grr_response_core.lib import type_info
 from grr_response_core.lib import utils
 from grr_response_core.lib.rdfvalues import structs as rdf_structs
+from grr_response_core.lib.util import compatibility
 from grr_response_core.lib.util import precondition
+from grr_response_core.lib.util import yaml
 
 # Default is set in distro_entry.py to be taken from package resource.
 flags.DEFINE_string(
@@ -85,10 +91,6 @@ class UnknownOption(Error, KeyError):
 
 class InterpolationError(Error):
   """Raised when a config object failed to interpolate."""
-
-  def AddContext(self, message):
-    self.message = "%s %s" % (self.message, message)
-    self.args = (self.message,)
 
 
 class FilterError(InterpolationError):
@@ -142,6 +144,7 @@ class ConfigFilter(with_metaclass(registry.MetaclassRegistry, object)):
   sensitive_arg = False
 
   def Filter(self, data):
+    precondition.AssertType(data, Text)
     return data
 
 
@@ -154,6 +157,7 @@ class Lower(ConfigFilter):
   name = "lower"
 
   def Filter(self, data):
+    precondition.AssertType(data, Text)
     return data.lower()
 
 
@@ -161,6 +165,7 @@ class Upper(ConfigFilter):
   name = "upper"
 
   def Filter(self, data):
+    precondition.AssertType(data, Text)
     return data.upper()
 
 
@@ -168,16 +173,33 @@ class Filename(ConfigFilter):
   name = "file"
 
   def Filter(self, data):
+    precondition.AssertType(data, Text)
     try:
-      return open(data, "rb").read(1024000)
+      with io.open(data, "r") as fd:
+        return fd.read()
     except IOError as e:
       raise FilterError("%s: %s" % (data, e))
 
 
+class OptionalFile(ConfigFilter):
+  name = "optionalfile"
+
+  def Filter(self, data):
+    precondition.AssertType(data, Text)
+    try:
+      with io.open(data, "r") as fd:
+        return fd.read()
+    except IOError:
+      return ""
+
+
 class FixPathSeparator(ConfigFilter):
+  """A configuration filter that fixes the path speratator."""
+
   name = "fixpathsep"
 
   def Filter(self, data):
+    precondition.AssertType(data, Text)
     if platform.system() == "Windows":
       # This will fix "X:\", and might add extra slashes to other paths, but
       # this is OK.
@@ -190,6 +212,11 @@ class Base64(ConfigFilter):
   name = "base64"
 
   def Filter(self, data):
+    precondition.AssertType(data, Text)
+    # TODO: `decode` on unicode object won't work in Python 3.
+    # Also, this method is supposed to return unicode object whereas "base64"
+    # encoding is used for binary data. Finally, this does not seem to be used
+    # anywhere so maybe it can be removed?
     return data.decode("base64")
 
 
@@ -198,7 +225,8 @@ class Env(ConfigFilter):
   name = "env"
 
   def Filter(self, data):
-    return os.environ.get(data.upper(), "")
+    precondition.AssertType(data, Text)
+    return compatibility.Environ(data.upper(), default="")
 
 
 class Expand(ConfigFilter):
@@ -206,7 +234,13 @@ class Expand(ConfigFilter):
   name = "expand"
 
   def Filter(self, data):
-    return _CONFIG.InterpolateValue(data)
+    precondition.AssertType(data, Text)
+    interpolated = _CONFIG.InterpolateValue(data)
+    # TODO(hanuszczak): This assertion should not be necessary but since the
+    # whole configuration system is one gigantic spaghetti, we can never be sure
+    # what is being returned.
+    precondition.AssertType(data, Text)
+    return cast(Text, interpolated)
 
 
 class Flags(ConfigFilter):
@@ -214,9 +248,19 @@ class Flags(ConfigFilter):
   name = "flags"
 
   def Filter(self, data):
+    precondition.AssertType(data, Text)
     try:
       logging.debug("Overriding config option with flags.FLAGS.%s", data)
-      return getattr(flags.FLAGS, data)
+      attribute = getattr(flags.FLAGS, data)
+      # TODO(hanuszczak): Filters should always return strings and this juggling
+      # should not be needed. This is just a quick hack to fix prod.
+      if isinstance(attribute, bytes):
+        attribute = attribute.decode("utf-8")
+      elif not isinstance(attribute, Text):
+        attribute = str(attribute)
+      # TODO(hanuszczak): See TODO comment in the `Expand` filter.
+      precondition.AssertType(attribute, Text)
+      return cast(Text, attribute)
     except AttributeError as e:
       raise FilterError(e)
 
@@ -286,6 +330,12 @@ class GRRConfigParser(with_metaclass(registry.MetaclassRegistry, object)):
   # Set to True by the parsers if the file exists.
   parsed = None
 
+  def SaveData(self, raw_data):
+    raise NotImplementedError()
+
+  def SaveDataToFD(self, raw_data, fd):
+    raise NotImplementedError()
+
   def RawData(self):
     """Convert the file to a more suitable data structure.
 
@@ -309,12 +359,12 @@ class GRRConfigParser(with_metaclass(registry.MetaclassRegistry, object)):
       }
     }
 
-    i.e. raw_data is an OrderedYamlDict() with keys representing parameter names
+    i.e. raw_data is an OrderedDict() with keys representing parameter names
     and values representing values. Contexts are represented by nested
-    OrderedYamlDict() structures with similar format.
+    OrderedDict() structures with similar format.
 
     Note that support for contexts is optional and depends on the config file
-    format. If contexts are not supported, a flat OrderedYamlDict() is returned.
+    format. If contexts are not supported, a flat OrderedDict() is returned.
     """
 
 
@@ -378,75 +428,12 @@ class ConfigFileParser(configparser.RawConfigParser, GRRConfigParser):
     self.write(fd)
 
   def RawData(self):
-    raw_data = OrderedYamlDict()
+    raw_data = collections.OrderedDict()
     for section in self.sections():
       for key, value in self.items(section):
         raw_data[".".join([section, key])] = value
 
     return raw_data
-
-
-# TODO(user): Move this class to utils.py
-class OrderedYamlDict(yaml.YAMLObject, collections.OrderedDict):
-  """A class which produces an ordered dict."""
-  yaml_tag = "tag:yaml.org,2002:map"
-
-  # pylint:disable=g-bad-name
-  @classmethod
-  def to_yaml(cls, dumper, data):
-    value = []
-    node = yaml.nodes.MappingNode(cls.yaml_tag, value)
-    for key, item in iteritems(data):
-      # Keys are forced to be strings and not unicode.
-      node_key = dumper.represent_data(utils.SmartStr(key))
-      node_value = dumper.represent_data(item)
-      value.append((node_key, node_value))
-
-    return node
-
-  @classmethod
-  def construct_mapping(cls, loader, node, deep=False):
-    """Based on yaml.loader.BaseConstructor.construct_mapping."""
-
-    if not isinstance(node, yaml.MappingNode):
-      raise yaml.loader.ConstructorError(
-          None, None, "expected a mapping node, but found %s" % node.id,
-          node.start_mark)
-
-    mapping = OrderedYamlDict()
-    for key_node, value_node in node.value:
-      key = loader.construct_object(key_node, deep=deep)
-      try:
-        hash(key)
-      except TypeError as exc:
-        raise yaml.loader.ConstructorError(
-            "while constructing a mapping", node.start_mark,
-            "found unacceptable key (%s)" % exc, key_node.start_mark)
-      value = loader.construct_object(value_node, deep=deep)
-      mapping[key] = value
-
-    return mapping
-
-  @classmethod
-  def from_yaml(cls, loader, node):
-    """Parse the yaml file into an OrderedDict so we can preserve order."""
-    fields = cls.construct_mapping(loader, node, deep=True)
-    result = cls()
-    for k, v in iteritems(fields):
-      result[k] = v
-
-    return result
-
-  # pylint:enable=g-bad-name
-
-
-  # Ensure Yaml does not emit tags for unicode objects.
-  # http://pyyaml.org/ticket/11
-def UnicodeRepresenter(dumper, value):
-  return dumper.represent_scalar(u"tag:yaml.org,2002:str", value)
-
-
-yaml.add_representer(unicode, UnicodeRepresenter)
 
 
 class YamlParser(GRRConfigParser):
@@ -479,9 +466,9 @@ class YamlParser(GRRConfigParser):
           # permissions.
           raise IOError(e)
         else:
-          self.parsed = OrderedYamlDict()
+          self.parsed = collections.OrderedDict()
       except OSError:
-        self.parsed = OrderedYamlDict()
+        self.parsed = collections.OrderedDict()
 
     elif data is not None:
       self.filename = filename
@@ -518,7 +505,7 @@ class YamlParser(GRRConfigParser):
 
   def SaveDataToFD(self, raw_data, fd):
     """Merge the raw data with the config file and store it."""
-    yaml.dump(raw_data, fd, default_flow_style=False)
+    fd.write(yaml.Dump(raw_data).encode("utf-8"))
 
   def _RawData(self, data):
     """Convert data to common format.
@@ -540,7 +527,7 @@ class YamlParser(GRRConfigParser):
     if not isinstance(data, dict):
       return data
 
-    result = OrderedYamlDict()
+    result = collections.OrderedDict()
     for k, v in iteritems(data):
       result[k] = self._RawData(v)
 
@@ -558,20 +545,8 @@ def _ParseYamlFromFilepath(filepath):
 
 def _ParseYamlFromFile(filedesc):
   """Parses given YAML file."""
-
-  def StrConstructor(loader, node):
-    precondition.AssertType(node.value, unicode)
-    return loader.construct_scalar(node)
-
-  # This makes sure that all string literals in the YAML file are parsed as an
-  # `unicode` object rather than `bytes` instances.
-  yaml.add_constructor("tag:yaml.org,2002:str", StrConstructor)
-
-  # Note that we do not use safe_load because we trust the config file (if an
-  # attacker can write on the config file they can already get code
-  # execution). Using safe_load will break when loading a yaml file written
-  # with dump().
-  return yaml.load(filedesc) or OrderedYamlDict()
+  content = filedesc.read()
+  return yaml.Parse(content) or collections.OrderedDict()
 
 
 class StringInterpolator(lexer.Lexer):
@@ -681,6 +656,7 @@ class StringInterpolator(lexer.Lexer):
       if not filter_object.sensitive_arg:
         logging.debug("Applying filter %s for %s.", filter_name, arg)
       arg = filter_object().Filter(arg)
+      precondition.AssertType(arg, Text)
 
     self.stack[-1] += arg
 
@@ -727,11 +703,11 @@ class GrrConfigManager(object):
     # different situations. The context can contain any string describing a
     # different aspect of the running instance.
     self.context = []
-    self.raw_data = OrderedYamlDict()
+    self.raw_data = collections.OrderedDict()
     self.files = []
     self.secondary_config_parsers = []
     self.writeback = None
-    self.writeback_data = OrderedYamlDict()
+    self.writeback_data = collections.OrderedDict()
     self.global_override = dict()
     self.context_descriptions = {}
     self.constants = set()
@@ -866,7 +842,7 @@ class GrrConfigManager(object):
     Returns:
       dict of {parameter: Exception}, where parameter is a section.name string.
     """
-    if isinstance(sections, basestring):
+    if isinstance(sections, string_types):
       sections = [sections]
 
     if sections is None:
@@ -972,7 +948,7 @@ class GrrConfigManager(object):
 
     # Check if the new value conforms with the type_info.
     if value is not None:
-      if isinstance(value, unicode):
+      if isinstance(value, Text):
         value = self.EscapeString(value)
 
     writeback_data[name] = value
@@ -1005,6 +981,8 @@ class GrrConfigManager(object):
                          "writeback location.")
 
     writeback_raw_value = dict(self.writeback.RawData()).get(config_option)
+    raw_value = None
+
     for parser in [self.parser] + self.secondary_config_parsers:
       if parser == self.writeback:
         continue
@@ -1016,6 +994,9 @@ class GrrConfigManager(object):
       break
 
     if writeback_raw_value == raw_value:
+      return
+
+    if raw_value is None:
       return
 
     self.SetRaw(config_option, raw_value)
@@ -1070,13 +1051,6 @@ class GrrConfigManager(object):
   def PrintHelp(self):
     print(self.FormatHelp())
 
-  default_descriptors = {
-      str: type_info.String,
-      unicode: type_info.String,
-      int: type_info.Integer,
-      list: type_info.List,
-  }
-
   def MergeData(self, merge_data, raw_data=None):
     """Merges data read from a config file into the current config."""
     self.FlushCache()
@@ -1085,10 +1059,10 @@ class GrrConfigManager(object):
 
     for k, v in iteritems(merge_data):
       # A context clause.
-      if isinstance(v, OrderedYamlDict) and k not in self.type_infos:
+      if isinstance(v, dict) and k not in self.type_infos:
         if k not in self.valid_contexts:
           raise InvalidContextError("Invalid context specified: %s" % k)
-        context_data = raw_data.setdefault(k, OrderedYamlDict())
+        context_data = raw_data.setdefault(k, collections.OrderedDict())
         self.MergeData(v, context_data)
 
       else:
@@ -1100,7 +1074,7 @@ class GrrConfigManager(object):
           if flags.FLAGS.disallow_missing_config_definitions:
             raise MissingConfigDefinitionError(msg)
 
-        if isinstance(v, basestring):
+        if isinstance(v, string_types):
           v = v.strip()
 
         # If we are already initialized and someone tries to modify a constant
@@ -1223,8 +1197,8 @@ class GrrConfigManager(object):
     self.FlushCache()
     if reset:
       # Clear previous configuration.
-      self.raw_data = OrderedYamlDict()
-      self.writeback_data = OrderedYamlDict()
+      self.raw_data = collections.OrderedDict()
+      self.writeback_data = collections.OrderedDict()
       self.writeback = None
       self.initialized = False
 
@@ -1288,9 +1262,9 @@ class GrrConfigManager(object):
                            "Configuration hasn't been initialized yet." % name)
     if context:
       # Make sure it's not just a string and is iterable.
-      if (isinstance(context, basestring) or
+      if (isinstance(context, string_types) or
           not isinstance(context, collections.Iterable)):
-        raise ValueError("context should be a list, got %s" % str(context))
+        raise ValueError("context should be a list, got %r" % context)
 
     calc_context = context
 
@@ -1356,7 +1330,7 @@ class GrrConfigManager(object):
 
         value = context_raw_data.get(name)
         if value is not None:
-          if isinstance(value, basestring):
+          if isinstance(value, string_types):
             value = value.strip()
 
           yield context_raw_data, value, path + [element]
@@ -1444,7 +1418,7 @@ class GrrConfigManager(object):
                        context=None):
     """Interpolate the value and parse it with the appropriate type."""
     # It is only possible to interpolate strings...
-    if isinstance(value, unicode):
+    if isinstance(value, Text):
       try:
         value = StringInterpolator(
             value,
@@ -1453,8 +1427,11 @@ class GrrConfigManager(object):
             parameter=type_info_obj.name,
             context=context).Parse()
       except InterpolationError as e:
-        e.AddContext(value)
-        raise
+        # TODO(hanuszczak): This is a quick hack to not refactor too much while
+        # working on Python 3 compatibility. But this is bad and exceptions
+        # should not be used like this.
+        message = "{cause}: {detail}".format(cause=e, detail=value)
+        raise type(e)(message)
 
       # Parse the data from the string.
       value = type_info_obj.FromString(value)

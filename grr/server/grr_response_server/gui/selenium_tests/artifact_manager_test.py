@@ -1,9 +1,11 @@
 #!/usr/bin/env python
-# -*- mode: python; encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 """Test the artifact rendering interface."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
+import io
 import os
 
 
@@ -101,7 +103,7 @@ class TestArtifactManagementRender(gui_test_lib.GRRSeleniumTest):
     self.WaitUntil(self.IsTextPresent, "TestDrivers")
 
   def testArtifactDeletion(self):
-    with open(self.json_file, "rb") as fd:
+    with io.open(self.json_file, mode="r", encoding="utf-8") as fd:
       artifact.UploadArtifactYamlFile(fd.read())
 
     self.Open("/#main=ArtifactManagerView")
@@ -128,7 +130,7 @@ class TestArtifactManagementRender(gui_test_lib.GRRSeleniumTest):
     self.WaitUntilNot(self.IsTextPresent, "TestDrivers")
 
   def testArtifactRemovedFromFormsImmediatelyAfterDeletion(self):
-    with open(self.json_file, "rb") as fd:
+    with io.open(self.json_file, mode="r", encoding="utf-8") as fd:
       artifact.UploadArtifactYamlFile(fd.read())
 
     client_id = self.SetupClient(0).Basename()

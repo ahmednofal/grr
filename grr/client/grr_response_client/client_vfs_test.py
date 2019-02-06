@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-# -*- mode: python; encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 """Test client vfs."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import io
@@ -11,11 +12,10 @@ import shutil
 import stat
 
 
+from absl.testing import absltest
 from builtins import range  # pylint: disable=redefined-builtin
 import mock
 import psutil
-
-import unittest
 
 # pylint: disable=unused-import,g-bad-import-order
 from grr_response_client import client_plugins
@@ -27,7 +27,7 @@ from grr_response_core.lib import flags
 from grr_response_core.lib import utils
 from grr_response_core.lib.rdfvalues import client as rdf_client
 from grr_response_core.lib.rdfvalues import paths as rdf_paths
-from grr.test_lib import temp
+from grr_response_core.lib.util import temp
 from grr.test_lib import test_lib
 from grr.test_lib import vfs_test_lib
 
@@ -92,7 +92,7 @@ class VFSTest(test_lib.GRRBaseTest):
       fds.append(fd)
 
     # This should not create any new file handles.
-    self.assertTrue(len(current_process.open_files()) - num_open_files < 5)
+    self.assertLess(len(current_process.open_files()) - num_open_files, 5)
 
   def testOpenFilehandlesExpire(self):
     """Test that file handles expire from cache."""
@@ -115,7 +115,7 @@ class VFSTest(test_lib.GRRBaseTest):
       fds.append(child_fd)
 
     # This should not create any new file handles.
-    self.assertTrue(len(current_process.open_files()) - num_open_files < 5)
+    self.assertLess(len(current_process.open_files()) - num_open_files, 5)
 
     # Make sure we exceeded the size of the cache.
     self.assertGreater(fds, 20)
@@ -296,9 +296,9 @@ class VFSTest(test_lib.GRRBaseTest):
     # The tsk_fs_attr_type enum:
     tsk_fs_attr_type = rdf_paths.PathSpec.tsk_fs_attr_type
 
-    ref = [(65, tsk_fs_attr_type.TSK_FS_ATTR_TYPE_DEFAULT,
-            0), (65, tsk_fs_attr_type.TSK_FS_ATTR_TYPE_NTFS_DATA,
-                 4), (66, tsk_fs_attr_type.TSK_FS_ATTR_TYPE_DEFAULT, 0),
+    ref = [(65, tsk_fs_attr_type.TSK_FS_ATTR_TYPE_DEFAULT, 0),
+           (65, tsk_fs_attr_type.TSK_FS_ATTR_TYPE_NTFS_DATA, 4),
+           (66, tsk_fs_attr_type.TSK_FS_ATTR_TYPE_DEFAULT, 0),
            (67, tsk_fs_attr_type.TSK_FS_ATTR_TYPE_DEFAULT, 0)]
 
     # Make sure that the ADS is recovered.
@@ -351,7 +351,7 @@ class VFSTest(test_lib.GRRBaseTest):
 
     vfs.VFSOpen(ps, progress_callback=Progress)
 
-    self.assertTrue(self.progress_counter > 0)
+    self.assertGreater(self.progress_counter, 0)
 
   def testUnicodeFile(self):
     """Test ability to read unicode files from images."""
@@ -442,7 +442,7 @@ class VFSTest(test_lib.GRRBaseTest):
       self.assertEqual(s.pathspec.nested_path.path, "/home/image2.img")
       names.append(s.pathspec.nested_path.nested_path.path)
 
-    self.assertTrue("home/a.txt" in names)
+    self.assertIn("home/a.txt", names)
 
   def testRegistryListing(self):
     """Test our ability to list registry keys."""
@@ -544,7 +544,7 @@ class VFSTest(test_lib.GRRBaseTest):
     self.assertEqual(fd.size, 100000000)
 
 
-class VFSMultiOpenTest(unittest.TestCase):
+class VFSMultiOpenTest(absltest.TestCase):
 
   _VFS_OVERRIDER = vfs_test_lib.VFSOverrider(rdf_paths.PathSpec.PathType.OS,
                                              files.File)
@@ -574,7 +574,7 @@ class VFSMultiOpenTest(unittest.TestCase):
 
       pathspecs = [foo_pathspec, bar_pathspec, baz_pathspec]
       with vfs.VFSMultiOpen(pathspecs) as filedescs:
-        self.assertEqual(len(filedescs), 3)
+        self.assertLen(filedescs, 3)
         self.assertEqual(filedescs[0].Read(), b"FOO")
         self.assertEqual(filedescs[1].Read(), b"BAR")
         self.assertEqual(filedescs[2].Read(), b"BAZ")
@@ -589,7 +589,7 @@ class VFSMultiOpenTest(unittest.TestCase):
       func = mock.MagicMock()
 
       with vfs.VFSMultiOpen([pathspec], progress_callback=func) as filedescs:
-        self.assertEqual(len(filedescs), 1)
+        self.assertLen(filedescs, 1)
         self.assertEqual(filedescs[0].Read(), b"QUUX")
 
       self.assertTrue(func.called)

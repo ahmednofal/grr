@@ -1,9 +1,11 @@
 #!/usr/bin/env python
-# -*- mode: python; encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 """Test the artifact rendering interface."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
+import io
 import os
 
 
@@ -32,7 +34,7 @@ class TestArtifactRender(gui_test_lib.GRRSeleniumTest):
     artifact_registry.REGISTRY.ClearRegistry()
     test_artifacts_file = os.path.join(config.CONFIG["Test.data_dir"],
                                        "artifacts", "test_artifacts.json")
-    with open(test_artifacts_file, "rb") as fd:
+    with io.open(test_artifacts_file, mode="r", encoding="utf-8") as fd:
       artifact.UploadArtifactYamlFile(fd.read())
 
   def _LoadSystemArtifacts(self):

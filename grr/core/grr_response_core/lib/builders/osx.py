@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """An implementation of an OSX client builder."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
@@ -13,7 +14,6 @@ import zipfile
 
 from grr_response_core import config
 from grr_response_core.lib import build
-from grr_response_core.lib import flags
 from grr_response_core.lib import package
 from grr_response_core.lib import utils
 
@@ -21,15 +21,16 @@ from grr_response_core.lib import utils
 class DarwinClientBuilder(build.ClientBuilder):
   """Builder class for the Mac OS X (Darwin) client."""
 
-  def __init__(self, context=None):
+  def __init__(self, context=None, fleetspeak_service_config=None):
     """Initialize the Mac OS X client builder."""
     super(DarwinClientBuilder, self).__init__(context=context)
+    self.fleetspeak_service_config = fleetspeak_service_config
     self.context.append("Target:Darwin")
 
   def MakeExecutableTemplate(self, output_file=None):
     """Create the executable template."""
-    super(DarwinClientBuilder, self).MakeExecutableTemplate(
-        output_file=output_file)
+    super(DarwinClientBuilder,
+          self).MakeExecutableTemplate(output_file=output_file)
     self.SetBuildVars()
     self.MakeBuildDirectory()
     self.BuildWithPyInstaller()
@@ -59,10 +60,10 @@ class DarwinClientBuilder(build.ClientBuilder):
         "ClientBuilder.fleetspeak_service_dir", context=self.context)
     self.pkg_root = os.path.join(self.build_root, "pkg-root")
     if self.fleetspeak_enabled:
-      self.target_binary_dir = os.path.join(self.pkg_root,
-                                            config.CONFIG.Get(
-                                                "ClientBuilder.install_dir",
-                                                context=self.context)[1:])
+      self.target_binary_dir = os.path.join(
+          self.pkg_root,
+          config.CONFIG.Get("ClientBuilder.install_dir",
+                            context=self.context)[1:])
     else:
       self.target_binary_dir = os.path.join(self.pkg_root, "usr/local/lib/",
                                             self.client_name,
@@ -108,7 +109,7 @@ class DarwinClientBuilder(build.ClientBuilder):
 
   def InterpolateFiles(self):
     if self.fleetspeak_enabled:
-      shutil.copy(flags.FLAGS.fleetspeak_service_config,
+      shutil.copy(self.fleetspeak_service_config,
                   self.pkg_fleetspeak_service_dir)
       build_files_dir = package.ResourcePath(
           "grr-response-core", "install_data/macosx/client/fleetspeak")
@@ -136,17 +137,17 @@ class DarwinClientBuilder(build.ClientBuilder):
       shutil.move(self.template_binary_dir, self.target_binary_dir)
     shutil.move(
         os.path.join(self.target_binary_dir, "grr-client"),
-        os.path.join(self.target_binary_dir,
-                     config.CONFIG.Get(
-                         "Client.binary_name", context=self.context)))
+        os.path.join(
+            self.target_binary_dir,
+            config.CONFIG.Get("Client.binary_name", context=self.context)))
 
   def SignGRRPyinstallerBinaries(self):
     cert_name = config.CONFIG.Get(
         "ClientBuilder.signing_cert_name", context=self.context)
     keychain_file = config.CONFIG.Get(
         "ClientBuilder.signing_keychain_file", context=self.context)
-    if not keychain_file:
-      print("No keychain file specified in the config, skipping "
+    if not cert_name:
+      print("No certificate name specified in the config, skipping "
             "binaries signing...")
       return
 
@@ -155,13 +156,12 @@ class DarwinClientBuilder(build.ClientBuilder):
     with utils.TempDirectory() as temp_dir:
       # codesign needs the directory name to adhere to a particular
       # naming format.
-      bundle_dir = os.path.join(temp_dir, "%s_%s" % (self.client_name,
-                                                     self.version))
+      bundle_dir = os.path.join(temp_dir,
+                                "%s_%s" % (self.client_name, self.version))
       shutil.move(self.target_binary_dir, bundle_dir)
-      temp_binary_path = os.path.join(bundle_dir,
-                                      config.CONFIG.Get(
-                                          "Client.binary_name",
-                                          context=self.context))
+      temp_binary_path = os.path.join(
+          bundle_dir,
+          config.CONFIG.Get("Client.binary_name", context=self.context))
       subprocess.check_call([
           "codesign", "--verbose", "--deep", "--force", "--sign", cert_name,
           "--keychain", keychain_file, temp_binary_path
@@ -187,10 +187,11 @@ class DarwinClientBuilder(build.ClientBuilder):
 
     # Generate a config file.
     with open(
-        os.path.join(self.target_binary_dir,
-                     config.CONFIG.Get(
-                         "ClientBuilder.config_filename",
-                         context=self.context)), "wb") as fd:
+        os.path.join(
+            self.target_binary_dir,
+            config.CONFIG.Get(
+                "ClientBuilder.config_filename", context=self.context)),
+        "wb") as fd:
       fd.write(
           repacker.GetClientConfig(
               ["Client Context"] + self.context, validate=False))

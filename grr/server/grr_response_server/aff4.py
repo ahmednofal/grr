@@ -7,7 +7,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import unicode_literals
 
-import __builtin__
 import abc
 import io
 import itertools
@@ -17,11 +16,14 @@ import time
 import zlib
 
 
-from builtins import range  # pylint: disable=redefined-builtin
-from builtins import zip  # pylint: disable=redefined-builtin
+from future.builtins import range
+from future.builtins import str
+from future.builtins import zip
 from future.utils import iteritems
 from future.utils import itervalues
+from future.utils import string_types
 from future.utils import with_metaclass
+from typing import Text
 
 from grr_response_core import config
 from grr_response_core.lib import lexer
@@ -295,7 +297,7 @@ class Factory(object):
     # aff4:/files, as well as to create top level paths like aff4:/foreman
     self.root_token = access_control.ACLToken(
         username="GRRSystem", reason="Maintenance").SetUID()
-    self._InitWellKnownPaths()
+    self._static_content_path = rdfvalue.RDFURN("aff4:/web/static")
 
   @classmethod
   def ParseAgeSpecification(cls, age):
@@ -449,7 +451,7 @@ class Factory(object):
     Returns:
        A key into the cache.
     """
-    precondition.AssertType(urn, unicode)
+    precondition.AssertType(urn, Text)
     return "%s:%s" % (urn, self.ParseAgeSpecification(age))
 
   def CreateWithLock(self,
@@ -488,6 +490,9 @@ class Factory(object):
     Raises:
       AttributeError: If the mode is invalid.
     """
+
+    if not data_store.AFF4Enabled():
+      raise NotImplementedError("AFF4 data store has been disabled.")
 
     transaction = self._AcquireLock(
         urn,
@@ -548,6 +553,9 @@ class Factory(object):
     Returns:
       Context manager to be used in 'with ...' statement.
     """
+
+    if not data_store.AFF4Enabled():
+      raise NotImplementedError("AFF4 data store has been disabled.")
 
     transaction = self._AcquireLock(
         urn,
@@ -701,6 +709,10 @@ class Factory(object):
       IOError: If the object is not of the required type.
       AttributeError: If the requested mode is incorrect.
     """
+
+    if not data_store.AFF4Enabled():
+      raise NotImplementedError("AFF4 data store has been disabled.")
+
     _ValidateAFF4Type(aff4_type)
 
     if mode not in ["w", "r", "rw"]:
@@ -979,7 +991,7 @@ class Factory(object):
     Raises:
       ValueError: A string was passed instead of an iterable.
     """
-    if isinstance(urns, basestring):
+    if isinstance(urns, string_types):
       raise ValueError("Expected an iterable, not string.")
     for subject, values in data_store.DB.MultiResolvePrefix(
         urns, ["aff4:type", "metadata:last"]):
@@ -1026,6 +1038,9 @@ class Factory(object):
     Raises:
       AttributeError: If the mode is invalid.
     """
+    if not data_store.AFF4Enabled():
+      raise NotImplementedError("AFF4 data store has been disabled.")
+
     if mode not in ["w", "r", "rw"]:
       raise AttributeError("Invalid mode %s" % mode)
 
@@ -1233,18 +1248,6 @@ class Factory(object):
 
   def Flush(self):
     self.intermediate_cache.Flush()
-
-  # Well known AFF4 paths.
-  def _InitWellKnownPaths(self):
-    self._python_hack_root = rdfvalue.RDFURN("aff4:/config/python_hacks")
-    self._executables_root = rdfvalue.RDFURN("aff4:/config/executables")
-    self._static_content_path = rdfvalue.RDFURN("aff4:/web/static")
-
-  def GetPythonHackRoot(self):
-    return self._python_hack_root
-
-  def GetExecutablesRoot(self):
-    return self._executables_root
 
   def GetStaticContentPath(self):
     return self._static_content_path
@@ -1827,6 +1830,13 @@ class AFF4Object(with_metaclass(registry.MetaclassRegistry, object)):
 
     return 0
 
+  def _RaiseLockError(self, operation):
+    now = rdfvalue.RDFDatetime.Now()
+    expires = self.transaction.ExpirationAsRDFDatetime()
+    raise LockError(
+        "%s: Can not update lease that has already expired (%s > %s)" %
+        (operation, now, expires))
+
   def UpdateLease(self, duration):
     """Updates the lease and flushes the object.
 
@@ -1849,14 +1859,14 @@ class AFF4Object(with_metaclass(registry.MetaclassRegistry, object)):
           "Object must be locked to update the lease: %s." % self.urn)
 
     if self.CheckLease() == 0:
-      raise LockError("Can not update lease that has already expired.")
+      self._RaiseLockError("UpdateLease")
 
     self.transaction.UpdateLease(duration)
 
   def Flush(self):
     """Syncs this object with the data store, maintaining object validity."""
     if self.locked and self.CheckLease() == 0:
-      raise LockError("Can not update lease that has already expired.")
+      self._RaiseLockError("Flush")
 
     self._WriteAttributes()
     self._SyncAttributes()
@@ -2145,7 +2155,7 @@ class AFF4Object(with_metaclass(registry.MetaclassRegistry, object)):
     if attribute is None:
       return []
 
-    elif isinstance(attribute, basestring):
+    elif isinstance(attribute, string_types):
       attribute = Attribute.GetAttributeByName(attribute)
 
     return attribute.GetValues(self)
@@ -2273,7 +2283,7 @@ class AFF4Object(with_metaclass(registry.MetaclassRegistry, object)):
     if owner is None and not self.token:
       raise ValueError("Can't set label: No owner specified and "
                        "no access token available.")
-    if isinstance(labels_names, basestring):
+    if isinstance(labels_names, string_types):
       raise ValueError("Label list can't be string.")
 
     owner = owner or self.token.username
@@ -2294,7 +2304,7 @@ class AFF4Object(with_metaclass(registry.MetaclassRegistry, object)):
     if owner is None and not self.token:
       raise ValueError("Can't remove label: No owner specified and "
                        "no access token available.")
-    if isinstance(labels_names, basestring):
+    if isinstance(labels_names, string_types):
       raise ValueError("Label list can't be string.")
 
     owner = owner or self.token.username
@@ -2666,7 +2676,7 @@ class AFF4MemoryStreamBase(AFF4Stream):
     return self.fd.read(int(length))
 
   def Write(self, data):
-    if isinstance(data, unicode):
+    if isinstance(data, Text):
       raise IOError("Cannot write unencoded string.")
 
     self._dirty = True
@@ -3112,9 +3122,12 @@ class ValueConverter(object):
       return rdf_structs.VarintEncode(int(value))
     elif hasattr(value, "SerializeToString"):
       return value.SerializeToString()
+    elif isinstance(value, bytes):
+      return value
+    elif isinstance(value, Text):
+      return value.encode("utf-8")
     else:
-      # Types "string" and "bytes" are stored as strings here.
-      return utils.SmartStr(value)
+      return str(value).encode("utf-8")
 
   def Decode(self, attribute, value):
     """Decode the value to the required type."""
@@ -3124,7 +3137,10 @@ class ValueConverter(object):
     elif required_type == "unsigned_integer":
       return rdf_structs.VarintReader(value, 0)[0]
     elif required_type == "string":
-      return utils.SmartUnicode(value)
+      if isinstance(value, bytes):
+        return value.decode("utf-8")
+      else:
+        return utils.SmartUnicode(value)
     else:
       return value
 
@@ -3132,38 +3148,3 @@ class ValueConverter(object):
 # A global registry of all AFF4 classes
 FACTORY = None
 ROOT_URN = rdfvalue.RDFURN("aff4:/")
-
-
-def issubclass(obj, cls):  # pylint: disable=redefined-builtin,g-bad-name
-  """A sane implementation of issubclass.
-
-  See http://bugs.python.org/issue10569
-
-  Python bare issubclass must be protected by an isinstance test first since it
-  can only work on types and raises when provided something which is not a type.
-
-  Args:
-    obj: Any object or class.
-    cls: The class to check against.
-
-  Returns:
-    True if obj is a subclass of cls and False otherwise.
-  """
-  return isinstance(obj, type) and __builtin__.issubclass(obj, cls)
-
-
-def AuditLogBase():
-  return ROOT_URN.Add("audit").Add("logs")
-
-
-AUDIT_ROLLOVER_TIME = rdfvalue.Duration("2w")
-
-
-def CurrentAuditLog():
-  """Get the rdfurn of the current audit log."""
-  now_sec = rdfvalue.RDFDatetime.Now().AsSecondsSinceEpoch()
-  rollover_seconds = AUDIT_ROLLOVER_TIME.seconds
-  # This gives us a filename that only changes every
-  # AUDIT_ROLLOVER_TIME seconds, but is still a valid timestamp.
-  current_log = (now_sec // rollover_seconds) * rollover_seconds
-  return AuditLogBase().Add(str(current_log))

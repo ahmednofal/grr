@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 """Basic rdfvalue tests."""
 from __future__ import absolute_import
 from __future__ import division
@@ -9,10 +9,13 @@ import datetime
 from datetime import datetime
 import time
 
+from future.builtins import str
+
 from grr_response_core.lib import flags
 from grr_response_core.lib import rdfvalue
 from grr_response_core.lib import utils
 from grr_response_core.lib.rdfvalues import test_base as rdf_test_base
+from grr_response_core.lib.util import compatibility
 from grr.test_lib import test_lib
 
 
@@ -20,7 +23,7 @@ class RDFBytesTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
   rdfvalue_class = rdfvalue.RDFBytes
 
   def GenerateSample(self, number=0):
-    return rdfvalue.RDFBytes(b"\x00hello%s\x01" % number)
+    return rdfvalue.RDFBytes(b"\x00hello%s\x01" % str(number).encode("ascii"))
 
 
 class RDFStringTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
@@ -44,10 +47,10 @@ class RDFIntegerTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
 
   def testComparableToPrimiviteInts(self):
     self.assertEqual(rdfvalue.RDFInteger(10), 10)
-    self.assertTrue(rdfvalue.RDFInteger(10) > 5)
-    self.assertTrue(15 > rdfvalue.RDFInteger(10))
-    self.assertTrue(rdfvalue.RDFInteger(10) < 15)
-    self.assertTrue(5 < rdfvalue.RDFInteger(10))
+    self.assertGreater(rdfvalue.RDFInteger(10), 5)
+    self.assertGreater(15, rdfvalue.RDFInteger(10))
+    self.assertLess(rdfvalue.RDFInteger(10), 15)
+    self.assertLess(5, rdfvalue.RDFInteger(10))
 
   def testDividesAndIsDividableByPrimitiveInts(self):
     self.assertEqual(rdfvalue.RDFInteger(10) // 5, 2)
@@ -290,8 +293,8 @@ class RDFDatetimeTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
     self.assertEqual(int(date1), 1320142980000000)
 
     self.assertEqual(
-        time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(int(date1) // 1e6)),
-        time_string)
+        compatibility.FormatTime("%Y-%m-%d %H:%M:%S",
+                                 time.gmtime(int(date1) // 1e6)), time_string)
 
     # We always stringify the date in UTC timezone.
     self.assertEqual(str(date1), time_string)
@@ -300,7 +303,7 @@ class RDFDatetimeTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
     with test_lib.FakeTime(1000):
       # Init from an empty string should generate a DateTime object with a zero
       # time.
-      date = rdfvalue.RDFDatetime.FromSerializedString("")
+      date = rdfvalue.RDFDatetime.FromSerializedString(b"")
       self.assertEqual(int(date), 0)
 
       self.assertEqual(int(date.Now()), int(1000 * 1e6))
@@ -416,7 +419,7 @@ class HashDigestTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
   def GenerateSample(self, number=0):
     return rdfvalue.HashDigest(b"\xca\x97\x81\x12\xca\x1b\xbd\xca\xfa\xc21\xb3"
                                b"\x9a#\xdcM\xa7\x86\xef\xf8\x14|Nr\xb9\x80w\x85"
-                               b"\xaf\xeeH\xbb%s" % number)
+                               b"\xaf\xeeH\xbb%s" % str(number).encode("ascii"))
 
   def testEqNeq(self):
     binary_digest = (b"\xca\x97\x81\x12\xca\x1b\xbd\xca\xfa\xc21\xb3"
@@ -425,10 +428,10 @@ class HashDigestTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
     sample = rdfvalue.HashDigest(binary_digest)
     hex_digest = ("ca978112ca1bbdcafac231b39a23dc4da786eff81"
                   "47c4e72b9807785afee48bb")
-    self.assertEqual(sample, hex_digest)
-    self.assertEqual(sample, binary_digest)
-    self.assertNotEqual(sample, "\xaa\xbb")
-    self.assertNotEqual(sample, "deadbeef")
+    self.assertEqual(str(sample), hex_digest)
+    self.assertEqual(sample.SerializeToString(), binary_digest)
+    self.assertNotEqual(sample.SerializeToString(), b"\xaa\xbb")
+    self.assertNotEqual(str(sample), "deadbeef")
 
 
 def main(argv):

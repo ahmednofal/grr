@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 """Tests for checks."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 from grr_response_core.lib import flags
@@ -72,7 +73,7 @@ class HintsTests(test_lib.GRRBaseTest):
     rdf.users = [rdf_client.User(username=u) for u in ("root", "jconnor")]
     # Interface (nested, repeated)
     addresses = [
-        rdf_client_network.NetworkAddress(human_readable=a)
+        rdf_client_network.NetworkAddress(human_readable_address=a)
         for a in ("1.1.1.1", "2.2.2.2", "3.3.3.3")
     ]
     eth0 = rdf_client_network.Interface(ifname="eth0", addresses=addresses[:2])
@@ -80,7 +81,7 @@ class HintsTests(test_lib.GRRBaseTest):
     rdf.interfaces = [eth0, ppp0]
 
     template = ("{system_info.system} {users.username} {interfaces.ifname} "
-                "{interfaces.addresses.human_readable}\n")
+                "{interfaces.addresses.human_readable_address}\n")
     hinter = hints.Hinter(template=template)
     expected = "Linux root,jconnor eth0,ppp0 1.1.1.1,2.2.2.2,3.3.3.3"
     result = hinter.Render(rdf)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Tests for the streaming utility classes."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import abc
@@ -8,13 +9,13 @@ import functools
 import os
 
 
+from absl.testing import absltest
 from future.utils import with_metaclass
 
-import unittest
 from grr_response_client import streaming
 from grr_response_client.client_actions.file_finder_utils import conditions
 from grr_response_core.lib import flags
-from grr.test_lib import temp
+from grr_response_core.lib.util import temp
 from grr.test_lib import test_lib
 
 
@@ -29,7 +30,7 @@ class StreamerTestMixin(with_metaclass(abc.ABCMeta, object)):
     method = self.Stream(streamer, "abcdefgh")
     chunks = list(method(amount=8))
 
-    self.assertEqual(len(chunks), 3)
+    self.assertLen(chunks, 3)
     self.assertEqual(chunks[0].data, "abc")
     self.assertEqual(chunks[1].data, "def")
     self.assertEqual(chunks[2].data, "gh")
@@ -45,7 +46,7 @@ class StreamerTestMixin(with_metaclass(abc.ABCMeta, object)):
     method = self.Stream(streamer, "abcdef")
     chunks = list(method(amount=8))
 
-    self.assertEqual(len(chunks), 3)
+    self.assertLen(chunks, 3)
     self.assertEqual(chunks[0].data, "abc")
     self.assertEqual(chunks[1].data, "cde")
     self.assertEqual(chunks[2].data, "ef")
@@ -61,14 +62,14 @@ class StreamerTestMixin(with_metaclass(abc.ABCMeta, object)):
     method = self.Stream(streamer, "abcdef")
     chunks = list(method(amount=0))
 
-    self.assertEqual(len(chunks), 0)
+    self.assertEmpty(chunks)
 
   def testSmallAmount(self):
     streamer = streaming.Streamer(chunk_size=1, overlap_size=0)
     method = self.Stream(streamer, "abc")
     chunks = list(method(amount=2))
 
-    self.assertEqual(len(chunks), 2)
+    self.assertLen(chunks, 2)
     self.assertEqual(chunks[0].data, "a")
     self.assertEqual(chunks[1].data, "b")
     self.assertEqual(chunks[0].offset, 0)
@@ -81,7 +82,7 @@ class StreamerTestMixin(with_metaclass(abc.ABCMeta, object)):
     method = self.Stream(streamer, "abcdef")
     chunks = list(method(amount=7))
 
-    self.assertEqual(len(chunks), 1)
+    self.assertLen(chunks, 1)
     self.assertEqual(chunks[0].data, "abcdef")
     self.assertEqual(chunks[0].offset, 0)
     self.assertEqual(chunks[0].overlap, 0)
@@ -91,14 +92,14 @@ class StreamerTestMixin(with_metaclass(abc.ABCMeta, object)):
     method = self.Stream(streamer, "")
     chunks = list(method(amount=5))
 
-    self.assertEqual(len(chunks), 0)
+    self.assertEmpty(chunks)
 
   def testOffset(self):
     streamer = streaming.Streamer(chunk_size=3, overlap_size=2)
     method = self.Stream(streamer, "abcdefghi")
     chunks = list(method(offset=4, amount=108))
 
-    self.assertEqual(len(chunks), 3)
+    self.assertLen(chunks, 3)
     self.assertEqual(chunks[0].data, "efg")
     self.assertEqual(chunks[1].data, "fgh")
     self.assertEqual(chunks[2].data, "ghi")
@@ -114,7 +115,7 @@ class StreamerTestMixin(with_metaclass(abc.ABCMeta, object)):
     method = self.Stream(streamer, "abcdefg")
     chunks = list(method(amount=1024))
 
-    self.assertEqual(len(chunks), 3)
+    self.assertLen(chunks, 3)
     self.assertEqual(chunks[0].data, "abcd")
     self.assertEqual(chunks[1].data, "cdef")
     self.assertEqual(chunks[2].data, "efg")
@@ -130,7 +131,7 @@ class StreamerTestMixin(with_metaclass(abc.ABCMeta, object)):
     method = self.Stream(streamer, "abcdefghijklmnopqrstuvwxyz")
     chunks = list(method())
 
-    self.assertEqual(len(chunks), 4)
+    self.assertLen(chunks, 4)
     self.assertEqual(chunks[0].data, "abcdefghi")
     self.assertEqual(chunks[1].data, "hijklmnop")
     self.assertEqual(chunks[2].data, "opqrstuvw")
@@ -145,7 +146,7 @@ class StreamerTestMixin(with_metaclass(abc.ABCMeta, object)):
     self.assertEqual(chunks[3].overlap, 2)
 
 
-class StreamFilePathTest(StreamerTestMixin, unittest.TestCase):
+class StreamFilePathTest(StreamerTestMixin, absltest.TestCase):
 
   def setUp(self):
     super(StreamFilePathTest, self).setUp()
@@ -162,7 +163,7 @@ class StreamFilePathTest(StreamerTestMixin, unittest.TestCase):
     return functools.partial(streamer.StreamFilePath, self.temp_filepath)
 
 
-class StreamMemoryTest(StreamerTestMixin, unittest.TestCase):
+class StreamMemoryTest(StreamerTestMixin, absltest.TestCase):
 
   def Stream(self, streamer, data):
     process = StubProcess(data)
@@ -214,7 +215,7 @@ class ReaderTestMixin(with_metaclass(abc.ABCMeta, object)):
     self.Prepare(data, Assertions, offset=3)
 
 
-class FileReaderTest(ReaderTestMixin, unittest.TestCase):
+class FileReaderTest(ReaderTestMixin, absltest.TestCase):
 
   def setUp(self):
     super(FileReaderTest, self).setUp()
@@ -233,7 +234,7 @@ class FileReaderTest(ReaderTestMixin, unittest.TestCase):
       callback(reader)
 
 
-class MemoryReaderTest(ReaderTestMixin, unittest.TestCase):
+class MemoryReaderTest(ReaderTestMixin, absltest.TestCase):
 
   def Prepare(self, data, callback, offset=0):
     process = StubProcess(data)
@@ -250,7 +251,7 @@ class StubProcess(object):
     return self.memory[address:address + num_bytes]
 
 
-class ChunkTest(unittest.TestCase):
+class ChunkTest(absltest.TestCase):
 
   Span = conditions.Matcher.Span  # pylint: disable=invalid-name
 
@@ -259,7 +260,7 @@ class ChunkTest(unittest.TestCase):
     chunk = streaming.Chunk(offset=0, data=data)
     spans = list(chunk.Scan(conditions.LiteralMatcher("bar")))
 
-    self.assertEqual(len(spans), 1)
+    self.assertLen(spans, 1)
     self.assertEqual(spans[0], self.Span(begin=3, end=6))
 
   def testScanMultiHit(self):
@@ -267,7 +268,7 @@ class ChunkTest(unittest.TestCase):
     chunk = streaming.Chunk(offset=0, data=data)
     spans = list(chunk.Scan(conditions.LiteralMatcher("foo")))
 
-    self.assertEqual(len(spans), 2)
+    self.assertLen(spans, 2)
     self.assertEqual(spans[0], self.Span(begin=0, end=3))
     self.assertEqual(spans[1], self.Span(begin=6, end=9))
 
@@ -276,7 +277,7 @@ class ChunkTest(unittest.TestCase):
     chunk = streaming.Chunk(offset=0, data=data)
     spans = list(chunk.Scan(conditions.LiteralMatcher("xoxo")))
 
-    self.assertEqual(len(spans), 2)
+    self.assertLen(spans, 2)
     self.assertEqual(spans[0], self.Span(begin=0, end=4))
     self.assertEqual(spans[1], self.Span(begin=4, end=8))
 
@@ -285,7 +286,7 @@ class ChunkTest(unittest.TestCase):
     chunk = streaming.Chunk(offset=0, data=data, overlap=8)
     spans = list(chunk.Scan(conditions.LiteralMatcher("foo")))
 
-    self.assertEqual(len(spans), 2)
+    self.assertLen(spans, 2)
     self.assertEqual(spans[0], self.Span(begin=9, end=12))
     self.assertEqual(spans[1], self.Span(begin=12, end=15))
 
@@ -294,7 +295,7 @@ class ChunkTest(unittest.TestCase):
     chunk = streaming.Chunk(offset=0, data=data, overlap=3)
     spans = list(chunk.Scan(conditions.LiteralMatcher("oo")))
 
-    self.assertEqual(len(spans), 2)
+    self.assertLen(spans, 2)
     self.assertEqual(spans[0], self.Span(begin=2, end=4))
     self.assertEqual(spans[1], self.Span(begin=4, end=6))
 

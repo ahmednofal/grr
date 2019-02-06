@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Tests for the main content view."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 
@@ -195,7 +196,7 @@ class TestClientSearch(gui_test_lib.SearchClientTestBase,
     self._WaitForSearchResults(target_count=0)
 
   def testSearchingForHuntIdOpensHunt(self):
-    hunt_id = self.CreateHunt(description="demo hunt").urn.Basename()
+    hunt_id = self.StartHunt(description="demo hunt").Basename()
 
     self.Open("/")
     self.Type("client_query", text=hunt_id, end_with_enter=True)

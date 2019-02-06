@@ -2,6 +2,7 @@
 """Tests for config_lib classes."""
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import io
@@ -10,6 +11,7 @@ import os
 import stat
 
 
+from future.builtins import str
 from past.builtins import long
 
 from grr_response_core import config
@@ -239,7 +241,7 @@ Section1.foobar: 6d
 """)
 
     value = conf.Get("Section1.foobar")
-    self.assertTrue(isinstance(value, rdfvalue.Duration))
+    self.assertIsInstance(value, rdfvalue.Duration)
     self.assertEqual(value, rdfvalue.Duration("6d"))
 
   def testSemanticStructType(self):
@@ -258,7 +260,7 @@ Section1.foobar:
 """)
 
     values = conf.Get("Section1.foobar")
-    self.assertTrue(isinstance(values, rdf_file_finder.FileFinderArgs))
+    self.assertIsInstance(values, rdf_file_finder.FileFinderArgs)
     self.assertEqual(values.paths, ["a/b", "b/c"])
     self.assertEqual(values.pathtype, "TSK")
 
@@ -328,7 +330,7 @@ Platform:Windows:
   def _SetupConfig(self, value):
     conf = config_lib.GrrConfigManager()
     config_file = os.path.join(self.temp_dir, "config.yaml")
-    with open(config_file, "wb") as fd:
+    with io.open(config_file, "w") as fd:
       fd.write("Section1.option1: %s" % value)
     conf.DEFINE_string("Section1.option1", "Default Value", "Help")
     conf.Initialize(filename=config_file)
@@ -371,6 +373,57 @@ Platform:Windows:
     with utils.Stubber(conf, "Write", DontCall):
       conf.Persist("Section1.option1")
 
+  def testPersistDoesntOverwriteCustomOptions(self):
+    conf = config_lib.GrrConfigManager()
+    writeback_file = os.path.join(self.temp_dir, "writeback.yaml")
+    conf.SetWriteBack(writeback_file)
+
+    conf.DEFINE_string("Section.option", "Default Value", "Help")
+    conf.Set("Section.option", "custom")
+    conf.Write()
+
+    new_conf = config_lib.GrrConfigManager()
+    new_conf.DEFINE_string("Section.option", "Default Value", "Help")
+    new_config_file = os.path.join(self.temp_dir, "config.yaml")
+    new_conf.Initialize(filename=new_config_file)
+    new_conf.SetWriteBack(writeback_file)
+    new_conf.Write()
+
+    # At this point, the writeback file has a custom setting for
+    # "Section.option" but new_conf has nothing set.
+    with io.open(writeback_file) as fd:
+      self.assertEqual(fd.read(), "Section.option: custom\n")
+
+    # Calling persist does not change the custom value.
+    new_conf.Persist("Section.option")
+
+    with io.open(writeback_file) as fd:
+      self.assertEqual(fd.read(), "Section.option: custom\n")
+
+  def testFileFilters(self):
+    filename = os.path.join(self.temp_dir, "f.txt")
+    content = "testcontent"
+    with io.open(filename, "w") as fd:
+      fd.write(content)
+
+    conf = config_lib.GrrConfigManager()
+    conf.DEFINE_string("Valid.file", "%%(%s|file)" % filename, "test")
+    conf.DEFINE_string("Valid.optionalfile", "%%(%s|optionalfile)" % filename,
+                       "test")
+    conf.DEFINE_string("Invalid.file", "%(notafile|file)", "test")
+    conf.DEFINE_string("Invalid.optionalfile", "%(notafile|optionalfile)",
+                       "test")
+
+    conf.Initialize(data="")
+
+    self.assertEqual(conf["Valid.file"], content)
+    self.assertEqual(conf["Valid.optionalfile"], content)
+
+    with self.assertRaises(config_lib.FilterError):
+      conf["Invalid.file"]  # pylint: disable=pointless-statement
+
+    self.assertEqual(conf["Invalid.optionalfile"], "")
+
   def testErrorDetection(self):
     """Check that invalid config files are detected immediately."""
     test_conf = """
@@ -384,8 +437,8 @@ test = val2"""
 
     # This should raise since the config file is incorrect.
     errors = conf.Validate("Section1")
-    self.assertTrue(
-        "Invalid value val2 for Integer" in str(errors["Section1.test"]))
+    self.assertIn("Invalid value val2 for Integer",
+                  str(errors["Section1.test"]))
 
   def testCopyConfig(self):
     """Check we can copy a config and use it without affecting the old one."""
@@ -552,7 +605,7 @@ Section1.test: 2
       _ = conf["Section1.foo1"]
 
     # Make sure the stringified exception explains the full interpolation chain.
-    self.assertTrue("%(Section1.foo6)/bar" in str(context.exception))
+    self.assertIn("%(Section1.foo6)/bar", str(context.exception))
 
   @flags.FlagOverrider(disallow_missing_config_definitions=True)
   def testConfigOptionsDefined(self):
@@ -654,8 +707,7 @@ literal = %{aff4:/C\.(?P<path>.\{1,16\}?)($|/.*)}
     conf.DEFINE_float("Section1.float", 0, "A float")
     conf.Initialize(parser=config_lib.YamlParser, data="Section1.float: abc")
     errors = conf.Validate("Section1")
-    self.assertTrue(
-        "Invalid value abc for Float" in str(errors["Section1.float"]))
+    self.assertIn("Invalid value abc for Float", str(errors["Section1.float"]))
 
     self.assertRaises(config_lib.ConfigFormatError, conf.Get, "Section1.float")
     conf.Initialize(parser=config_lib.YamlParser, data="Section1.float: 2")
@@ -674,8 +726,7 @@ literal = %{aff4:/C\.(?P<path>.\{1,16\}?)($|/.*)}
     errors = conf.Validate("Section1")
 
     # Floats can not be coerced to an int because that will lose data.
-    self.assertTrue(
-        "Invalid value 2.0 for Integer" in str(errors["Section1.int"]))
+    self.assertIn("Invalid value 2.0 for Integer", str(errors["Section1.int"]))
 
     # A string can be coerced to an int if it makes sense:
     conf.Initialize(parser=config_lib.YamlParser, data="Section1.int: '2'")
@@ -726,13 +777,13 @@ Section1.int: 3
       subdir = os.path.join(temp_dir, "subdir")
       os.makedirs(subdir)
       configthree = os.path.join(subdir, "3.yaml")
-      with open(configone, "wb") as fd:
+      with io.open(configone, "w") as fd:
         fd.write(one)
 
-      with open(configtwo, "wb") as fd:
+      with io.open(configtwo, "w") as fd:
         fd.write(two)
 
-      with open(configthree, "wb") as fd:
+      with io.open(configthree, "w") as fd:
         fd.write(three)
 
       # Using filename
@@ -764,7 +815,7 @@ Section1.int: 1
 """
     with utils.TempDirectory() as temp_dir:
       configone = os.path.join(temp_dir, "1.yaml")
-      with open(configone, "wb") as fd:
+      with io.open(configone, "w") as fd:
         fd.write(one)
 
       absolute_include = r"""
@@ -794,7 +845,7 @@ Section1.int: 2
 
       # If we write it to a file it should work though.
       configtwo = os.path.join(temp_dir, "2.yaml")
-      with open(configtwo, "wb") as fd:
+      with io.open(configtwo, "w") as fd:
         fd.write(relative_include)
 
       conf.Initialize(parser=config_lib.YamlParser, filename=configtwo)
@@ -852,10 +903,10 @@ SecondaryFileIncluded: true
     with utils.TempDirectory() as temp_dir:
       configone = os.path.join(temp_dir, "1.yaml")
       configtwo = os.path.join(temp_dir, "2.yaml")
-      with open(configone, "wb") as fd:
+      with io.open(configone, "w") as fd:
         fd.write(one)
 
-      with open(configtwo, "wb") as fd:
+      with io.open(configtwo, "w") as fd:
         fd.write(two)
 
       # Without specifying the context the includes are not processed.
@@ -900,10 +951,10 @@ Test3 Context:
     conf.DEFINE_context("Test3 Context")
     conf.Initialize(parser=config_lib.YamlParser, data=context)
     conf.AddContext("Test1 Context")
-    result_map = [(("linux", "amd64", "deb"), True), (("linux", "i386", "deb"),
-                                                      True),
-                  (("windows", "amd64", "exe"), True), (("windows", "i386",
-                                                         "exe"), False)]
+    result_map = [(("linux", "amd64", "deb"), True),
+                  (("linux", "i386", "deb"), True),
+                  (("windows", "amd64", "exe"), True),
+                  (("windows", "i386", "exe"), False)]
     for result in result_map:
       self.assertEqual(conf.MatchBuildContext(*result[0]), result[1])
 
@@ -930,11 +981,11 @@ Test1 Context:
     config_file = os.path.join(self.temp_dir, "writeback.yaml")
     conf.SetWriteBack(config_file)
     conf.DEFINE_string("NewSection1.new_option1", u"Default Value", "Help")
-    conf.Set(unicode("NewSection1.new_option1"), u"New Value1")
+    conf.Set(str("NewSection1.new_option1"), u"New Value1")
     conf.Write()
 
-    data = open(config_file).read()
-    self.assertFalse("!!python/unicode" in data)
+    data = io.open(config_file).read()
+    self.assertNotIn("!!python/unicode", data)
 
   def testNoUnicodeReading(self):
     """Check that we can parse yaml files with unicode tags."""
@@ -949,7 +1000,7 @@ Client.labels: [Test1]
   def testRenameOnWritebackFailure(self):
     conf = config.CONFIG.MakeNewConfig()
     writeback_file = os.path.join(self.temp_dir, "writeback.yaml")
-    with open(writeback_file, "w") as f:
+    with io.open(writeback_file, "w") as f:
       f.write("This is a bad line of yaml{[(\n")
       f.close()
 
@@ -960,7 +1011,7 @@ Client.labels: [Test1]
     """Don't rename config files we don't have permission to read."""
     conf = config.CONFIG.MakeNewConfig()
     writeback_file = os.path.join(self.temp_dir, "writeback.yaml")
-    with open(writeback_file, "w") as f:
+    with io.open(writeback_file, "w") as f:
       f.write("...")
       f.close()
 

@@ -29,9 +29,13 @@ class Distribution(rdf_structs.RDFProtoStruct):
                        "be specified.")
 
     super(Distribution, self).__init__(initializer=initializer, age=age)
+
     if bins:
       self.bins = [-float("inf")] + bins
-      self.heights = [0] * len(self.bins)
+    else:
+      self.bins = []
+
+    self.heights = [0] * len(self.bins)
 
   def Record(self, value):
     """Records given value."""
@@ -70,10 +74,10 @@ class MetricMetadata(rdf_structs.RDFProtoStruct):
       return 0
     elif self.value_type == self.ValueType.FLOAT:
       return 0.0
-    elif self.value_type == self.ValueType.STR:
-      return ""
-    else:
+    elif self.value_type == self.ValueType.DISTRIBUTION:
       return Distribution()
+    else:
+      raise ValueError("Illegal value type: {!r}".format(self.value_type))
 
 
 class StatsHistogramBin(rdf_structs.RDFProtoStruct):
@@ -233,3 +237,11 @@ class GraphFloat(Graph):
 class GraphSeries(rdf_protodict.RDFValueArray):
   """A sequence of graphs (e.g. evolving over time)."""
   rdf_type = Graph
+
+
+class ClientGraphSeries(rdf_structs.RDFProtoStruct):
+  """A collection of graphs for a single client-report type."""
+  protobuf = analysis_pb2.ClientGraphSeries
+  rdf_deps = [
+      Graph,
+  ]

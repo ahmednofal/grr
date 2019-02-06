@@ -2,6 +2,7 @@
 """Simple parsers for registry keys and values."""
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import logging
@@ -9,6 +10,7 @@ import os
 import re
 
 
+from future.builtins import str
 from future.utils import iteritems
 from future.utils import itervalues
 

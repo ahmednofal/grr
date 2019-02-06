@@ -1,16 +1,15 @@
 #!/usr/bin/env python
-# -*- mode: python; encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 """Test RDFStruct implementations."""
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import random
 
-from builtins import range  # pylint: disable=redefined-builtin
-
-from google.protobuf import descriptor_pool
-from google.protobuf import message_factory
+from future.builtins import range
+from future.builtins import str
 
 from grr_response_core.lib import flags
 from grr_response_core.lib import rdfvalue
@@ -71,7 +70,11 @@ class TestStruct(rdf_structs.RDFProtoStruct):
           name="type",
           field_number=7,
           enum_name="Type",
-          enum=dict(FIRST=1, SECOND=2, THIRD=3),
+          enum={
+              "FIRST": 1,
+              "SECOND": 2,
+              "THIRD": 3
+          },
           default=3,
           description="An enum field"),
       rdf_structs.ProtoFloat(
@@ -125,10 +128,7 @@ class DynamicAnyValueTypeTest(rdf_structs.RDFProtoStruct):
 
   type_description = type_info.TypeDescriptorSet(
       rdf_structs.ProtoString(
-          name="type",
-          field_number=1,
-          # By default return the TestStruct proto.
-          description="A string value"),
+          name="type", field_number=1, description="A string value"),
       rdf_structs.ProtoDynamicAnyValueEmbedded(
           name="dynamic",
           # The callback here returns the type specified by the type member.
@@ -175,7 +175,11 @@ class UnionTest(rdf_structs.RDFProtoStruct):
           name="struct_flavor",
           field_number=1,
           enum_name="Type",
-          enum=dict(FIRST=1, SECOND=2, THIRD=3),
+          enum={
+              "FIRST": 1,
+              "SECOND": 2,
+              "THIRD": 3
+          },
           default=3,
           description="An union enum field"),
       rdf_structs.ProtoFloat(
@@ -215,20 +219,34 @@ class RDFStructsTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
 
     # Can assign a nested field.
     test_pb.dynamic.foobar = "Hello"
-    self.assertTrue(isinstance(test_pb.dynamic, TestStruct))
+    self.assertIsInstance(test_pb.dynamic, TestStruct)
 
     # Test serialization/deserialization.
     serialized = test_pb.SerializeToString()
     self.assertEqual(DynamicTypeTest.FromSerializedString(serialized), test_pb)
 
+    # TODO: In Python 2 unicode string representation has an extra
+    # 'u' prefix and there is nothing we can do about that. Once support for
+    # Python 2 is dropped, this can be removed.
+    if compatibility.PY2:
+      test_struct_class_repr = "u'TestStruct'"
+    else:
+      test_struct_class_repr = "'TestStruct'"
+
+    expected_emitted_proto = """\
+message DynamicTypeTest {{
+
+  // A string value
+  optional string type = 1 [default = {test_struct}];
+
+  // A dynamic value based on another field.
+  optional bytes dynamic = 2;
+  optional User nested = 3;
+}}
+""".format(test_struct=test_struct_class_repr)
+
     # Test proto definition.
-    self.assertEqual(
-        DynamicTypeTest.EmitProto(), "message DynamicTypeTest {\n\n  "
-        "// A string value\n  optional string type = 1 "
-        "[default = u'TestStruct'];\n\n  "
-        "// A dynamic value based on another field.\n  "
-        "optional bytes dynamic = 2;\n  "
-        "optional User nested = 3;\n}\n")
+    self.assertEqual(DynamicTypeTest.EmitProto(), expected_emitted_proto)
 
   def testAnyValueWithoutTypeCallback(self):
     test_pb = AnyValueWithoutTypeFunctionTest()
@@ -241,9 +259,10 @@ class RDFStructsTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
     ]:
       test_pb.dynamic = value_to_assign
       serialized = test_pb.SerializeToString()
-      self.assertEqual(
-          AnyValueWithoutTypeFunctionTest.FromSerializedString(serialized),
-          test_pb)
+      deserialized = AnyValueWithoutTypeFunctionTest.FromSerializedString(
+          serialized)
+      self.assertEqual(deserialized, test_pb)
+      self.assertEqual(type(deserialized.dynamic), type(value_to_assign))
 
   def testDynamicAnyValueType(self):
     test_pb = DynamicAnyValueTypeTest(type="TestStruct")
@@ -252,7 +271,7 @@ class RDFStructsTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
 
     # Can assign a nested field.
     test_pb.dynamic.foobar = "Hello"
-    self.assertTrue(isinstance(test_pb.dynamic, TestStruct))
+    self.assertIsInstance(test_pb.dynamic, TestStruct)
 
     # Test serialization/deserialization.
     serialized = test_pb.SerializeToString()
@@ -274,70 +293,13 @@ class RDFStructsTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
 
     # Can assign a nested field.
     test_pb.dynamic = rdfvalue.RDFString("Hello")
-    self.assertTrue(isinstance(test_pb.dynamic, rdfvalue.RDFString))
+    self.assertIsInstance(test_pb.dynamic, rdfvalue.RDFString)
 
     # Test serialization/deserialization.
     serialized = test_pb.SerializeToString()
     unserialized = DynamicAnyValueTypeTest.FromSerializedString(serialized)
     self.assertEqual(unserialized, test_pb)
     self.assertEqual(unserialized.dynamic, "Hello")
-
-  def testProtoFileDescriptorIsGeneratedForDynamicType(self):
-    test_pb_file_descriptor, deps = DynamicTypeTest.EmitProtoFileDescriptor(
-        "grr_export")
-
-    pool = descriptor_pool.DescriptorPool()
-    for file_descriptor in deps + [test_pb_file_descriptor]:
-      pool.Add(file_descriptor)
-
-    proto_descriptor = pool.FindMessageTypeByName("grr_export.DynamicTypeTest")
-    factory = message_factory.MessageFactory()
-    proto_class = factory.GetPrototype(proto_descriptor)
-
-    # Now let's define an RDFProtoStruct for the dynamically generated
-    # proto_class.
-    new_dynamic_class = compatibility.MakeType(
-        "DynamicTypeTestReversed", (rdf_structs.RDFProtoStruct,),
-        dict(protobuf=proto_class, rdf_deps=[rdf_client.User]))
-    new_dynamic_instance = new_dynamic_class(
-        type="foo", nested=rdf_client.User(username="bar"))
-    self.assertEqual(new_dynamic_instance.type, "foo")
-    self.assertEqual(new_dynamic_instance.nested.username, "bar")
-
-  def testProtoFileDescriptorIsGeneratedForDynamicAnyValueType(self):
-    test_pb_file_descriptor, deps = (
-        DynamicAnyValueTypeTest.EmitProtoFileDescriptor("grr_export"))
-
-    pool = descriptor_pool.DescriptorPool()
-    for file_descriptor in deps + [test_pb_file_descriptor]:
-      pool.Add(file_descriptor)
-    proto_descriptor = pool.FindMessageTypeByName(
-        "grr_export.DynamicAnyValueTypeTest")
-    factory = message_factory.MessageFactory()
-    proto_class = factory.GetPrototype(proto_descriptor)
-
-    # Now let's define an RDFProtoStruct for the dynamically generated
-    # proto_class.
-    new_dynamic_class = compatibility.MakeType(
-        "DynamicAnyValueTypeTestReversed",
-        (rdf_structs.RDFProtoStruct,),
-        dict(protobuf=proto_class),
-    )
-    new_dynamic_instance = new_dynamic_class(type="foo")
-    self.assertEqual(new_dynamic_instance.type, "foo")
-
-    # Test that a proto can be deserialized from serialized RDFValue
-    # with a dynamic AnyValue field.
-    test_pb = DynamicAnyValueTypeTest(type="TestStruct")
-    test_pb.dynamic.foobar = "Hello"
-
-    proto_value = proto_class()
-    proto_value.ParseFromString(test_pb.SerializeToString())
-
-    self.assertEqual(proto_value.type, "TestStruct")
-    self.assertEqual(proto_value.dynamic.type_url, "TestStruct")
-    self.assertEqual(proto_value.dynamic.value,
-                     test_pb.dynamic.SerializeToString())
 
   def testStructDefinition(self):
     """Ensure that errors in struct definitions are raised."""
@@ -370,7 +332,7 @@ class RDFStructsTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
     new_tested = TestStruct.FromSerializedString(data)
 
     # Test the repeated field.
-    self.assertEqual(len(new_tested.repeat_nested), 10)
+    self.assertLen(new_tested.repeat_nested, 10)
     self.assertEqual(new_tested.repeat_nested[1].foobar, "Nest1")
 
     # Check that slicing works.
@@ -379,7 +341,7 @@ class RDFStructsTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
     self.assertEqual(sliced.type_descriptor,
                      new_tested.repeat_nested.type_descriptor)
 
-    self.assertEqual(len(sliced), 2)
+    self.assertLen(sliced, 2)
     self.assertEqual(sliced[0].foobar, "Nest3")
 
   def testUnknownFields(self):
@@ -451,7 +413,7 @@ class RDFStructsTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
 
     # Coercing on assignment. This field is an RDFURN:
     tested.urn = "www.example.com"
-    self.assertTrue(isinstance(tested.urn, rdfvalue.RDFURN))
+    self.assertIsInstance(tested.urn, rdfvalue.RDFURN)
 
     self.assertEqual(tested.urn, rdfvalue.RDFURN("www.example.com"))
 
@@ -480,7 +442,7 @@ class RDFStructsTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
     # Out of range values are permitted and preserved through serialization.
     tested.type = 4
     self.assertEqual(tested.type, 4)
-    serialized_type = str(tested.type)
+    serialized_type = str(tested.type).encode("utf-8")
     tested.type = 1
     tested.type = serialized_type
     self.assertEqual(tested.type, 4)
@@ -501,14 +463,14 @@ class RDFStructsTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
     # When we serialize the modified proto we should get the new field
     # serialized. If the cache is not properly invalidated, we will return the
     # old result instead.
-    self.assertTrue("booo" in path.SerializeToString())
+    self.assertIn(b"booo", path.SerializeToString())
 
   def testLateBinding(self):
     # The LateBindingTest protobuf is not fully defined.
     self.assertRaises(KeyError, LateBindingTest.type_infos.__getitem__,
                       "nested")
 
-    self.assertTrue("UndefinedYet" in rdfvalue._LATE_BINDING_STORE)
+    self.assertIn("UndefinedYet", rdfvalue._LATE_BINDING_STORE)
 
     # We can still use this protobuf
     tested = LateBindingTest()
@@ -525,21 +487,21 @@ class RDFStructsTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
               name="foobar", field_number=1, description="A string value"),)
 
     # The field is now resolved.
-    self.assertFalse("UndefinedYet" in rdfvalue._LATE_BINDING_STORE)
+    self.assertNotIn("UndefinedYet", rdfvalue._LATE_BINDING_STORE)
     nested_field = LateBindingTest.type_infos["nested"]
     self.assertEqual(nested_field.name, "nested")
 
     # We can now use the protobuf as normal.
     tested = LateBindingTest()
     tested.nested.foobar = "foobar string"
-    self.assertTrue(isinstance(tested.nested, UndefinedYet))
+    self.assertIsInstance(tested.nested, UndefinedYet)
 
   def testRDFValueLateBinding(self):
     # The LateBindingTest protobuf is not fully defined.
     self.assertRaises(KeyError, LateBindingTest.type_infos.__getitem__,
                       "rdfvalue")
 
-    self.assertTrue("UndefinedRDFValue" in rdfvalue._LATE_BINDING_STORE)
+    self.assertIn("UndefinedRDFValue", rdfvalue._LATE_BINDING_STORE)
 
     # We can still use this protobuf
     tested = LateBindingTest()
@@ -554,7 +516,7 @@ class RDFStructsTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
       pass
 
     # The field is now resolved.
-    self.assertFalse("UndefinedRDFValue" in rdfvalue._LATE_BINDING_STORE)
+    self.assertNotIn("UndefinedRDFValue", rdfvalue._LATE_BINDING_STORE)
     rdfvalue_field = LateBindingTest.type_infos["rdfvalue"]
     self.assertEqual(rdfvalue_field.name, "rdfvalue")
 
@@ -567,7 +529,7 @@ class RDFStructsTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
     self.assertRaises(KeyError, LateBindingTest.type_infos.__getitem__,
                       "repeated")
 
-    self.assertTrue("UndefinedRDFValue2" in rdfvalue._LATE_BINDING_STORE)
+    self.assertIn("UndefinedRDFValue2", rdfvalue._LATE_BINDING_STORE)
 
     # We can still use this protobuf
     tested = LateBindingTest()
@@ -582,13 +544,13 @@ class RDFStructsTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
       pass
 
     # The field is now resolved.
-    self.assertFalse("UndefinedRDFValue2" in rdfvalue._LATE_BINDING_STORE)
+    self.assertNotIn("UndefinedRDFValue2", rdfvalue._LATE_BINDING_STORE)
     rdfvalue_field = LateBindingTest.type_infos["repeated"]
     self.assertEqual(rdfvalue_field.name, "repeated")
 
     # We can now use the protobuf as normal.
     tested = LateBindingTest(repeated=["foo"])
-    self.assertEqual(len(tested.repeated), 1)
+    self.assertLen(tested.repeated, 1)
     self.assertEqual(tested.repeated[0], "foo")
     self.assertEqual(type(tested.repeated[0]), UndefinedRDFValue2)
 
@@ -598,7 +560,7 @@ class RDFStructsTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
 
     result = rdf_client_fs.StatEntry.FromSerializedString(data)
 
-    self.assertTrue(isinstance(result.st_mode, rdf_client_fs.StatMode))
+    self.assertIsInstance(result.st_mode, rdf_client_fs.StatMode)
 
   def testDefaults(self):
     """Accessing a field which does not exist returns a default."""
@@ -711,7 +673,7 @@ class RDFStructsTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
         }]
     }
     self.assertEqual(
-        test_struct.ToPrimitiveDict(serialize_leaf_fields=True), expected_dict)
+        test_struct.ToPrimitiveDict(stringify_leaf_fields=True), expected_dict)
 
   def _GenerateSampleWithManyFields(self):
     fields = {}

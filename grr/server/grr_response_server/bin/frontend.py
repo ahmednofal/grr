@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """This is the GRR frontend HTTP Server."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
@@ -17,8 +18,6 @@ from future.utils import iteritems
 from http import server as http_server
 import ipaddr
 import socketserver
-
-from google.protobuf import json_format
 
 # pylint: disable=unused-import,g-bad-import-order
 from grr_response_server import server_plugins
@@ -53,6 +52,18 @@ class GRRHTTPServerHandler(http_server.BaseHTTPRequestHandler):
   active_counter_lock = threading.Lock()
   active_counter = 0
 
+  def _IncrementActiveCount(self):
+    with GRRHTTPServerHandler.active_counter_lock:
+      GRRHTTPServerHandler.active_counter += 1
+      stats_collector_instance.Get().SetGaugeValue(
+          "frontend_active_count", self.active_counter, fields=["http"])
+
+  def _DecrementActiveCount(self):
+    with GRRHTTPServerHandler.active_counter_lock:
+      GRRHTTPServerHandler.active_counter -= 1
+      stats_collector_instance.Get().SetGaugeValue(
+          "frontend_active_count", self.active_counter, fields=["http"])
+
   def Send(self,
            data,
            status=200,
@@ -80,65 +91,22 @@ class GRRHTTPServerHandler(http_server.BaseHTTPRequestHandler):
     self.wfile.write(header.encode("utf-8"))
     self.wfile.write(data)
 
-  rekall_profile_path = "/rekall_profiles"
-
   static_content_path = "/static/"
 
   def do_GET(self):  # pylint: disable=g-bad-name
     """Serve the server pem with GET requests."""
-    if self.path.startswith("/server.pem"):
-      stats_collector_instance.Get().IncrementCounter(
-          "frontend_http_requests", fields=["cert", "http"])
-      self.ServerPem()
-    elif self.path.startswith(self.rekall_profile_path):
-      stats_collector_instance.Get().IncrementCounter(
-          "frontend_http_requests", fields=["rekall", "http"])
-      self.ServeRekallProfile(self.path)
-    elif self.path.startswith(self.static_content_path):
-      stats_collector_instance.Get().IncrementCounter(
-          "frontend_http_requests", fields=["static", "http"])
-      self.ServeStatic(self.path[len(self.static_content_path):])
-
-  def ServeRekallProfile(self, path):
-    """This servers rekall profiles from the frontend server.
-
-    Format is /rekall_profiles/<version>/<profile_name>
-
-    Args:
-      path: The path the client requested.
-    """
-    logging.debug("Rekall profile request from IP %s for %s",
-                  self.client_address[0], path)
-    remaining_path = path[len(self.rekall_profile_path):]
-    if not remaining_path.startswith("/"):
-      self.Send("Error serving profile.", status=500, ctype="text/plain")
-      return
-
-    components = remaining_path[1:].split("/", 1)
-
-    if len(components) != 2:
-      self.Send("Error serving profile.", status=500, ctype="text/plain")
-      return
-    version, name = components
-    profile = self.server.frontend.GetRekallProfile(name, version=version)
-    if not profile:
-      self.Send("Profile not found.", status=404, ctype="text/plain")
-      return
-
-    json_data = json_format.MessageToJson(profile.AsPrimitiveProto())
-
-    sanitized_data = ")]}'\n" + json_data.replace("<", r"\u003c").replace(
-        ">", r"\u003e")
-
-    additional_headers = {
-        "Content-Disposition": "attachment; filename=response.json",
-        "X-Content-Type-Options": "nosniff"
-    }
-    self.Send(
-        sanitized_data,
-        status=200,
-        ctype="application/json",
-        additional_headers=additional_headers)
+    self._IncrementActiveCount()
+    try:
+      if self.path.startswith("/server.pem"):
+        stats_collector_instance.Get().IncrementCounter(
+            "frontend_http_requests", fields=["cert", "http"])
+        self.ServerPem()
+      elif self.path.startswith(self.static_content_path):
+        stats_collector_instance.Get().IncrementCounter(
+            "frontend_http_requests", fields=["static", "http"])
+        self.ServeStatic(self.path[len(self.static_content_path):])
+    finally:
+      self._DecrementActiveCount()
 
   AFF4_READ_BLOCK_SIZE = 10 * 1024 * 1024
 
@@ -217,7 +185,7 @@ class GRRHTTPServerHandler(http_server.BaseHTTPRequestHandler):
 
   def do_POST(self):  # pylint: disable=g-bad-name
     """Process encrypted message bundles."""
-
+    self._IncrementActiveCount()
     try:
       if self.path.startswith("/upload"):
         stats_collector_instance.Get().IncrementCounter(
@@ -236,6 +204,8 @@ class GRRHTTPServerHandler(http_server.BaseHTTPRequestHandler):
 
       logging.exception("Had to respond with status 500.")
       self.Send("Error: %s" % e, status=500)
+    finally:
+      self._DecrementActiveCount()
 
   @stats_utils.Counted("frontend_request_count", fields=["http"])
   @stats_utils.Timed("frontend_request_latency", fields=["http"])
@@ -255,11 +225,6 @@ class GRRHTTPServerHandler(http_server.BaseHTTPRequestHandler):
     except (ValueError, KeyError, IndexError):
       # The oldest api version we support if not specified.
       api_version = 3
-
-    with GRRHTTPServerHandler.active_counter_lock:
-      GRRHTTPServerHandler.active_counter += 1
-      stats_collector_instance.Get().SetGaugeValue(
-          "frontend_active_count", self.active_counter, fields=["http"])
 
     try:
       content_length = self.headers.getheader("content-length")
@@ -298,17 +263,11 @@ class GRRHTTPServerHandler(http_server.BaseHTTPRequestHandler):
 
       self.Send(responses_comms.SerializeToString())
 
-    except communicator.UnknownClientCert:
+    except communicator.UnknownClientCertError:
       # "406 Not Acceptable: The server can only generate a response that is not
       # accepted by the client". This is because we can not encrypt for the
       # client appropriately.
       self.Send("Enrollment required", status=406)
-
-    finally:
-      with GRRHTTPServerHandler.active_counter_lock:
-        GRRHTTPServerHandler.active_counter -= 1
-        stats_collector_instance.Get().SetGaugeValue(
-            "frontend_active_count", self.active_counter, fields=["http"])
 
 
 class GRRHTTPServer(socketserver.ThreadingMixIn, http_server.HTTPServer):
@@ -319,7 +278,7 @@ class GRRHTTPServer(socketserver.ThreadingMixIn, http_server.HTTPServer):
 
   address_family = socket.AF_INET6
 
-  def __init__(self, server_address, handler, frontend=None, *args, **kwargs):
+  def __init__(self, server_address, handler, frontend=None, **kwargs):
     stats_collector_instance.Get().SetGaugeValue("frontend_max_active_count",
                                                  self.request_queue_size)
 
@@ -331,8 +290,8 @@ class GRRHTTPServer(socketserver.ThreadingMixIn, http_server.HTTPServer):
           private_key=config.CONFIG["PrivateKeys.server_key"],
           max_queue_size=config.CONFIG["Frontend.max_queue_size"],
           message_expiry_time=config.CONFIG["Frontend.message_expiry_time"],
-          max_retransmission_time=config.CONFIG[
-              "Frontend.max_retransmission_time"])
+          max_retransmission_time=config
+          .CONFIG["Frontend.max_retransmission_time"])
     self.server_cert = config.CONFIG["Frontend.certificate"]
 
     (address, _) = server_address
@@ -343,8 +302,10 @@ class GRRHTTPServer(socketserver.ThreadingMixIn, http_server.HTTPServer):
       self.address_family = socket.AF_INET6
 
     logging.info("Will attempt to listen on %s", server_address)
-    http_server.HTTPServer.__init__(self, server_address, handler, *args,
-                                    **kwargs)
+    http_server.HTTPServer.__init__(self, server_address, handler, **kwargs)
+
+  def Shutdown(self):
+    self.shutdown()
 
 
 def CreateServer(frontend=None):

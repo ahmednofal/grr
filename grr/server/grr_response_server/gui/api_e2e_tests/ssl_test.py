@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Tests for API client + HTTPS server integration."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import datetime
@@ -69,8 +70,9 @@ class ApiSslServerTestBase(test_lib.GRRBaseTest, acl_test_lib.AclTestMixin):
     })
     self.config_overrider.Start()
 
-    self.port = portpicker.PickUnusedPort()
-    self.thread = wsgiapp_testlib.ServerThread(self.port)
+    self.port = portpicker.pick_unused_port()
+    self.thread = wsgiapp_testlib.ServerThread(
+        self.port, name="ApiSslServerTest")
     self.thread.StartAndWaitUntilServing()
 
     api_auth_manager.APIACLInit.InitApiAuthManager()
@@ -84,6 +86,7 @@ class ApiSslServerTestBase(test_lib.GRRBaseTest, acl_test_lib.AclTestMixin):
 
     self.config_overrider.Stop()
     self.thread.keep_running = False
+    self.thread.Stop()
 
 
 class ApiSslE2ETestMixin(object):
@@ -196,7 +199,7 @@ class ApiSslProxyTest(ApiSslServerTestBase):
     self.proxy_server = None
     while self.proxy_server is None:
       try:
-        self.proxy_port = portpicker.PickUnusedPort()
+        self.proxy_port = portpicker.pick_unused_port()
         self.proxy_server = TCPServerV6(("::", self.proxy_port), Proxy)
       except socket.error:
         attempts_count += 1

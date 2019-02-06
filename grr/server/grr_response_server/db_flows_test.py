@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+# -*- encoding: utf-8 -*-
 """Tests for the flow database api."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import itertools
@@ -17,7 +19,9 @@ from grr_response_core.lib.rdfvalues import client as rdf_client
 from grr_response_core.lib.rdfvalues import flows as rdf_flows
 from grr_response_core.lib.util import compatibility
 from grr_response_server import db
+from grr_response_server import flow
 from grr_response_server.rdfvalues import flow_objects as rdf_flow_objects
+from grr_response_server.rdfvalues import hunt_objects as rdf_hunt_objects
 from grr_response_server.rdfvalues import objects as rdf_objects
 from grr.test_lib import test_lib
 
@@ -28,14 +32,16 @@ class DatabaseTestFlowMixin(object):
   This mixin adds methods to test the handling of flows.
   """
 
-  def _SetupClientAndFlow(self, **additional_flow_args):
-    flow_id = u"1234ABCD"
-    client_id = u"C.1234567890123456"
-
+  def _SetupClientAndFlow(self, client_id=None, **additional_flow_args):
+    client_id = client_id or u"C.1234567890123456"
+    flow_id = flow.RandomFlowId()
     self.db.WriteClientMetadata(client_id, fleetspeak_enabled=False)
 
     rdf_flow = rdf_flow_objects.Flow(
-        client_id=client_id, flow_id=flow_id, **additional_flow_args)
+        client_id=client_id,
+        flow_id=flow_id,
+        create_time=rdfvalue.RDFDatetime.Now(),
+        **additional_flow_args)
     self.db.WriteFlowObject(rdf_flow)
 
     return client_id, flow_id
@@ -48,12 +54,12 @@ class DatabaseTestFlowMixin(object):
     self.db.WriteClientMessages([msg])
 
     read_msgs = self.db.ReadClientMessages(client_id)
-    self.assertEqual(len(read_msgs), 1)
+    self.assertLen(read_msgs, 1)
     self.assertEqual(msg, read_msgs[0])
 
     self.db.DeleteClientMessages([msg])
     read_msgs = self.db.ReadClientMessages(client_id)
-    self.assertEqual(len(read_msgs), 0)
+    self.assertEmpty(read_msgs)
 
     # Extra delete should not raise.
     self.db.DeleteClientMessages([msg])
@@ -79,7 +85,7 @@ class DatabaseTestFlowMixin(object):
       msg.ttl -= 1
       self.db.WriteClientMessages([msg])
       read_msgs = self.db.ReadClientMessages(client_id)
-      self.assertEqual(len(read_msgs), 1)
+      self.assertLen(read_msgs, 1)
       self.assertEqual(msg, read_msgs[0])
 
   def testClientMessageLeasing(self):
@@ -99,7 +105,7 @@ class DatabaseTestFlowMixin(object):
       leased = self.db.LeaseClientMessages(
           client_id, lease_time=lease_time, limit=5)
 
-      self.assertEqual(len(leased), 5)
+      self.assertLen(leased, 5)
 
       for request in leased:
         self.assertEqual(request.leased_until, t0_expiry)
@@ -111,7 +117,7 @@ class DatabaseTestFlowMixin(object):
       leased = self.db.LeaseClientMessages(
           client_id, lease_time=lease_time, limit=5)
 
-      self.assertEqual(len(leased), 5)
+      self.assertLen(leased, 5)
 
       for request in leased:
         self.assertEqual(request.leased_until, t1_expiry)
@@ -121,30 +127,30 @@ class DatabaseTestFlowMixin(object):
       leased = self.db.LeaseClientMessages(
           client_id, lease_time=lease_time, limit=2)
 
-      self.assertEqual(len(leased), 0)
+      self.assertEmpty(leased)
 
     read = self.db.ReadClientMessages(client_id)
 
-    self.assertEqual(len(read), 10)
+    self.assertLen(read, 10)
     for r in read:
       self.assertEqual(r.leased_by, utils.ProcessIdString())
 
-    self.assertEqual(len([r for r in read if r.leased_until == t0_expiry]), 5)
-    self.assertEqual(len([r for r in read if r.leased_until == t1_expiry]), 5)
+    self.assertLen([r for r in read if r.leased_until == t0_expiry], 5)
+    self.assertLen([r for r in read if r.leased_until == t1_expiry], 5)
 
     # Half the leases expired.
     t2 = rdfvalue.RDFDatetime.FromSecondsSinceEpoch(100000 + 350)
     with test_lib.FakeTime(t2):
       leased = self.db.LeaseClientMessages(client_id, lease_time=lease_time)
 
-      self.assertEqual(len(leased), 5)
+      self.assertLen(leased, 5)
 
     # All of them expired.
     t3 = rdfvalue.RDFDatetime.FromSecondsSinceEpoch(100000 + 10350)
     with test_lib.FakeTime(t3):
       leased = self.db.LeaseClientMessages(client_id, lease_time=lease_time)
 
-      self.assertEqual(len(leased), 10)
+      self.assertLen(leased, 10)
 
   def testClientMessagesAreSorted(self):
     client_id = self.InitializeClient()
@@ -159,7 +165,7 @@ class DatabaseTestFlowMixin(object):
 
     read = self.db.ReadClientMessages(client_id)
 
-    self.assertEqual(len(read), 10)
+    self.assertLen(read, 10)
     task_ids = [m.task_id for m in read]
     self.assertEqual(task_ids, sorted(task_ids))
 
@@ -168,11 +174,42 @@ class DatabaseTestFlowMixin(object):
     task_ids = [m.task_id for m in leased]
     self.assertEqual(task_ids, sorted(task_ids))
 
+  def testClientMessagesTTL(self):
+    client_id = self.InitializeClient()
+    messages = [
+        rdf_flows.GrrMessage(queue=client_id, generate_task_id=True)
+        for _ in range(10)
+    ]
+    self.db.WriteClientMessages(messages)
+
+    now = rdfvalue.RDFDatetime.Now()
+    lease_time = rdfvalue.Duration("60s")
+
+    for _ in range(db.Database.CLIENT_MESSAGES_TTL):
+      now += rdfvalue.Duration("120s")
+      with test_lib.FakeTime(now):
+        leased = self.db.LeaseClientMessages(
+            client_id, lease_time=lease_time, limit=10)
+        self.assertLen(leased, 10)
+
+    now += rdfvalue.Duration("120s")
+    with test_lib.FakeTime(now):
+      leased = self.db.LeaseClientMessages(
+          client_id, lease_time=lease_time, limit=10)
+      self.assertEmpty(leased)
+
+    # ReadClientMessages includes also messages whose TTL has expired. Make sure
+    # that the messages have been deleted from the db.
+    self.assertEqual(self.db.ReadClientMessages(client_id), [])
+
   def testFlowWritingUnknownClient(self):
     flow_id = u"1234ABCD"
     client_id = u"C.1234567890123456"
 
-    rdf_flow = rdf_flow_objects.Flow(client_id=client_id, flow_id=flow_id)
+    rdf_flow = rdf_flow_objects.Flow(
+        client_id=client_id,
+        flow_id=flow_id,
+        create_time=rdfvalue.RDFDatetime.Now())
 
     with self.assertRaises(db.UnknownClientError):
       self.db.WriteFlowObject(rdf_flow)
@@ -184,7 +221,10 @@ class DatabaseTestFlowMixin(object):
     self.db.WriteClientMetadata(client_id, fleetspeak_enabled=False)
 
     rdf_flow = rdf_flow_objects.Flow(
-        client_id=client_id, flow_id=flow_id, next_request_to_process=4)
+        client_id=client_id,
+        flow_id=flow_id,
+        next_request_to_process=4,
+        create_time=rdfvalue.RDFDatetime.Now())
     self.db.WriteFlowObject(rdf_flow)
 
     read_flow = self.db.ReadFlowObject(client_id, flow_id)
@@ -201,32 +241,185 @@ class DatabaseTestFlowMixin(object):
     with self.assertRaises(db.UnknownFlowError):
       self.db.ReadFlowObject(u"C.1234567890000000", flow_id)
 
+  def testFlowOverwrite(self):
+    flow_id = u"1234ABCD"
+    client_id = u"C.1234567890123456"
+
+    self.db.WriteClientMetadata(client_id, fleetspeak_enabled=False)
+
+    rdf_flow = rdf_flow_objects.Flow(
+        client_id=client_id,
+        flow_id=flow_id,
+        next_request_to_process=4,
+        create_time=rdfvalue.RDFDatetime.Now())
+    self.db.WriteFlowObject(rdf_flow)
+
+    read_flow = self.db.ReadFlowObject(client_id, flow_id)
+
+    # Last update time has changed, everything else should be equal.
+    read_flow.last_update_time = None
+
+    self.assertEqual(read_flow, rdf_flow)
+
+    # Now change the flow object.
+    rdf_flow.next_request_to_process = 5
+
+    self.db.WriteFlowObject(rdf_flow)
+
+    read_flow_after_update = self.db.ReadFlowObject(client_id, flow_id)
+
+    self.assertEqual(read_flow_after_update.next_request_to_process, 5)
+
   def testReadAllFlowObjects(self):
-    client_id_1 = u"C.1234567890123456"
-    client_id_2 = u"C.1234567890123457"
-    flow_id_1 = u"1234ABCD"
-    flow_id_2 = u"ABCD1234"
+    client_id_1 = "C.1111111111111111"
+    client_id_2 = "C.2222222222222222"
 
     self.db.WriteClientMetadata(client_id_1, fleetspeak_enabled=False)
     self.db.WriteClientMetadata(client_id_2, fleetspeak_enabled=False)
 
     # Write a flow and a child flow for client 1.
-    rdf_flow = rdf_flow_objects.Flow(client_id=client_id_1, flow_id=flow_id_1)
-    self.db.WriteFlowObject(rdf_flow)
-    rdf_flow = rdf_flow_objects.Flow(
-        client_id=client_id_1, flow_id=flow_id_2, parent_flow_id=flow_id_1)
-    self.db.WriteFlowObject(rdf_flow)
+    flow1 = rdf_flow_objects.Flow(
+        client_id=client_id_1,
+        flow_id="000A0001",
+        create_time=rdfvalue.RDFDatetime.Now())
+    self.db.WriteFlowObject(flow1)
+    flow2 = rdf_flow_objects.Flow(
+        client_id=client_id_1,
+        flow_id="000A0002",
+        parent_flow_id="000A0001",
+        create_time=rdfvalue.RDFDatetime.Now())
+    self.db.WriteFlowObject(flow2)
 
     # Same flow id for client 2.
-    rdf_flow = rdf_flow_objects.Flow(client_id=client_id_2, flow_id=flow_id_1)
-    self.db.WriteFlowObject(rdf_flow)
+    flow3 = rdf_flow_objects.Flow(
+        client_id=client_id_2,
+        flow_id="000A0001",
+        create_time=rdfvalue.RDFDatetime.Now())
+    self.db.WriteFlowObject(flow3)
 
-    read = self.db.ReadAllFlowObjects(client_id_1)
+    flows = self.db.ReadAllFlowObjects()
+    self.assertCountEqual([f.flow_id for f in flows],
+                          ["000A0001", "000A0002", "000A0001"])
 
-    self.assertEqual(len(read), 2)
+  def testReadAllFlowObjectsWithMinCreateTime(self):
+    now = rdfvalue.RDFDatetime.Now()
+    client_id_1 = "C.1111111111111111"
+    self.db.WriteClientMetadata(client_id_1, fleetspeak_enabled=False)
 
-    for flow_obj in read:
-      self.assertEqual(flow_obj.client_id, client_id_1)
+    self.db.WriteFlowObject(
+        rdf_flow_objects.Flow(
+            client_id=client_id_1,
+            flow_id="0000001A",
+            create_time=now - rdfvalue.Duration("2h")))
+    self.db.WriteFlowObject(
+        rdf_flow_objects.Flow(
+            client_id=client_id_1,
+            flow_id="0000001B",
+            create_time=now - rdfvalue.Duration("1h")))
+
+    flows = self.db.ReadAllFlowObjects(
+        min_create_time=now - rdfvalue.Duration("1h"))
+    self.assertEqual([f.flow_id for f in flows], ["0000001B"])
+
+  def testReadAllFlowObjectsWithMaxCreateTime(self):
+    now = rdfvalue.RDFDatetime.Now()
+    client_id_1 = "C.1111111111111111"
+    self.db.WriteClientMetadata(client_id_1, fleetspeak_enabled=False)
+
+    self.db.WriteFlowObject(
+        rdf_flow_objects.Flow(
+            client_id=client_id_1,
+            flow_id="0000001A",
+            create_time=now - rdfvalue.Duration("2h")))
+    self.db.WriteFlowObject(
+        rdf_flow_objects.Flow(
+            client_id=client_id_1,
+            flow_id="0000001B",
+            create_time=now - rdfvalue.Duration("1h")))
+
+    flows = self.db.ReadAllFlowObjects(
+        max_create_time=now - rdfvalue.Duration("2h"))
+    self.assertEqual([f.flow_id for f in flows], ["0000001A"])
+
+  def testReadAllFlowObjectsWithClientID(self):
+    now = rdfvalue.RDFDatetime.Now()
+    client_id_1 = "C.1111111111111111"
+    client_id_2 = "C.2222222222222222"
+    self.db.WriteClientMetadata(client_id_1, fleetspeak_enabled=False)
+    self.db.WriteClientMetadata(client_id_2, fleetspeak_enabled=False)
+
+    self.db.WriteFlowObject(
+        rdf_flow_objects.Flow(
+            client_id=client_id_1, flow_id="0000001A", create_time=now))
+    self.db.WriteFlowObject(
+        rdf_flow_objects.Flow(
+            client_id=client_id_2, flow_id="0000001B", create_time=now))
+
+    flows = self.db.ReadAllFlowObjects(client_id=client_id_1)
+    self.assertEqual([f.flow_id for f in flows], ["0000001A"])
+
+  def testReadAllFlowObjectsWithoutChildren(self):
+    now = rdfvalue.RDFDatetime.Now()
+    client_id_1 = "C.1111111111111111"
+    self.db.WriteClientMetadata(client_id_1, fleetspeak_enabled=False)
+
+    self.db.WriteFlowObject(
+        rdf_flow_objects.Flow(
+            client_id=client_id_1, flow_id="0000001A", create_time=now))
+    self.db.WriteFlowObject(
+        rdf_flow_objects.Flow(
+            client_id=client_id_1,
+            flow_id="0000001B",
+            parent_flow_id="0000001A",
+            create_time=now))
+
+    flows = self.db.ReadAllFlowObjects(include_child_flows=False)
+    self.assertEqual([f.flow_id for f in flows], ["0000001A"])
+
+  def testReadAllFlowObjectsWithAllConditions(self):
+    now = rdfvalue.RDFDatetime.Now()
+    client_id_1 = "C.1111111111111111"
+    client_id_2 = "C.2222222222222222"
+    self.db.WriteClientMetadata(client_id_1, fleetspeak_enabled=False)
+    self.db.WriteClientMetadata(client_id_2, fleetspeak_enabled=False)
+
+    self.db.WriteFlowObject(
+        rdf_flow_objects.Flow(
+            client_id=client_id_1, flow_id="0000000A", create_time=now))
+    self.db.WriteFlowObject(
+        rdf_flow_objects.Flow(
+            client_id=client_id_1,
+            flow_id="0000000B",
+            parent_flow_id="0000000A",
+            create_time=now))
+    self.db.WriteFlowObject(
+        rdf_flow_objects.Flow(
+            client_id=client_id_1,
+            flow_id="0000000C",
+            create_time=now - rdfvalue.Duration.FromSeconds(1)))
+    self.db.WriteFlowObject(
+        rdf_flow_objects.Flow(
+            client_id=client_id_1,
+            flow_id="0000000D",
+            create_time=now + rdfvalue.Duration.FromSeconds(1)))
+    self.db.WriteFlowObject(
+        rdf_flow_objects.Flow(
+            client_id=client_id_2, flow_id="0000000E", create_time=now))
+
+    flows = self.db.ReadAllFlowObjects(
+        client_id=client_id_1,
+        min_create_time=now,
+        max_create_time=now,
+        include_child_flows=False)
+    self.assertEqual([f.flow_id for f in flows], ["0000000A"])
+
+  def testUpdateUnknownFlow(self):
+    _, flow_id = self._SetupClientAndFlow()
+
+    crash_info = rdf_client.ClientCrash(crash_message="oh no")
+    with self.assertRaises(db.UnknownFlowError):
+      self.db.UpdateFlow(
+          u"C.1234567890AAAAAA", flow_id, client_crash_info=crash_info)
 
   def testCrashInfoUpdate(self):
     client_id, flow_id = self._SetupClientAndFlow()
@@ -261,6 +454,42 @@ class DatabaseTestFlowMixin(object):
     self.assertEqual(read_flow.processing_since, now)
     self.assertEqual(read_flow.processing_deadline, deadline)
 
+    # None can be used to clear some fields.
+    self.db.UpdateFlow(client_id, flow_id, processing_on=None)
+    read_flow = self.db.ReadFlowObject(client_id, flow_id)
+    self.assertEqual(read_flow.processing_on, "")
+
+    self.db.UpdateFlow(client_id, flow_id, processing_since=None)
+    read_flow = self.db.ReadFlowObject(client_id, flow_id)
+    self.assertEqual(read_flow.processing_since, None)
+
+    self.db.UpdateFlow(client_id, flow_id, processing_deadline=None)
+    read_flow = self.db.ReadFlowObject(client_id, flow_id)
+    self.assertEqual(read_flow.processing_deadline, None)
+
+  def testUpdateFlowsIgnoresMissingFlows(self):
+    _, flow_id = self._SetupClientAndFlow()
+    pending_termination = rdf_flow_objects.PendingFlowTermination(reason="test")
+    self.db.UpdateFlows([("C.1234567890AAAAAA", flow_id),
+                         ("C.1234567890BBBBBB", flow_id)],
+                        pending_termination=pending_termination)
+
+  def testUpdateFlowsUpdatesMultipleFlowsCorrectly(self):
+    client_id_1, flow_id_1 = self._SetupClientAndFlow(
+        client_id="C.1234567890AAAAAA")
+    client_id_2, flow_id_2 = self._SetupClientAndFlow(
+        client_id="C.1234567890BBBBBB")
+
+    pending_termination = rdf_flow_objects.PendingFlowTermination(reason="test")
+    self.db.UpdateFlows([(client_id_1, flow_id_1), (client_id_2, flow_id_2)],
+                        pending_termination=pending_termination)
+
+    read_flow_1 = self.db.ReadFlowObject(client_id_1, flow_id_1)
+    self.assertEqual(read_flow_1.pending_termination, pending_termination)
+
+    read_flow_2 = self.db.ReadFlowObject(client_id_2, flow_id_2)
+    self.assertEqual(read_flow_2.pending_termination, pending_termination)
+
   def testRequestWriting(self):
     client_id_1 = u"C.1234567890123456"
     client_id_2 = u"C.1234567890123457"
@@ -278,7 +507,10 @@ class DatabaseTestFlowMixin(object):
     requests = []
     for flow_id in [flow_id_1, flow_id_2]:
       for client_id in [client_id_1, client_id_2]:
-        rdf_flow = rdf_flow_objects.Flow(client_id=client_id, flow_id=flow_id)
+        rdf_flow = rdf_flow_objects.Flow(
+            client_id=client_id,
+            flow_id=flow_id,
+            create_time=rdfvalue.RDFDatetime.Now())
         self.db.WriteFlowObject(rdf_flow)
 
         for i in range(1, 4):
@@ -293,15 +525,17 @@ class DatabaseTestFlowMixin(object):
         read = self.db.ReadAllFlowRequestsAndResponses(
             client_id=client_id, flow_id=flow_id)
 
-        self.assertEqual(len(read), 3)
+        self.assertLen(read, 3)
         self.assertEqual([req.request_id for (req, _) in read], list(
             range(1, 4)))
         for _, responses in read:
           self.assertEqual(responses, {})
 
+  flow_processing_req_func = "WriteFlowProcessingRequests"
+
   def _WriteRequestForProcessing(self, client_id, flow_id, request_id):
     with mock.patch.object(self.db.delegate,
-                           "WriteFlowProcessingRequests") as req_func:
+                           self.flow_processing_req_func) as req_func:
 
       request = rdf_flow_objects.FlowRequest(
           flow_id=flow_id,
@@ -353,7 +587,7 @@ class DatabaseTestFlowMixin(object):
     self.db.WriteFlowResponses(responses)
 
     request_list = self.db.ReadAllFlowRequestsAndResponses(client_id, flow_id)
-    self.assertItemsEqual([req.request_id for req, _ in request_list],
+    self.assertCountEqual([req.request_id for req, _ in request_list],
                           [req.request_id for req in requests])
 
     random.shuffle(requests)
@@ -362,7 +596,7 @@ class DatabaseTestFlowMixin(object):
       request = requests.pop()
       self.db.DeleteFlowRequests([request])
       request_list = self.db.ReadAllFlowRequestsAndResponses(client_id, flow_id)
-      self.assertItemsEqual([req.request_id for req, _ in request_list],
+      self.assertCountEqual([req.request_id for req, _ in request_list],
                             [req.request_id for req in requests])
 
   def testResponsesForUnknownFlow(self):
@@ -397,9 +631,35 @@ class DatabaseTestFlowMixin(object):
 
     # We should have one response in the db.
     read = self.db.ReadAllFlowRequestsAndResponses(client_id, flow_id)
-    self.assertEqual(len(read), 1)
+    self.assertLen(read, 1)
     request, responses = read[0]
-    self.assertEqual(len(responses), 1)
+    self.assertLen(responses, 1)
+
+  def testStatusForUnknownRequest(self):
+    client_id, flow_id = self._SetupClientAndFlow()
+
+    request = rdf_flow_objects.FlowRequest(
+        client_id=client_id, flow_id=flow_id, request_id=1)
+    self.db.WriteFlowRequests([request])
+
+    # Write two status responses at a time, one for the request that exists, one
+    # for a request that doesn't.
+    with test_lib.SuppressLogs():
+      self.db.WriteFlowResponses([
+          rdf_flow_objects.FlowStatus(
+              client_id=client_id, flow_id=flow_id, request_id=1,
+              response_id=1),
+          rdf_flow_objects.FlowStatus(
+              client_id=client_id, flow_id=flow_id, request_id=2, response_id=1)
+      ])
+
+    # We should have one response in the db.
+    read = self.db.ReadAllFlowRequestsAndResponses(client_id, flow_id)
+    self.assertLen(read, 1)
+    request, responses = read[0]
+    self.assertLen(responses, 1)
+
+    self.assertEqual(request.nr_responses_expected, 1)
 
   def testResponseWriting(self):
     client_id, flow_id = self._SetupClientAndFlow()
@@ -420,7 +680,7 @@ class DatabaseTestFlowMixin(object):
     self.db.WriteFlowResponses(responses)
 
     all_requests = self.db.ReadAllFlowRequestsAndResponses(client_id, flow_id)
-    self.assertEqual(len(all_requests), 1)
+    self.assertLen(all_requests, 1)
 
     read_request, read_responses = all_requests[0]
     self.assertEqual(read_request, request)
@@ -454,7 +714,7 @@ class DatabaseTestFlowMixin(object):
     self.db.WriteFlowResponses(responses)
 
     all_requests = self.db.ReadAllFlowRequestsAndResponses(client_id, flow_id)
-    self.assertEqual(len(all_requests), 1)
+    self.assertLen(all_requests, 1)
 
     _, read_responses = all_requests[0]
     self.assertEqual(list(read_responses), [0, 1, 2, 3, 4])
@@ -560,6 +820,36 @@ class DatabaseTestFlowMixin(object):
         client_id, flow_id, request_id=1, num_responses=3, task_id=msg.task_id)
 
     self.assertFalse(self.db.ReadClientMessages(client_id))
+
+  def testReadFlowForProcessingRaisesIfParentHuntIsStoppedOrCompleted(self):
+    hunt_obj = rdf_hunt_objects.Hunt()
+    hunt_obj.hunt_state = hunt_obj.HuntState.STOPPED
+    self.db.WriteHuntObject(hunt_obj)
+
+    client_id, flow_id = self._SetupClientAndFlow(
+        parent_hunt_id=hunt_obj.hunt_id)
+    processing_time = rdfvalue.Duration("60s")
+
+    with self.assertRaises(db.ParentHuntIsNotRunningError):
+      self.db.ReadFlowForProcessing(client_id, flow_id, processing_time)
+
+    def UpdateToCompleted(h):
+      h.hunt_state = h.HuntState.COMPLETED
+      return h
+
+    self.db.UpdateHuntObject(hunt_obj.hunt_id, UpdateToCompleted)
+
+    with self.assertRaises(db.ParentHuntIsNotRunningError):
+      self.db.ReadFlowForProcessing(client_id, flow_id, processing_time)
+
+    def UpdateToStarted(h):
+      h.hunt_state = h.HuntState.STARTED
+      return h
+
+    self.db.UpdateHuntObject(hunt_obj.hunt_id, UpdateToStarted)
+
+    # Should work again.
+    self.db.ReadFlowForProcessing(client_id, flow_id, processing_time)
 
   def testReadFlowForProcessingThatIsAlreadyBeingProcessed(self):
     client_id, flow_id = self._SetupClientAndFlow()
@@ -698,22 +988,28 @@ class DatabaseTestFlowMixin(object):
     self.db.WriteClientMetadata(client_id, fleetspeak_enabled=False)
 
     self.db.WriteFlowObject(
-        rdf_flow_objects.Flow(flow_id=u"00000001", client_id=client_id))
+        rdf_flow_objects.Flow(
+            flow_id=u"00000001",
+            client_id=client_id,
+            create_time=rdfvalue.RDFDatetime.Now()))
     self.db.WriteFlowObject(
         rdf_flow_objects.Flow(
             flow_id=u"00000002",
             client_id=client_id,
-            parent_flow_id=u"00000001"))
+            parent_flow_id=u"00000001",
+            create_time=rdfvalue.RDFDatetime.Now()))
     self.db.WriteFlowObject(
         rdf_flow_objects.Flow(
             flow_id=u"00000003",
             client_id=client_id,
-            parent_flow_id=u"00000002"))
+            parent_flow_id=u"00000002",
+            create_time=rdfvalue.RDFDatetime.Now()))
     self.db.WriteFlowObject(
         rdf_flow_objects.Flow(
             flow_id=u"00000004",
             client_id=client_id,
-            parent_flow_id=u"00000001"))
+            parent_flow_id=u"00000001",
+            create_time=rdfvalue.RDFDatetime.Now()))
 
     # This one is completely unrelated (different client id).
     self.db.WriteClientMetadata(u"C.1234567890123457", fleetspeak_enabled=False)
@@ -721,24 +1017,28 @@ class DatabaseTestFlowMixin(object):
         rdf_flow_objects.Flow(
             flow_id=u"00000002",
             client_id=u"C.1234567890123457",
-            parent_flow_id=u"00000001"))
+            parent_flow_id=u"00000001",
+            create_time=rdfvalue.RDFDatetime.Now()))
 
     children = self.db.ReadChildFlowObjects(client_id, u"00000001")
 
-    self.assertEqual(len(children), 2)
+    self.assertLen(children, 2)
     for c in children:
       self.assertEqual(c.parent_flow_id, u"00000001")
 
     children = self.db.ReadChildFlowObjects(client_id, u"00000002")
-    self.assertEqual(len(children), 1)
+    self.assertLen(children, 1)
     self.assertEqual(children[0].parent_flow_id, u"00000002")
     self.assertEqual(children[0].flow_id, u"00000003")
 
     children = self.db.ReadChildFlowObjects(client_id, u"00000003")
-    self.assertEqual(len(children), 0)
+    self.assertEmpty(children)
 
   def _WriteRequestAndResponses(self, client_id, flow_id):
-    rdf_flow = rdf_flow_objects.Flow(client_id=client_id, flow_id=flow_id)
+    rdf_flow = rdf_flow_objects.Flow(
+        client_id=client_id,
+        flow_id=flow_id,
+        create_time=rdfvalue.RDFDatetime.Now())
     self.db.WriteFlowObject(rdf_flow)
 
     for request_id in range(1, 4):
@@ -756,9 +1056,9 @@ class DatabaseTestFlowMixin(object):
 
   def _CheckRequestsAndResponsesAreThere(self, client_id, flow_id):
     all_requests = self.db.ReadAllFlowRequestsAndResponses(client_id, flow_id)
-    self.assertEqual(len(all_requests), 3)
+    self.assertLen(all_requests, 3)
     for _, responses in all_requests:
-      self.assertEqual(len(responses), 2)
+      self.assertLen(responses, 2)
 
   def testDeleteAllFlowRequestsAndResponses(self):
     client_id1 = u"C.1234567890123456"
@@ -820,7 +1120,7 @@ class DatabaseTestFlowMixin(object):
     # We expect three requests here. Req #1 is old and should not be there, req
     # #7 can't be processed since we are missing #6 in between. That leaves
     # requests #3, #4 and #5.
-    self.assertEqual(len(requests_for_processing), 3)
+    self.assertLen(requests_for_processing, 3)
     self.assertEqual(list(requests_for_processing), [3, 4, 5])
 
     for request_id in requests_for_processing:
@@ -830,8 +1130,10 @@ class DatabaseTestFlowMixin(object):
     self.assertEqual(requests_for_processing[4][1], responses)
 
   def testFlowProcessingRequestsQueue(self):
-    client_id, _ = self._SetupClientAndFlow()
-    flow_ids = [u"1234ABC%d" % i for i in range(5)]
+    flow_ids = []
+    for _ in range(5):
+      client_id, flow_id = self._SetupClientAndFlow()
+      flow_ids.append(flow_id)
 
     request_queue = queue.Queue()
 
@@ -857,14 +1159,15 @@ class DatabaseTestFlowMixin(object):
             "Timed out waiting for messages, expected 5, got %d" % len(got))
       got.append(l)
 
-    got.sort(key=lambda req: req.flow_id)
-    self.assertEqual(requests, got)
+    self.assertCountEqual(requests, got)
 
     self.db.UnregisterFlowProcessingHandler()
 
   def testFlowProcessingRequestsQueueWithDelay(self):
-    client_id, _ = self._SetupClientAndFlow()
-    flow_ids = [u"1234ABC%d" % i for i in range(5)]
+    flow_ids = []
+    for _ in range(5):
+      client_id, flow_id = self._SetupClientAndFlow()
+      flow_ids.append(flow_id)
 
     request_queue = queue.Queue()
 
@@ -896,14 +1199,19 @@ class DatabaseTestFlowMixin(object):
       got.append(l)
       self.assertGreater(rdfvalue.RDFDatetime.Now(), l.delivery_time)
 
-    got.sort(key=lambda req: req.flow_id)
-    self.assertEqual(requests, got)
+    self.assertCountEqual(requests, got)
+
+    leftover = self.db.ReadFlowProcessingRequests()
+    self.assertEqual(leftover, [])
 
     self.db.UnregisterFlowProcessingHandler()
 
   def testAcknowledgingFlowProcessingRequestsWorks(self):
-    client_id, _ = self._SetupClientAndFlow()
-    flow_ids = [u"1234ABC%d" % i for i in range(5)]
+    flow_ids = []
+    for _ in range(5):
+      client_id, flow_id = self._SetupClientAndFlow()
+      flow_ids.append(flow_id)
+    flow_ids.sort()
 
     now = rdfvalue.RDFDatetime.Now()
     delivery_time = now + rdfvalue.Duration("10m")
@@ -920,14 +1228,14 @@ class DatabaseTestFlowMixin(object):
     # there.
     stored_requests = self.db.ReadFlowProcessingRequests()
     stored_requests.sort(key=lambda r: r.flow_id)
-    self.assertEqual(len(stored_requests), 5)
-    self.assertEqual([r.flow_id for r in stored_requests], flow_ids)
+    self.assertLen(stored_requests, 5)
+    self.assertCountEqual([r.flow_id for r in stored_requests], flow_ids)
 
     # Now we ack requests 1 and 2. There should be three remaining in the db.
     self.db.AckFlowProcessingRequests(stored_requests[1:3])
     stored_requests = self.db.ReadFlowProcessingRequests()
-    self.assertEqual(len(stored_requests), 3)
-    self.assertItemsEqual([r.flow_id for r in stored_requests],
+    self.assertLen(stored_requests, 3)
+    self.assertCountEqual([r.flow_id for r in stored_requests],
                           [flow_ids[0], flow_ids[3], flow_ids[4]])
 
     # Make sure DeleteAllFlowProcessingRequests removes all requests.
@@ -936,58 +1244,62 @@ class DatabaseTestFlowMixin(object):
 
     self.db.UnregisterFlowProcessingHandler()
 
-  def _WriteFlowResults(self,
-                        client_id,
-                        flow_id,
-                        multiple_timestamps=False,
-                        sample_results=None):
-    client_id, flow_id = self._SetupClientAndFlow()
-    if sample_results is None:
-      sample_results = []
-      for i in range(10):
-        sample_results.append(
-            rdf_flow_objects.FlowResult(
-                tag="tag_%d" % i,
-                payload=rdf_client.ClientSummary(
-                    client_id=client_id,
-                    system_manufacturer="manufacturer_%d" % i,
-                    install_date=rdfvalue.RDFDatetime.FromSecondsSinceEpoch(
-                        10 + i))))
+  def _SampleResults(self, client_id, flow_id, hunt_id=None):
+    sample_results = []
+    for i in range(10):
+      sample_results.append(
+          rdf_flow_objects.FlowResult(
+              client_id=client_id,
+              flow_id=flow_id,
+              hunt_id=hunt_id,
+              tag="tag_%d" % i,
+              payload=rdf_client.ClientSummary(
+                  client_id=client_id,
+                  system_manufacturer="manufacturer_%d" % i,
+                  install_date=rdfvalue.RDFDatetime.FromSecondsSinceEpoch(10 +
+                                                                          i))))
+
+    return sample_results
+
+  def _WriteFlowResults(self, sample_results=None, multiple_timestamps=False):
 
     if multiple_timestamps:
-      for i, r in enumerate(sample_results):
-        self.db.WriteFlowResults(client_id, flow_id, [r])
+      for r in sample_results:
+        self.db.WriteFlowResults([r])
     else:
       # Use random.shuffle to make sure we don't care about the order of
       # results here, as they all have the same timestamp.
       random.shuffle(sample_results)
-      self.db.WriteFlowResults(client_id, flow_id, sample_results)
+      self.db.WriteFlowResults(sample_results)
 
     return sample_results
 
   def testWritesAndReadsSingleFlowResultOfSingleType(self):
     client_id, flow_id = self._SetupClientAndFlow()
     sample_result = rdf_flow_objects.FlowResult(
+        client_id=client_id,
+        flow_id=flow_id,
         payload=rdf_client.ClientSummary(client_id=client_id))
 
     with test_lib.FakeTime(42):
-      self.db.WriteFlowResults(client_id, flow_id, [sample_result])
+      self.db.WriteFlowResults([sample_result])
 
     results = self.db.ReadFlowResults(client_id, flow_id, 0, 100)
-    self.assertEqual(len(results), 1)
+    self.assertLen(results, 1)
     self.assertEqual(results[0].payload, sample_result.payload)
 
   def testWritesAndReadsMultipleFlowResultsOfSingleType(self):
     client_id, flow_id = self._SetupClientAndFlow()
-    sample_results = self._WriteFlowResults(client_id, flow_id)
+    sample_results = self._WriteFlowResults(
+        self._SampleResults(client_id, flow_id))
 
     results = self.db.ReadFlowResults(client_id, flow_id, 0, 100)
-    self.assertEqual(len(results), len(sample_results))
+    self.assertLen(results, len(sample_results))
 
     # All results were written with the same timestamp (as they were written
     # via a single WriteFlowResults call), so no assumptions about
     # the order are made.
-    self.assertItemsEqual(
+    self.assertCountEqual(
         [i.payload for i in results],
         [i.payload for i in sample_results],
     )
@@ -995,10 +1307,10 @@ class DatabaseTestFlowMixin(object):
   def testWritesAndReadsMultipleFlowResultsWithDifferentTimestamps(self):
     client_id, flow_id = self._SetupClientAndFlow()
     sample_results = self._WriteFlowResults(
-        client_id, flow_id, multiple_timestamps=True)
+        self._SampleResults(client_id, flow_id), multiple_timestamps=True)
 
     results = self.db.ReadFlowResults(client_id, flow_id, 0, 100)
-    self.assertEqual(len(results), len(sample_results))
+    self.assertLen(results, len(sample_results))
 
     # Returned results have to be sorted by the timestamp in the ascending
     # order.
@@ -1010,42 +1322,40 @@ class DatabaseTestFlowMixin(object):
   def testWritesAndReadsMultipleFlowResultsOfMultipleTypes(self):
     client_id, flow_id = self._SetupClientAndFlow()
 
-    sample_results = self._WriteFlowResults(
-        client_id,
-        flow_id,
-        sample_results=[
+    sample_results = self._WriteFlowResults(sample_results=[
+        rdf_flow_objects.FlowResult(
+            client_id=client_id,
+            flow_id=flow_id,
+            payload=rdf_client.ClientSummary(
+                client_id=client_id,
+                install_date=rdfvalue.RDFDatetime.FromSecondsSinceEpoch(10 +
+                                                                        i)))
+        for i in range(10)
+    ])
+    sample_results.extend(
+        self._WriteFlowResults(sample_results=[
             rdf_flow_objects.FlowResult(
-                payload=rdf_client.ClientSummary(
+                client_id=client_id,
+                flow_id=flow_id,
+                payload=rdf_client.ClientCrash(
                     client_id=client_id,
-                    install_date=rdfvalue.RDFDatetime.FromSecondsSinceEpoch(10 +
-                                                                            i)))
+                    timestamp=rdfvalue.RDFDatetime.FromSecondsSinceEpoch(10 +
+                                                                         i)))
             for i in range(10)
-        ])
+        ]))
     sample_results.extend(
-        self._WriteFlowResults(
-            client_id,
-            flow_id,
-            sample_results=[
-                rdf_flow_objects.FlowResult(
-                    payload=rdf_client.ClientCrash(
-                        client_id=client_id,
-                        timestamp=rdfvalue.RDFDatetime.FromSecondsSinceEpoch(
-                            10 + i))) for i in range(10)
-            ]))
-    sample_results.extend(
-        self._WriteFlowResults(
-            client_id,
-            flow_id,
-            sample_results=[
-                rdf_flow_objects.FlowResult(
-                    payload=rdf_client.ClientInformation(client_version=i))
-                for i in range(10)
-            ]))
+        self._WriteFlowResults(sample_results=[
+            rdf_flow_objects.FlowResult(
+                client_id=client_id,
+                flow_id=flow_id,
+                payload=rdf_client.ClientInformation(client_version=i))
+            for i in range(10)
+        ]))
 
     results = self.db.ReadFlowResults(client_id, flow_id, 0, 100)
-    self.assertEqual(len(results), len(sample_results))
+    self.assertLen(results, len(sample_results))
 
-    self.assertItemsEqual(
+    self.assertCountEqual(
         [i.payload for i in results],
         [i.payload for i in sample_results],
     )
@@ -1053,7 +1363,7 @@ class DatabaseTestFlowMixin(object):
   def testReadFlowResultsCorrectlyAppliesOffsetAndCountFilters(self):
     client_id, flow_id = self._SetupClientAndFlow()
     sample_results = self._WriteFlowResults(
-        client_id, flow_id, multiple_timestamps=True)
+        self._SampleResults(client_id, flow_id), multiple_timestamps=True)
 
     for l in range(1, 11):
       for i in range(10):
@@ -1070,7 +1380,7 @@ class DatabaseTestFlowMixin(object):
   def testReadFlowResultsCorrectlyAppliesWithTagFilter(self):
     client_id, flow_id = self._SetupClientAndFlow()
     sample_results = self._WriteFlowResults(
-        client_id, flow_id, multiple_timestamps=True)
+        self._SampleResults(client_id, flow_id), multiple_timestamps=True)
 
     results = self.db.ReadFlowResults(
         client_id, flow_id, 0, 100, with_tag="blah")
@@ -1082,32 +1392,31 @@ class DatabaseTestFlowMixin(object):
 
     results = self.db.ReadFlowResults(
         client_id, flow_id, 0, 100, with_tag="tag_1")
-    self.assertEquals([i.payload for i in results], [sample_results[1].payload])
+    self.assertEqual([i.payload for i in results], [sample_results[1].payload])
 
   def testReadFlowResultsCorrectlyAppliesWithTypeFilter(self):
     client_id, flow_id = self._SetupClientAndFlow()
-    sample_results = self._WriteFlowResults(
-        client_id,
-        flow_id,
-        sample_results=[
-            rdf_flow_objects.FlowResult(
-                payload=rdf_client.ClientSummary(
-                    client_id=client_id,
-                    install_date=rdfvalue.RDFDatetime.FromSecondsSinceEpoch(10 +
-                                                                            i)))
-            for i in range(10)
-        ])
+    sample_results = self._WriteFlowResults(sample_results=[
+        rdf_flow_objects.FlowResult(
+            client_id=client_id,
+            flow_id=flow_id,
+            payload=rdf_client.ClientSummary(
+                client_id=client_id,
+                install_date=rdfvalue.RDFDatetime.FromSecondsSinceEpoch(10 +
+                                                                        i)))
+        for i in range(10)
+    ])
     sample_results.extend(
-        self._WriteFlowResults(
-            client_id,
-            flow_id,
-            sample_results=[
-                rdf_flow_objects.FlowResult(
-                    payload=rdf_client.ClientCrash(
-                        client_id=client_id,
-                        timestamp=rdfvalue.RDFDatetime.FromSecondsSinceEpoch(
-                            10 + i))) for i in range(10)
-            ]))
+        self._WriteFlowResults(sample_results=[
+            rdf_flow_objects.FlowResult(
+                client_id=client_id,
+                flow_id=flow_id,
+                payload=rdf_client.ClientCrash(
+                    client_id=client_id,
+                    timestamp=rdfvalue.RDFDatetime.FromSecondsSinceEpoch(10 +
+                                                                         i)))
+            for i in range(10)
+        ]))
 
     results = self.db.ReadFlowResults(
         client_id,
@@ -1123,7 +1432,7 @@ class DatabaseTestFlowMixin(object):
         0,
         100,
         with_type=compatibility.GetName(rdf_client.ClientSummary))
-    self.assertItemsEqual(
+    self.assertCountEqual(
         [i.payload for i in results],
         [i.payload for i in sample_results[:10]],
     )
@@ -1131,7 +1440,7 @@ class DatabaseTestFlowMixin(object):
   def testReadFlowResultsCorrectlyAppliesWithSubstringFilter(self):
     client_id, flow_id = self._SetupClientAndFlow()
     sample_results = self._WriteFlowResults(
-        client_id, flow_id, multiple_timestamps=True)
+        self._SampleResults(client_id, flow_id), multiple_timestamps=True)
 
     results = self.db.ReadFlowResults(
         client_id, flow_id, 0, 100, with_substring="blah")
@@ -1146,12 +1455,12 @@ class DatabaseTestFlowMixin(object):
 
     results = self.db.ReadFlowResults(
         client_id, flow_id, 0, 100, with_substring="manufacturer_1")
-    self.assertEquals([i.payload for i in results], [sample_results[1].payload])
+    self.assertEqual([i.payload for i in results], [sample_results[1].payload])
 
   def testReadFlowResultsCorrectlyAppliesVariousCombinationsOfFilters(self):
     client_id, flow_id = self._SetupClientAndFlow()
     sample_results = self._WriteFlowResults(
-        client_id, flow_id, multiple_timestamps=True)
+        self._SampleResults(client_id, flow_id), multiple_timestamps=True)
 
     tags = {"tag_1": set([sample_results[1]])}
     substrings = {
@@ -1178,7 +1487,7 @@ class DatabaseTestFlowMixin(object):
               with_type=type_value,
               with_substring=substring_value)
 
-          self.assertItemsEqual(
+          self.assertCountEqual(
               [i.payload for i in expected], [i.payload for i in results],
               "Result items do not match for "
               "(tag=%s, type=%s, substring=%s): %s vs %s" %
@@ -1187,7 +1496,7 @@ class DatabaseTestFlowMixin(object):
   def testReadFlowResultsReturnsPayloadWithMissingTypeAsSpecialValue(self):
     client_id, flow_id = self._SetupClientAndFlow()
     sample_results = self._WriteFlowResults(
-        client_id, flow_id, multiple_timestamps=True)
+        self._SampleResults(client_id, flow_id), multiple_timestamps=True)
 
     type_name = compatibility.GetName(rdf_client.ClientSummary)
     try:
@@ -1197,7 +1506,7 @@ class DatabaseTestFlowMixin(object):
     finally:
       rdfvalue.RDFValue.classes[type_name] = cls
 
-    self.assertEqual(len(sample_results), len(results))
+    self.assertLen(sample_results, len(results))
     for r in results:
       self.assertTrue(
           isinstance(r.payload, rdf_objects.SerializedValueOfUnrecognizedType))
@@ -1206,14 +1515,15 @@ class DatabaseTestFlowMixin(object):
   def testCountFlowResultsReturnsCorrectResultsCount(self):
     client_id, flow_id = self._SetupClientAndFlow()
     sample_results = self._WriteFlowResults(
-        client_id, flow_id, multiple_timestamps=True)
+        self._SampleResults(client_id, flow_id), multiple_timestamps=True)
 
     num_results = self.db.CountFlowResults(client_id, flow_id)
     self.assertEqual(num_results, len(sample_results))
 
   def testCountFlowResultsCorrectlyAppliesWithTagFilter(self):
     client_id, flow_id = self._SetupClientAndFlow()
-    self._WriteFlowResults(client_id, flow_id, multiple_timestamps=True)
+    self._WriteFlowResults(
+        self._SampleResults(client_id, flow_id), multiple_timestamps=True)
 
     num_results = self.db.CountFlowResults(client_id, flow_id, with_tag="blah")
     self.assertEqual(num_results, 0)
@@ -1223,22 +1533,20 @@ class DatabaseTestFlowMixin(object):
 
   def testCountFlowResultsCorrectlyAppliesWithTypeFilter(self):
     client_id, flow_id = self._SetupClientAndFlow()
-    self._WriteFlowResults(
-        client_id,
-        flow_id,
-        sample_results=[
-            rdf_flow_objects.FlowResult(
-                payload=rdf_client.ClientSummary(client_id=client_id))
-            for _ in range(10)
-        ])
-    self._WriteFlowResults(
-        client_id,
-        flow_id,
-        sample_results=[
-            rdf_flow_objects.FlowResult(
-                payload=rdf_client.ClientCrash(client_id=client_id))
-            for _ in range(10)
-        ])
+    self._WriteFlowResults(sample_results=[
+        rdf_flow_objects.FlowResult(
+            client_id=client_id,
+            flow_id=flow_id,
+            payload=rdf_client.ClientSummary(client_id=client_id))
+        for _ in range(10)
+    ])
+    self._WriteFlowResults(sample_results=[
+        rdf_flow_objects.FlowResult(
+            client_id=client_id,
+            flow_id=flow_id,
+            payload=rdf_client.ClientCrash(client_id=client_id))
+        for _ in range(10)
+    ])
 
     num_results = self.db.CountFlowResults(
         client_id,
@@ -1260,7 +1568,8 @@ class DatabaseTestFlowMixin(object):
 
   def testCountFlowResultsCorrectlyAppliesWithTagAndWithTypeFilters(self):
     client_id, flow_id = self._SetupClientAndFlow()
-    self._WriteFlowResults(client_id, flow_id, multiple_timestamps=True)
+    self._WriteFlowResults(
+        self._SampleResults(client_id, flow_id), multiple_timestamps=True)
 
     num_results = self.db.CountFlowResults(
         client_id,
@@ -1273,18 +1582,22 @@ class DatabaseTestFlowMixin(object):
     client_id, flow_id = self._SetupClientAndFlow()
     message = "blah"
 
-    self.db.WriteFlowLogEntries(
-        client_id, flow_id, [rdf_flow_objects.FlowLogEntry(message=message)])
+    self.db.WriteFlowLogEntries([
+        rdf_flow_objects.FlowLogEntry(
+            client_id=client_id, flow_id=flow_id, message=message)
+    ])
 
     entries = self.db.ReadFlowLogEntries(client_id, flow_id, 0, 100)
-    self.assertEqual(len(entries), 1)
+    self.assertLen(entries, 1)
     self.assertEqual(entries[0].message, message)
 
   def _WriteFlowLogEntries(self, client_id, flow_id):
     messages = ["blah_%d" % i for i in range(10)]
     for message in messages:
-      self.db.WriteFlowLogEntries(
-          client_id, flow_id, [rdf_flow_objects.FlowLogEntry(message=message)])
+      self.db.WriteFlowLogEntries([
+          rdf_flow_objects.FlowLogEntry(
+              client_id=client_id, flow_id=flow_id, message=message)
+      ])
 
     return messages
 
@@ -1342,3 +1655,181 @@ class DatabaseTestFlowMixin(object):
 
     num_entries = self.db.CountFlowLogEntries(client_id, flow_id)
     self.assertEqual(num_entries, len(messages))
+
+  def testFlowLogsAndErrorsForUnknownFlowsRaise(self):
+    client_id = u"C.1234567890123456"
+    flow_id = flow.RandomFlowId()
+    self.db.WriteClientMetadata(client_id, fleetspeak_enabled=False)
+
+    with self.assertRaises(db.AtLeastOneUnknownFlowError):
+      self.db.WriteFlowLogEntries([
+          rdf_flow_objects.FlowLogEntry(
+              client_id=client_id, flow_id=flow_id, message="test")
+      ])
+
+  def _WriteFlowOutputPluginLogEntries(self, client_id, flow_id,
+                                       output_plugin_id):
+    entries = []
+    for i in range(10):
+      message = "blah_🚀_%d" % i
+      enum = rdf_flow_objects.FlowOutputPluginLogEntry.LogEntryType
+      if i % 3 == 0:
+        log_entry_type = enum.ERROR
+      else:
+        log_entry_type = enum.LOG
+
+      entry = rdf_flow_objects.FlowOutputPluginLogEntry(
+          client_id=client_id,
+          flow_id=flow_id,
+          output_plugin_id=output_plugin_id,
+          message=message,
+          log_entry_type=log_entry_type)
+      entries.append(entry)
+
+      self.db.WriteFlowOutputPluginLogEntries([entry])
+
+    return entries
+
+  def testFlowOutputPluginLogEntriesCanBeWrittenAndThenRead(self):
+    client_id, flow_id = self._SetupClientAndFlow()
+    output_plugin_id = "1"
+
+    written_entries = self._WriteFlowOutputPluginLogEntries(
+        client_id, flow_id, output_plugin_id)
+    read_entries = self.db.ReadFlowOutputPluginLogEntries(
+        client_id, flow_id, output_plugin_id, 0, 100)
+
+    self.assertEqual(len(written_entries), len(read_entries))
+    self.assertEqual([e.message for e in written_entries],
+                     [e.message for e in read_entries])
+
+  def testFlowOutputPluginLogEntryWith1MbMessageCanBeWrittenAndThenRead(self):
+    client_id, flow_id = self._SetupClientAndFlow()
+    output_plugin_id = "1"
+
+    entry = rdf_flow_objects.FlowOutputPluginLogEntry(
+        client_id=client_id,
+        flow_id=flow_id,
+        output_plugin_id=output_plugin_id,
+        message="x" * 1024 * 1024,
+        log_entry_type=rdf_flow_objects.FlowOutputPluginLogEntry.LogEntryType
+        .LOG)
+
+    self.db.WriteFlowOutputPluginLogEntries([entry])
+    read_entries = self.db.ReadFlowOutputPluginLogEntries(
+        client_id, flow_id, output_plugin_id, 0, 100)
+
+    self.assertLen(read_entries, 1)
+    self.assertEqual(read_entries[0].message, entry.message)
+
+  def testFlowOutputPluginLogEntriesCanBeReadWithTypeFilter(self):
+    client_id, flow_id = self._SetupClientAndFlow()
+    output_plugin_id = "1"
+
+    self._WriteFlowOutputPluginLogEntries(client_id, flow_id, output_plugin_id)
+
+    read_entries = self.db.ReadFlowOutputPluginLogEntries(
+        client_id,
+        flow_id,
+        output_plugin_id,
+        0,
+        100,
+        with_type=rdf_flow_objects.FlowOutputPluginLogEntry.LogEntryType.ERROR)
+    self.assertEqual(len(read_entries), 4)
+
+    read_entries = self.db.ReadFlowOutputPluginLogEntries(
+        client_id,
+        flow_id,
+        output_plugin_id,
+        0,
+        100,
+        with_type=rdf_flow_objects.FlowOutputPluginLogEntry.LogEntryType.LOG)
+    self.assertEqual(len(read_entries), 6)
+
+  def testReadFlowOutputPluginLogEntriesCorrectlyAppliesOffsetCounter(self):
+    client_id, flow_id = self._SetupClientAndFlow()
+    output_plugin_id = "1"
+
+    entries = self._WriteFlowOutputPluginLogEntries(client_id, flow_id,
+                                                    output_plugin_id)
+
+    for l in range(1, 11):
+      for i in range(10):
+        results = self.db.ReadFlowOutputPluginLogEntries(
+            client_id, flow_id, output_plugin_id, i, l)
+        expected = entries[i:i + l]
+
+        result_messages = [x.message for x in results]
+        expected_messages = [x.message for x in expected]
+        self.assertEqual(
+            result_messages, expected_messages,
+            "Results differ from expected (from %d, size %d): %s vs %s" %
+            (i, l, result_messages, expected_messages))
+
+  def testReadFlowOutputPluginLogEntriesAppliesOffsetCounterWithType(self):
+    client_id, flow_id = self._SetupClientAndFlow()
+    output_plugin_id = "1"
+
+    entries = self._WriteFlowOutputPluginLogEntries(client_id, flow_id,
+                                                    output_plugin_id)
+
+    for l in range(1, 11):
+      for i in range(10):
+        for with_type in [
+            rdf_flow_objects.FlowOutputPluginLogEntry.LogEntryType.LOG,
+            rdf_flow_objects.FlowOutputPluginLogEntry.LogEntryType.ERROR
+        ]:
+          results = self.db.ReadFlowOutputPluginLogEntries(
+              client_id, flow_id, output_plugin_id, i, l, with_type=with_type)
+          expected = [e for e in entries if e.log_entry_type == with_type
+                     ][i:i + l]
+
+          result_messages = [x.message for x in results]
+          expected_messages = [x.message for x in expected]
+          self.assertEqual(
+              result_messages, expected_messages,
+              "Results differ from expected (from %d, size %d): %s vs %s" %
+              (i, l, result_messages, expected_messages))
+
+  def testFlowOutputPluginLogEntriesCanBeCountedPerPlugin(self):
+    client_id, flow_id = self._SetupClientAndFlow()
+
+    output_plugin_id_1 = "1"
+    self._WriteFlowOutputPluginLogEntries(client_id, flow_id,
+                                          output_plugin_id_1)
+
+    output_plugin_id_2 = "2"
+    self._WriteFlowOutputPluginLogEntries(client_id, flow_id,
+                                          output_plugin_id_2)
+
+    self.assertEqual(
+        self.db.CountFlowOutputPluginLogEntries(client_id, flow_id,
+                                                output_plugin_id_1), 10)
+    self.assertEqual(
+        self.db.CountFlowOutputPluginLogEntries(client_id, flow_id,
+                                                output_plugin_id_2), 10)
+
+  def testCountFlowOutputPluginLogEntriesRespectsWithTypeFilter(self):
+    client_id, flow_id = self._SetupClientAndFlow()
+
+    output_plugin_id = "1"
+    self._WriteFlowOutputPluginLogEntries(client_id, flow_id, output_plugin_id)
+
+    self.assertEqual(
+        self.db.CountFlowOutputPluginLogEntries(
+            client_id,
+            flow_id,
+            output_plugin_id,
+            with_type=rdf_flow_objects.FlowOutputPluginLogEntry.LogEntryType.LOG
+        ),
+        6,
+    )
+    self.assertEqual(
+        self.db.CountFlowOutputPluginLogEntries(
+            client_id,
+            flow_id,
+            output_plugin_id,
+            with_type=rdf_flow_objects.FlowOutputPluginLogEntry.LogEntryType
+            .ERROR),
+        4,
+    )

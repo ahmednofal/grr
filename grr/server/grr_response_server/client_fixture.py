@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-# -*- mode: python; encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 # pyformat: disable
 
 """This is a test fixture for client objects.."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 from grr_response_core.lib.rdfvalues import protodict as rdf_protodict
@@ -57,9 +58,9 @@ system_manufacturer: "Sample System Manufacturer"
         "aff4:size": 12,
         "aff4:content": b"Hello world",
     })),
-    (ur"/fs/os/c/regex\V.*?]xx[{}--", (aff4_standard.VFSDirectory, {
+    (u"/fs/os/c/regex\\V.*?]xx[{}--", (aff4_standard.VFSDirectory, {
         })),
-    (ur"/fs/os/c/regex\V.*?]xx[{}--/regexchild", (aff4_standard.VFSDirectory, {
+    (u"/fs/os/c/regex\\V.*?]xx[{}--/regexchild", (aff4_standard.VFSDirectory, {
         })),
     (u"/fs/os/proc/", (aff4_standard.VFSDirectory, {
         })),
@@ -135,7 +136,7 @@ st_blksize: 4096
 st_rdev: 0
 pathspec {
   pathtype: OS
-  path: "/bin/bash"
+  path: "/c/bin/bash"
 }
 """
     })),

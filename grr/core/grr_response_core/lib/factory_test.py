@@ -1,14 +1,17 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
-import unittest
+from absl.testing import absltest
+from typing import Text
+
 from grr_response_core.lib import factory
 from grr_response_core.lib import flags
 from grr.test_lib import test_lib
 
 
-class FactoryTest(unittest.TestCase):
+class FactoryTest(absltest.TestCase):
 
   def testRegisterAndUnregister(self):
     del self  # Unused.
@@ -42,7 +45,7 @@ class FactoryTest(unittest.TestCase):
       obj_factory.Unregister("foo")
 
   def testCreateString(self):
-    str_factory = factory.Factory(unicode)
+    str_factory = factory.Factory(Text)
     str_factory.Register("foo", lambda: "FOO")
     str_factory.Register("bar", lambda: "BAR")
     str_factory.Register("baz", lambda: "BAZ")
@@ -82,7 +85,7 @@ class FactoryTest(unittest.TestCase):
   def testCreateAllEmpty(self):
     obj_factory = factory.Factory(object)
 
-    self.assertItemsEqual(list(obj_factory.CreateAll()), [])
+    self.assertCountEqual(list(obj_factory.CreateAll()), [])
 
   def testCreateAllSome(self):
     int_factory = factory.Factory(int)
@@ -90,7 +93,7 @@ class FactoryTest(unittest.TestCase):
     int_factory.Register("bar", lambda: 101)
     int_factory.Register("baz", lambda: 108)
 
-    self.assertItemsEqual(list(int_factory.CreateAll()), [1337, 101, 108])
+    self.assertCountEqual(list(int_factory.CreateAll()), [1337, 101, 108])
 
 
 if __name__ == "__main__":

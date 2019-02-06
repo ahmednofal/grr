@@ -87,6 +87,8 @@ filter is easy. Three basic filter implementations are given:
 """
 
 from __future__ import absolute_import
+from __future__ import division
+
 from __future__ import unicode_literals
 
 import abc
@@ -95,13 +97,20 @@ import collections
 import re
 
 
-from builtins import filter  # pylint: disable=redefined-builtin
-from builtins import range  # pylint: disable=redefined-builtin
+from future.builtins import filter
+from future.builtins import range
+from future.builtins import str
 from future.utils import iteritems
+from future.utils import python_2_unicode_compatible
+from future.utils import string_types
 from future.utils import with_metaclass
+
+from typing import Text
 
 from grr_response_core.lib import lexer
 from grr_response_core.lib import utils
+from grr_response_core.lib.util import compatibility
+from grr_response_core.lib.util import precondition
 
 
 class Error(Exception):
@@ -123,6 +132,7 @@ class InvalidNumberOfOperands(Error):
 # TODO(user):pytype: Type checker doesn't see the metaclass, apparently
 # because with_metaclass is used.
 # pytype: disable=ignored-abstractmethod
+@python_2_unicode_compatible
 class Filter(with_metaclass(abc.ABCMeta, object)):
   """Base class for every filter."""
 
@@ -334,7 +344,7 @@ class InSet(GenericBinaryOperator):
 
     # x might be an iterable
     # first we need to skip strings or we'll do silly things
-    if isinstance(x, basestring) or isinstance(x, bytes):
+    if isinstance(x, string_types) or isinstance(x, bytes):
       return False
 
     try:
@@ -503,7 +513,7 @@ class ValueExpander(object):
         if len(path) > 2:
           # Expand any additional elements underneath the key.
           sub_obj = self.Expand(sub_obj, path[2:])
-        if isinstance(sub_obj, basestring):
+        if isinstance(sub_obj, string_types):
           # If it is a string, stop here
           yield sub_obj
         elif isinstance(sub_obj, collections.Mapping):
@@ -540,7 +550,7 @@ class ValueExpander(object):
     Yields:
       The values once the object is traversed.
     """
-    if isinstance(path, basestring):
+    if isinstance(path, string_types):
       path = path.split(self.FIELD_SEPARATOR)
 
     attr_name = self._GetAttributeName(path)
@@ -593,6 +603,7 @@ class BasicExpression(lexer.Expression):
     return operator(arguments=arguments, value_expander=expander)
 
 
+@python_2_unicode_compatible
 class ContextExpression(lexer.Expression):
   """Represents the context operator."""
 
@@ -774,13 +785,15 @@ class Parser(lexer.SearchParser):
       ParseError: For strings other than those used to define a regexp, raise an
         error if the escaped string is not one of [\'"rnbt].
     """
+    precondition.AssertType(string, Text)
+
     # Allow unfiltered strings for regexp operations so that escaped special
     # characters (e.g. \*) or special sequences (e.g. \w) can be used in
     # objectfilter.
     if self.current_expression.operator == "regexp":
-      self.string += string.decode("string_escape")
+      self.string += compatibility.UnescapeString(string)
     elif match.group(1) in "\\'\"rnbt":
-      self.string += string.decode("string_escape")
+      self.string += compatibility.UnescapeString(string)
     else:
       raise ParseError("Invalid escape character %s." % string)
 
@@ -788,9 +801,14 @@ class Parser(lexer.SearchParser):
     """Converts a hex escaped string."""
     hex_string = match.group(1)
     try:
-      self.string += binascii.unhexlify(hex_string)
-    except TypeError:
-      raise ParseError("Invalid hex escape %s" % string)
+      self.string += binascii.unhexlify(hex_string).decode("utf-8")
+    # TODO: In Python 2 `binascii` throws `TypeError` for invalid
+    # input values (for whathever reason). This behaviour is fixed in Python 3
+    # where `binascii.Error` (a subclass of `ValueError`) is raised. Once we do
+    # not have to support Python 2 anymore, this `TypeError` catch should be
+    # removed.
+    except (binascii.Error, TypeError) as error:
+      raise ParseError("Invalid hex escape '{}': {}".format(hex_string, error))
 
   def ContextOperator(self, string="", **_):
     self.stack.append(self.context_cls(string[1:]))

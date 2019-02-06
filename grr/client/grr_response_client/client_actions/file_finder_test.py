@@ -2,6 +2,7 @@
 # -*- encoding: utf-8 -*-
 """Tests the client file finder action."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import collections
@@ -21,8 +22,9 @@ from grr_response_core.lib import utils
 from grr_response_core.lib.rdfvalues import file_finder as rdf_file_finder
 from grr_response_core.lib.rdfvalues import flows as rdf_flows
 from grr_response_core.lib.rdfvalues import paths as rdf_paths
+from grr_response_core.lib.util import temp
 from grr.test_lib import client_test_lib
-from grr.test_lib import temp
+from grr.test_lib import filesystem_test_lib
 from grr.test_lib import test_lib
 from grr.test_lib import vfs_test_lib
 from grr.test_lib import worker_mocks
@@ -102,10 +104,10 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
     self.assertIn("a/b/d/hellod.txt", relative_results)
 
   def testRegexGlob(self):
-    paths = [self.base_path + "/rekall*.gz"]
+    paths = [self.base_path + "/valid_win_mbr*.gz"]
     results = self._RunFileFinder(paths, self.stat_action)
     relative_results = self._GetRelativeResults(results)
-    for glob_result in glob.glob(self.base_path + "/rekall*gz"):
+    for glob_result in glob.glob(self.base_path + "/valid_win_mbr*gz"):
       self.assertIn(os.path.basename(glob_result), relative_results)
 
   def testRecursiveRegexGlob(self):
@@ -245,14 +247,13 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
         paths, self.stat_action, conditions=[condition])
     relative_results = self._GetRelativeResults(
         raw_results, base_path=searching_path)
-    self.assertEqual(len(relative_results), 1)
+    self.assertLen(relative_results, 1)
     self.assertIn("auth.log", relative_results)
-    self.assertEqual(len(raw_results[0].matches), 1)
+    self.assertLen(raw_results[0].matches, 1)
     buffer_ref = raw_results[0].matches[0]
     orig_data = open(os.path.join(searching_path, "auth.log")).read()
 
-    self.assertEqual(
-        len(buffer_ref.data), bytes_before + len(literal) + bytes_after)
+    self.assertLen(buffer_ref.data, bytes_before + len(literal) + bytes_after)
     self.assertEqual(
         orig_data[buffer_ref.offset:buffer_ref.offset + buffer_ref.length],
         buffer_ref.data)
@@ -273,8 +274,8 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
 
     raw_results = self._RunFileFinder(
         paths, self.stat_action, conditions=[condition])
-    self.assertEqual(len(raw_results), 1)
-    self.assertEqual(len(raw_results[0].matches), 6)
+    self.assertLen(raw_results, 1)
+    self.assertLen(raw_results[0].matches, 6)
     for buffer_ref in raw_results[0].matches:
       self.assertEqual(
           buffer_ref.data[bytes_before:bytes_before + len(literal)], literal)
@@ -294,8 +295,8 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
 
     raw_results = self._RunFileFinder(
         paths, self.stat_action, conditions=[condition])
-    self.assertEqual(len(raw_results), 1)
-    self.assertEqual(len(raw_results[0].matches), 1)
+    self.assertLen(raw_results, 1)
+    self.assertLen(raw_results[0].matches, 1)
     buffer_ref = raw_results[0].matches[0]
     with open(paths[0], "rb") as fd:
       fd.seek(buffer_ref.offset)
@@ -318,9 +319,9 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
         paths, self.stat_action, conditions=[condition])
     relative_results = self._GetRelativeResults(
         raw_results, base_path=searching_path)
-    self.assertEqual(len(relative_results), 1)
+    self.assertLen(relative_results, 1)
     self.assertIn("auth.log", relative_results)
-    self.assertEqual(len(raw_results[0].matches), 1)
+    self.assertLen(raw_results[0].matches, 1)
     buffer_ref = raw_results[0].matches[0]
     orig_data = open(os.path.join(searching_path, "auth.log")).read()
     self.assertEqual(
@@ -343,8 +344,8 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
 
     raw_results = self._RunFileFinder(
         paths, self.stat_action, conditions=[condition])
-    self.assertEqual(len(raw_results), 1)
-    self.assertEqual(len(raw_results[0].matches), 6)
+    self.assertLen(raw_results, 1)
+    self.assertLen(raw_results[0].matches, 6)
     for buffer_ref in raw_results[0].matches:
       needle = "mydomain.com"
       self.assertEqual(buffer_ref.data[bytes_before:bytes_before + len(needle)],
@@ -355,10 +356,10 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
 
     hash_action = rdf_file_finder.FileFinderAction.Hash()
     results = self._RunFileFinder(paths, hash_action)
-    self.assertEqual(len(results), 1)
+    self.assertLen(results, 1)
     res = results[0]
     data = open(paths[0], "rb").read()
-    self.assertEqual(res.hash_entry.num_bytes, len(data))
+    self.assertLen(data, res.hash_entry.num_bytes)
     self.assertEqual(res.hash_entry.md5.HexDigest(),
                      hashlib.md5(data).hexdigest())
     self.assertEqual(res.hash_entry.sha1.HexDigest(),
@@ -370,7 +371,7 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
         max_size=100, oversized_file_policy="SKIP")
 
     results = self._RunFileFinder(paths, hash_action)
-    self.assertEqual(len(results), 1)
+    self.assertLen(results, 1)
     res = results[0]
     self.assertFalse(res.HasField("hash"))
 
@@ -378,10 +379,10 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
         max_size=100, oversized_file_policy="HASH_TRUNCATED")
 
     results = self._RunFileFinder(paths, hash_action)
-    self.assertEqual(len(results), 1)
+    self.assertLen(results, 1)
     res = results[0]
     data = open(paths[0], "rb").read()[:100]
-    self.assertEqual(res.hash_entry.num_bytes, len(data))
+    self.assertLen(data, res.hash_entry.num_bytes)
     self.assertEqual(res.hash_entry.md5.HexDigest(),
                      hashlib.md5(data).hexdigest())
     self.assertEqual(res.hash_entry.sha1.HexDigest(),
@@ -394,7 +395,7 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
     path = os.path.join(self.base_path, "a")
 
     results = self._RunFileFinder([path], action)
-    self.assertEqual(len(results), 1)
+    self.assertLen(results, 1)
     self.assertTrue(results[0].HasField("stat_entry"))
     self.assertTrue(stat.S_ISDIR(results[0].stat_entry.st_mode))
     self.assertFalse(results[0].HasField("hash_entry"))
@@ -404,7 +405,7 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
     path = os.path.join(self.base_path, "a")
 
     results = self._RunFileFinder([path], action)
-    self.assertEqual(len(results), 1)
+    self.assertLen(results, 1)
     self.assertTrue(results[0].HasField("stat_entry"))
     self.assertTrue(stat.S_ISDIR(results[0].stat_entry.st_mode))
     self.assertFalse(results[0].HasField("uploaded_file"))
@@ -421,7 +422,7 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
     executor.RegisterWellKnownFlow(transfer_store)
     results = executor.Execute(client_file_finder.FileFinderOS, args)
 
-    self.assertEqual(len(results), 1)
+    self.assertLen(results, 1)
     with open(os.path.join(self.base_path, "hello.exe"), "rb") as filedesc:
       actual = transfer_store.Retrieve(results[0].transferred_file)
       expected = filedesc.read()
@@ -440,8 +441,8 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
     executor.RegisterWellKnownFlow(transfer_store)
     results = executor.Execute(client_file_finder.FileFinderOS, args)
 
-    self.assertEqual(len(transfer_store.blobs), 0)
-    self.assertEqual(len(results), 1)
+    self.assertEmpty(transfer_store.blobs)
+    self.assertLen(results, 1)
     self.assertFalse(results[0].HasField("transferred_file"))
     self.assertTrue(results[0].HasField("stat_entry"))
 
@@ -458,7 +459,7 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
     executor.RegisterWellKnownFlow(transfer_store)
     results = executor.Execute(client_file_finder.FileFinderOS, args)
 
-    self.assertEqual(len(results), 1)
+    self.assertLen(results, 1)
     with open(os.path.join(self.base_path, "hello.exe"), "rb") as filedesc:
       actual = transfer_store.Retrieve(results[0].transferred_file)
       expected = filedesc.read(42)
@@ -477,8 +478,8 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
     executor.RegisterWellKnownFlow(transfer_store)
     results = executor.Execute(client_file_finder.FileFinderOS, args)
 
-    self.assertEqual(len(transfer_store.blobs), 0)
-    self.assertEqual(len(results), 1)
+    self.assertEmpty(transfer_store.blobs)
+    self.assertLen(results, 1)
     self.assertFalse(results[0].HasField("transferred_file"))
     self.assertTrue(results[0].HasField("hash_entry"))
     self.assertTrue(results[0].HasField("stat_entry"))
@@ -490,11 +491,11 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
 
   def testStatExtFlags(self):
     with temp.AutoTempFilePath() as temp_filepath:
-      client_test_lib.Chattr(temp_filepath, attrs=["+c"])
+      filesystem_test_lib.Chattr(temp_filepath, attrs=["+c"])
 
-      action = rdf_file_finder.FileFinderAction.Stat()
+      action = rdf_file_finder.FileFinderAction.Stat(collect_ext_attrs=True)
       results = self._RunFileFinder([temp_filepath], action)
-      self.assertEqual(len(results), 1)
+      self.assertLen(results, 1)
 
       stat_entry = results[0].stat_entry
       self.assertTrue(stat_entry.st_flags_linux & self.EXT2_COMPR_FL)
@@ -502,12 +503,14 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
 
   def testStatExtAttrs(self):
     with temp.AutoTempFilePath() as temp_filepath:
-      client_test_lib.SetExtAttr(temp_filepath, name=b"user.foo", value=b"norf")
-      client_test_lib.SetExtAttr(temp_filepath, name=b"user.bar", value=b"quux")
+      filesystem_test_lib.SetExtAttr(
+          temp_filepath, name=b"user.foo", value=b"norf")
+      filesystem_test_lib.SetExtAttr(
+          temp_filepath, name=b"user.bar", value=b"quux")
 
-      action = rdf_file_finder.FileFinderAction.Stat()
+      action = rdf_file_finder.FileFinderAction.Stat(collect_ext_attrs=True)
       results = self._RunFileFinder([temp_filepath], action)
-      self.assertEqual(len(results), 1)
+      self.assertLen(results, 1)
 
       ext_attrs = results[0].stat_entry.ext_attrs
       self.assertEqual(ext_attrs[0].name, b"user.foo")
@@ -517,7 +520,7 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
 
       action = rdf_file_finder.FileFinderAction.Stat(collect_ext_attrs=False)
       results = self._RunFileFinder([temp_filepath], action)
-      self.assertEqual(len(results), 1)
+      self.assertLen(results, 1)
 
       ext_attrs = results[0].stat_entry.ext_attrs
       self.assertFalse(ext_attrs)
@@ -526,18 +529,18 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
     with temp.AutoTempFilePath() as temp_filepath:
       name_0 = "user.żółć".encode("utf-8")
       value_0 = "jaźń".encode("utf-8")
-      client_test_lib.SetExtAttr(temp_filepath, name=name_0, value=value_0)
+      filesystem_test_lib.SetExtAttr(temp_filepath, name=name_0, value=value_0)
 
       name_1 = "user.rtęć".encode("utf-8")
       value_1 = "kość".encode("utf-8")
-      client_test_lib.SetExtAttr(temp_filepath, name=name_1, value=value_1)
+      filesystem_test_lib.SetExtAttr(temp_filepath, name=name_1, value=value_1)
 
-      action = rdf_file_finder.FileFinderAction.Stat()
+      action = rdf_file_finder.FileFinderAction.Stat(collect_ext_attrs=True)
       results = self._RunFileFinder([temp_filepath], action)
-      self.assertEqual(len(results), 1)
+      self.assertLen(results, 1)
 
       ext_attrs = results[0].stat_entry.ext_attrs
-      self.assertEqual(len(ext_attrs), 2)
+      self.assertLen(ext_attrs, 2)
       self.assertEqual(ext_attrs[0].name, name_0)
       self.assertEqual(ext_attrs[0].value, value_0)
       self.assertEqual(ext_attrs[1].name, name_1)
@@ -548,14 +551,14 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
       name = b"user.foo"
       value = b"\xDE\xAD\xBE\xEF"
 
-      client_test_lib.SetExtAttr(temp_filepath, name=name, value=value)
+      filesystem_test_lib.SetExtAttr(temp_filepath, name=name, value=value)
 
-      action = rdf_file_finder.FileFinderAction.Stat()
+      action = rdf_file_finder.FileFinderAction.Stat(collect_ext_attrs=True)
       results = self._RunFileFinder([temp_filepath], action)
-      self.assertEqual(len(results), 1)
+      self.assertLen(results, 1)
 
       ext_attrs = results[0].stat_entry.ext_attrs
-      self.assertEqual(len(ext_attrs), 1)
+      self.assertLen(ext_attrs, 1)
       self.assertEqual(ext_attrs[0].name, name)
       self.assertEqual(ext_attrs[0].value, value)
 
@@ -564,13 +567,17 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
       name = b"user.\xDE\xAD\xBE\xEF"
       value = b"bar"
 
-      client_test_lib.SetExtAttr(temp_filepath, name=name, value=value)
+      filesystem_test_lib.SetExtAttr(temp_filepath, name=name, value=value)
 
       # This should not explode (`xattr` does not handle non-unicode names).
-      action = rdf_file_finder.FileFinderAction.Stat()
+      action = rdf_file_finder.FileFinderAction.Stat(collect_ext_attrs=True)
       results = self._RunFileFinder([temp_filepath], action)
-      self.assertEqual(len(results), 1)
-      self.assertEqual(len(results[0].stat_entry.ext_attrs), 0)
+      self.assertLen(results, 1)
+      # We do not have an assertion whether the attributes were collected or not
+      # because apparently `xattr` is sometimes able to do that and sometimes
+      # not depending on the file system. This is fine as primary objective of
+      # this test is to ensure that failures are handled gracefully and nothing
+      # explodes.
 
   def testLinkStat(self):
     """Tests resolving symlinks when getting stat entries."""
@@ -591,7 +598,7 @@ class FileFinderTest(client_test_lib.EmptyActionTest):
       stat_action = rdf_file_finder.FileFinderAction.Stat(
           resolve_links=resolve_links)
       results = self._RunFileFinder(paths, stat_action)
-      self.assertEqual(len(results), 1)
+      self.assertLen(results, 1)
       res = results[0]
       self.assertEqual(res.stat_entry.st_size, expected_size)
 

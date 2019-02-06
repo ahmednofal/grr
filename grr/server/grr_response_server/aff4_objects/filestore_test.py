@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Tests for the filestore."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import hashlib
@@ -21,7 +22,6 @@ from grr_response_server.aff4_objects import filestore_test_lib
 from grr_response_server.flows.general import file_finder
 from grr.test_lib import action_mocks
 from grr.test_lib import aff4_test_lib
-from grr.test_lib import db_test_lib
 from grr.test_lib import flow_test_lib
 from grr.test_lib import test_lib
 from grr.test_lib import worker_test_lib
@@ -46,7 +46,6 @@ class FakeStore(object):
     ACTIVE = "unused"
 
 
-@db_test_lib.DualDBTest
 class FileStoreTest(aff4_test_lib.AFF4ObjectTest):
   """Tests for file store functionality."""
 
@@ -97,8 +96,8 @@ class FileStoreTest(aff4_test_lib.AFF4ObjectTest):
     fs = aff4.FACTORY.Open(
         filestore.FileStore.PATH, filestore.FileStore, token=self.token)
 
-    with utils.Stubber(fs, "OpenChildren",
-                       lambda: [priority3, priority1, priority2]):
+    with utils.Stubber(
+        fs, "OpenChildren", lambda: [priority3, priority1, priority2]):
 
       child_list = list(fs.GetChildrenByPriority())
       self.assertEqual(child_list[0].PRIORITY, 2)
@@ -128,7 +127,7 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
   def testListHashes(self):
     self.AddFile("/Ext2IFS_1_10b.exe")
     hashes = list(filestore.HashFileStore.ListHashes())
-    self.assertEqual(len(hashes), 5)
+    self.assertLen(hashes, 5)
 
     self.assertTrue(
         filestore.FileStoreHash(
@@ -162,18 +161,18 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
       self.AddFile("/Ext2IFS_1_10b.exe")
 
     hashes = list(filestore.HashFileStore.ListHashes(age=41e6))
-    self.assertEqual(len(hashes), 0)
+    self.assertEmpty(hashes)
 
     hashes = list(filestore.HashFileStore.ListHashes(age=43e6))
-    self.assertEqual(len(hashes), 5)
+    self.assertLen(hashes, 5)
 
     hashes = list(filestore.HashFileStore.ListHashes())
-    self.assertEqual(len(hashes), 5)
+    self.assertLen(hashes, 5)
 
   def testHashAgeUpdatedWhenNewHitAddedWithinAFF4IndexCacheAge(self):
     # Check that there are no hashes.
     hashes = list(filestore.HashFileStore.ListHashes(age=(41e6, 1e10)))
-    self.assertEqual(len(hashes), 0)
+    self.assertEmpty(hashes)
 
     with utils.Stubber(time, "time", lambda: 42):
       filestore_test_lib.AddFileToFileStore(
@@ -187,7 +186,7 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
     self.assertTrue(hashes)
     hits = list(
         filestore.HashFileStore.GetClientsForHash(hashes[0], token=self.token))
-    self.assertEqual(len(hits), 1)
+    self.assertLen(hits, 1)
 
     latest_time = 42 + aff4.FACTORY.intermediate_cache_age - 1
     with utils.Stubber(time, "time", lambda: latest_time):
@@ -201,7 +200,7 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
     # Check that now we have two hits for the previosly added hash.
     hits = list(
         filestore.HashFileStore.GetClientsForHash(hashes[0], token=self.token))
-    self.assertEqual(len(hits), 2)
+    self.assertLen(hits, 2)
 
     # Check that new hit doesn't affect hash age.
     hashes = list(filestore.HashFileStore.ListHashes(age=(43e6, 1e10)))
@@ -210,7 +209,7 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
   def testHashAgeUpdatedWhenNewHitAddedAfterAFF4IndexCacheAge(self):
     # Check that there are no hashes.
     hashes = list(filestore.HashFileStore.ListHashes(age=(41e6, 1e10)))
-    self.assertEqual(len(hashes), 0)
+    self.assertEmpty(hashes)
 
     with utils.Stubber(time, "time", lambda: 42):
       filestore_test_lib.AddFileToFileStore(
@@ -224,7 +223,7 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
     self.assertTrue(hashes)
     hits = list(
         filestore.HashFileStore.GetClientsForHash(hashes[0], token=self.token))
-    self.assertEqual(len(hits), 1)
+    self.assertLen(hits, 1)
 
     latest_time = 42 + aff4.FACTORY.intermediate_cache_age + 1
     with utils.Stubber(time, "time", lambda: latest_time):
@@ -239,7 +238,7 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
     hits = list(
         filestore.HashFileStore.GetClientsForHash(hashes[0], token=self.token))
 
-    self.assertEqual(len(hits), 2)
+    self.assertLen(hits, 2)
 
     # Check that new hit affects hash age.
     hashes = list(filestore.HashFileStore.ListHashes(age=(43e6, 1e10)))
@@ -257,8 +256,8 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
                 hash_value="bb0a15eefe63fd41f8dc9dee01c5cf9a"),
             token=self.token))
     self.assertListEqual(hits, [
-        self.client_id.Add("fs/tsk").Add(self.base_path)
-        .Add("winexec_img.dd/Ext2IFS_1_10b.exe")
+        self.client_id.Add("fs/tsk").Add(
+            self.base_path).Add("winexec_img.dd/Ext2IFS_1_10b.exe")
     ])
 
   def testGetClientsForHashWithAge(self):
@@ -274,7 +273,7 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
                 hash_value="bb0a15eefe63fd41f8dc9dee01c5cf9a"),
             age=41e6,
             token=self.token))
-    self.assertEqual(len(hits), 0)
+    self.assertEmpty(hits)
 
     hits = list(
         filestore.HashFileStore.GetClientsForHash(
@@ -284,7 +283,7 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
                 hash_value="bb0a15eefe63fd41f8dc9dee01c5cf9a"),
             age=43e6,
             token=self.token))
-    self.assertEqual(len(hits), 1)
+    self.assertLen(hits, 1)
 
     hits = list(
         filestore.HashFileStore.GetClientsForHash(
@@ -293,7 +292,7 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
                 hash_type="md5",
                 hash_value="bb0a15eefe63fd41f8dc9dee01c5cf9a"),
             token=self.token))
-    self.assertEqual(len(hits), 1)
+    self.assertLen(hits, 1)
 
   def testGetClientsForHashes(self):
     self.AddFile("/Ext2IFS_1_10b.exe")
@@ -309,9 +308,9 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
         hash_value="e1f7e62b3909263f3a2518bbae6a9ee36d5b502b")
 
     hits = dict(
-        filestore.HashFileStore.GetClientsForHashes(
-            [hash1, hash2], token=self.token))
-    self.assertEqual(len(hits), 2)
+        filestore.HashFileStore.GetClientsForHashes([hash1, hash2],
+                                                    token=self.token))
+    self.assertLen(hits, 2)
     self.assertListEqual(hits[hash1], [
         self.client_id.Add("fs/tsk").Add(
             self.base_path).Add("winexec_img.dd/Ext2IFS_1_10b.exe")
@@ -336,19 +335,21 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
         hash_value="e1f7e62b3909263f3a2518bbae6a9ee36d5b502b")
 
     hits = dict(
-        filestore.HashFileStore.GetClientsForHashes(
-            [hash1, hash2], age=41e6, token=self.token))
-    self.assertEqual(len(hits), 0)
+        filestore.HashFileStore.GetClientsForHashes([hash1, hash2],
+                                                    age=41e6,
+                                                    token=self.token))
+    self.assertEmpty(hits)
 
     hits = dict(
-        filestore.HashFileStore.GetClientsForHashes(
-            [hash1, hash2], age=43e6, token=self.token))
-    self.assertEqual(len(hits), 2)
+        filestore.HashFileStore.GetClientsForHashes([hash1, hash2],
+                                                    age=43e6,
+                                                    token=self.token))
+    self.assertLen(hits, 2)
 
     hits = dict(
-        filestore.HashFileStore.GetClientsForHashes(
-            [hash1, hash2], token=self.token))
-    self.assertEqual(len(hits), 2)
+        filestore.HashFileStore.GetClientsForHashes([hash1, hash2],
+                                                    token=self.token))
+    self.assertLen(hits, 2)
 
   def testAttributesOfFileFoundInHashFileStoreAreSetCorrectly(self):
     client_ids = self.SetupClients(2)
@@ -374,10 +375,10 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
       worker.Simulate()
 
     fd1 = aff4.FACTORY.Open(urn1, token=self.token)
-    self.assertTrue(isinstance(fd1, aff4_grr.VFSBlobImage))
+    self.assertIsInstance(fd1, aff4_grr.VFSBlobImage)
 
     fd2 = aff4.FACTORY.Open(urn2, token=self.token)
-    self.assertTrue(isinstance(fd2, aff4_grr.VFSBlobImage))
+    self.assertIsInstance(fd2, aff4_grr.VFSBlobImage)
 
     self.assertTrue(fd1.Get(fd1.Schema.STAT))
     self.assertTrue(fd2.Get(fd2.Schema.STAT))
@@ -393,7 +394,7 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
         pathtype=rdf_paths.PathSpec.PathType.OS, path=filename)
     filestore_test_lib.AddFileToFileStore(
         pathspec, client_id=self.client_id, token=self.token)
-    self.assertEqual(len(self._GetBackRefs(filename)), 3)
+    self.assertLen(self._GetBackRefs(filename), 3)
 
     # Now use the empty file.
     filename = os.path.join(self.base_path, "empty_file")
@@ -401,7 +402,7 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
         pathtype=rdf_paths.PathSpec.PathType.OS, path=filename)
     filestore_test_lib.AddFileToFileStore(
         pathspec, client_id=self.client_id, token=self.token)
-    self.assertEqual(len(self._GetBackRefs(filename)), 0)
+    self.assertEmpty(self._GetBackRefs(filename))
 
   def _GetBackRefs(self, filename):
     res = []
@@ -446,7 +447,7 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
     nsrl_fs = self._SetupNSRLFiles()
     hits = list(nsrl_fs.CheckHashes([self.hashes1, self.hashes2]))
 
-    self.assertEqual(len(hits), 1)
+    self.assertLen(hits, 1)
     hit = hits[0]
     self.assertEqual(hit[1], self.hashes2)
 
@@ -473,7 +474,7 @@ class HashFileStoreTest(aff4_test_lib.AFF4ObjectTest):
     """
     nsrl_fs = self._SetupNSRLFiles()
     hits = dict(nsrl_fs.GetClientsForHashes([self.sha1_hash], token=self.token))
-    self.assertEqual(len(hits), 1)
+    self.assertLen(hits, 1)
     self.assertListEqual(hits[self.sha1_hash], [
         self.client_id.Add("fs/tsk").Add(
             self.base_path).Add("winexec_img.dd/idea.dll")

@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 
 from future.builtins import map
+from future.builtins import str
 import mock
 
 from grr_response_core.lib import flags
@@ -271,7 +273,7 @@ class ClientVfsMigratorTest(test_lib.GRRBaseTest):
       path_info = data_store.REL_DB.ReadPathInfo(
           client_id=client_urn.Basename(),
           path_type=rdf_objects.PathInfo.PathType.OS,
-          components=("foo", unicode(i)))
+          components=("foo", str(i)))
 
       self.assertEqual(path_info.hash_entry.md5, b"bar")
       self.assertEqual(path_info.stat_entry.st_size, i + 42)

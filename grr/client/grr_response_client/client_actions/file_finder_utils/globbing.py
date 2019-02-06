@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Implementation of path expansion mechanism for client-side file-finder."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import abc
@@ -9,7 +10,9 @@ import itertools
 import os
 import platform
 import re
+
 from future.utils import with_metaclass
+from typing import Text
 
 from grr_response_client import vfs
 from grr_response_core.lib.rdfvalues import paths as rdf_paths
@@ -194,7 +197,7 @@ def ParsePath(path, opts=None):
   Raises:
     ValueError: If path contains more than one recursive component.
   """
-  precondition.AssertType(path, unicode)
+  precondition.AssertType(path, Text)
 
   rcount = 0
   for item in path.split(os.path.sep):
@@ -216,7 +219,7 @@ def ExpandPath(path, opts=None):
   Yields:
     All paths possible to obtain from a given path by performing expansions.
   """
-  precondition.AssertType(path, unicode)
+  precondition.AssertType(path, Text)
 
   for grouped_path in ExpandGroups(path):
     for globbed_path in ExpandGlobs(grouped_path, opts):
@@ -235,7 +238,7 @@ def ExpandGroups(path):
   Yields:
     Paths that can be obtained from given path by expanding groups.
   """
-  precondition.AssertType(path, unicode)
+  precondition.AssertType(path, Text)
 
   chunks = []
   offset = 0
@@ -268,7 +271,7 @@ def ExpandGlobs(path, opts=None):
   Raises:
     ValueError: If given path is empty or relative.
   """
-  precondition.AssertType(path, unicode)
+  precondition.AssertType(path, Text)
   if not path:
     raise ValueError("Path is empty")
 

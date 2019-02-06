@@ -157,6 +157,10 @@ RESULTS_PER_TYPE_SUFFIX = "ResultsPerType"
 LOGS_SUFFIX = "Logs"
 
 
+def IsLegacyHunt(hunt_id):
+  return hunt_id.startswith("H:")
+
+
 def FilterArgsFromSemanticProtobuf(protobuf, kwargs):
   """Assign kwargs to the protobuf, and remove them from the kwargs dict."""
   for descriptor in protobuf.type_infos:
@@ -170,10 +174,9 @@ def GetOutputPluginStates(output_plugins, source=None, token=None):
   output_plugins_states = []
   for plugin_descriptor in output_plugins:
     plugin_class = plugin_descriptor.GetPluginClass()
-    plugin = plugin_class(
-        source_urn=source, args=plugin_descriptor.plugin_args, token=token)
     try:
-      plugin.InitializeState()
+      plugin, plugin_state = plugin_class.CreatePluginAndDefaultState(
+          source_urn=source, args=plugin_descriptor.plugin_args, token=token)
     except Exception as e:  # pylint: disable=broad-except
       logging.warning("Plugin %s failed to initialize (%s), ignoring it.",
                       plugin, e)
@@ -181,12 +184,12 @@ def GetOutputPluginStates(output_plugins, source=None, token=None):
 
     # TODO(amoser): Those do not need to be inside the state, they
     # could be part of the plugin descriptor.
-    plugin.state["logs"] = []
-    plugin.state["errors"] = []
+    plugin_state["logs"] = []
+    plugin_state["errors"] = []
 
     output_plugins_states.append(
         rdf_flow_runner.OutputPluginState(
-            plugin_state=plugin.state, plugin_descriptor=plugin_descriptor))
+            plugin_state=plugin_state, plugin_descriptor=plugin_descriptor))
 
   return output_plugins_states
 
@@ -311,15 +314,22 @@ def StartAFF4Flow(args=None,
   return flow_obj.urn
 
 
+def RandomFlowId():
+  """Returns a random flow id encoded as a hex string."""
+  return "%08X" % random.PositiveUInt32()
+
+
 def StartFlow(client_id=None,
-              cpu_limit=7200,
+              cpu_limit=None,
               creator=None,
               flow_args=None,
               flow_cls=None,
               network_bytes_limit=None,
               original_flow=None,
               output_plugins=None,
+              start_at=None,
               parent_flow_obj=None,
+              parent_hunt_id=None,
               **kwargs):
   """The main factory function for creating and executing a new flow.
 
@@ -335,7 +345,11 @@ def StartFlow(client_id=None,
       another flow.
     output_plugins: An OutputPluginDescriptor object indicating what output
       plugins should be used for this flow.
+    start_at: If specified, flow will be started not immediately, but at a given
+      time.
     parent_flow_obj: A parent flow object. None if this is a top level flow.
+    parent_hunt_id: String identifying parent hunt. Can't be passed together
+      with parent_flow_obj.
     **kwargs: If args or runner_args are not specified, we construct these
       protobufs from these keywords.
 
@@ -345,6 +359,11 @@ def StartFlow(client_id=None,
   Raises:
     ValueError: Unknown or invalid parameters were provided.
   """
+
+  if parent_flow_obj is not None and parent_hunt_id is not None:
+    raise ValueError(
+        "parent_flow_obj and parent_hunt_id are mutually exclusive.")
+
   # Is the required flow a known flow?
   try:
     registry.FlowRegistry.FlowClassByName(flow_cls.__name__)
@@ -379,17 +398,26 @@ def StartFlow(client_id=None,
       original_flow=original_flow,
       flow_state="RUNNING")
 
-  rdf_flow.flow_id = "%08X" % random.PositiveUInt32()
+  if parent_hunt_id is not None and parent_flow_obj is None:
+    rdf_flow.flow_id = parent_hunt_id
+    if IsLegacyHunt(parent_hunt_id):
+      rdf_flow.flow_id = rdf_flow.flow_id[2:]
+  else:
+    rdf_flow.flow_id = RandomFlowId()
 
-  if parent_flow_obj:
+  if parent_flow_obj:  # A flow is a nested flow.
     parent_rdf_flow = parent_flow_obj.rdf_flow
     rdf_flow.long_flow_id = "%s/%s" % (parent_rdf_flow.long_flow_id,
                                        rdf_flow.flow_id)
     rdf_flow.parent_flow_id = parent_rdf_flow.flow_id
+    rdf_flow.parent_hunt_id = parent_rdf_flow.parent_hunt_id
     rdf_flow.parent_request_id = parent_flow_obj.GetCurrentOutboundId()
     if parent_rdf_flow.creator:
       rdf_flow.creator = parent_rdf_flow.creator
-  else:
+  elif parent_hunt_id:  # A flow is a root-level hunt-induced flow.
+    rdf_flow.long_flow_id = "%s/%s" % (client_id, rdf_flow.flow_id)
+    rdf_flow.parent_hunt_id = parent_hunt_id
+  else:  # A flow is a root-level non-hunt flow.
     rdf_flow.long_flow_id = "%s/%s" % (client_id, rdf_flow.flow_id)
 
   if output_plugins:
@@ -406,17 +434,32 @@ def StartFlow(client_id=None,
   logging.info(u"Scheduling %s(%s) on %s", rdf_flow.long_flow_id,
                rdf_flow.flow_class_name, client_id)
 
-  flow_obj = flow_cls(rdf_flow)
-  # Just run the first state inline. NOTE: Running synchronously means
-  # that this runs on the thread that starts the flow. The advantage is
-  # that that Start method can raise any errors immediately.
-  flow_obj.Start()
-  flow_obj.PersistState()
+  rdf_flow.current_state = "Start"
 
-  # The flow does not need to actually remain running.
-  if not flow_obj.outstanding_requests:
-    flow_obj.RunStateMethod("End")
-    flow_obj.MarkDone()
+  flow_obj = flow_cls(rdf_flow)
+  if start_at is None:
+
+    # Store an initial version of the flow straight away. This is needed so the
+    # database doesn't raise consistency errors due to missing parent keys when
+    # writing logs / errors / results which might happen in Start().
+    data_store.REL_DB.WriteFlowObject(flow_obj.rdf_flow)
+
+    # Just run the first state inline. NOTE: Running synchronously means
+    # that this runs on the thread that starts the flow. The advantage is
+    # that that Start method can raise any errors immediately.
+    flow_obj.Start()
+
+    # The flow does not need to actually remain running.
+    if not flow_obj.outstanding_requests:
+      flow_obj.RunStateMethod("End")
+      # Additional check for the correct state in case the End method raised and
+      # terminated the flow.
+      if flow_obj.IsRunning():
+        flow_obj.MarkDone()
+  else:
+    flow_obj.CallState("Start", start_time=start_at)
+
+  flow_obj.PersistState()
 
   data_store.REL_DB.WriteFlowObject(flow_obj.rdf_flow)
 
@@ -678,10 +721,6 @@ class GRRFlow(FlowBase):
   category = ""
   friendly_name = None
 
-  # If this is set, the flow is only displayed in the UI if the user has one of
-  # the labels given.
-  AUTHORIZED_LABELS = []
-
   # Behaviors set attributes of this flow. See FlowBehavior() above.
   behaviours = FlowBehaviour("ADVANCED")
 
@@ -690,6 +729,7 @@ class GRRFlow(FlowBase):
     super(GRRFlow, self).Initialize()
     self._client_version = None
     self._client_os = None
+    self._client_knowledge_base = None
 
     if "r" in self.mode:
       state = self.Get(self.Schema.FLOW_STATE_DICT)
@@ -804,6 +844,13 @@ class GRRFlow(FlowBase):
           self.client_id, token=self.token)
 
     return self._client_os
+
+  @property
+  def client_knowledge_base(self):
+    if self._client_knowledge_base is None:
+      self._client_knowledge_base = data_store_utils.GetClientKnowledgeBase(
+          self.client_id, token=self.token)
+    return self._client_knowledge_base
 
   def Name(self):
     return self.__class__.__name__
@@ -953,7 +1000,7 @@ class WellKnownFlow(GRRFlow):
     """Get instances of all well known flows."""
     well_known_flows = {}
     for cls in itervalues(registry.AFF4FlowRegistry.FLOW_REGISTRY):
-      if aff4.issubclass(cls, WellKnownFlow) and cls.well_known_session_id:
+      if issubclass(cls, WellKnownFlow) and cls.well_known_session_id:
         well_known_flow = cls(cls.well_known_session_id, mode="rw", token=token)
         well_known_flows[cls.well_known_session_id.FlowName()] = well_known_flow
 

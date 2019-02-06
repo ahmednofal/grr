@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 """CSV single-pass output plugin."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import os
 import zipfile
+
+from future.builtins import str
 
 import yaml
 
@@ -43,7 +46,7 @@ class CSVInstantOutputPlugin(
       if type_info.__class__.__name__ == "ProtoEmbedded":
         row.extend(self._GetCSVRow(value.Get(type_info.name)))
       else:
-        row.append(unicode(value.Get(type_info.name)))
+        row.append(str(value.Get(type_info.name)))
 
     return row
 

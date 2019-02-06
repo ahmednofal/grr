@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 """Tests for flows."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
+
+from future.builtins import str
 
 import mock
 
@@ -57,7 +60,7 @@ class CallStateFlow(flow_base.FlowBase):
     CallStateFlow.success = True
 
 
-class BasicFlowTest(db_test_lib.RelationalFlowsEnabledMixin,
+class BasicFlowTest(db_test_lib.RelationalDBEnabledMixin,
                     flow_test_lib.FlowTestsBaseclass):
 
   def setUp(self):
@@ -92,8 +95,8 @@ class ParentFlow(flow_base.FlowBase):
 
   def ParentReceiveHello(self, responses):
     responses = list(responses)
-    if (len(responses) != 2 or "Child" not in unicode(responses[0]) or
-        "Hello" not in unicode(responses[1])):
+    if (len(responses) != 2 or "Child" not in str(responses[0]) or
+        "Hello" not in str(responses[1])):
       raise RuntimeError("Messages not passed to parent")
 
     ParentFlow.success = True
@@ -153,44 +156,13 @@ class CallClientChildFlow(flow_base.FlowBase):
     self.CallClient(server_stubs.GetClientStats, next_state="End")
 
 
-class CPULimitFlow(flow_base.FlowBase):
-  """This flow is used to test the cpu limit."""
-
-  def Start(self):
-    self.CallClient(
-        server_stubs.ClientActionStub.classes["Store"],
-        string="Hey!",
-        next_state="State1")
-
-  def State1(self, responses):
-    del responses  # Unused.
-    self.CallClient(
-        server_stubs.ClientActionStub.classes["Store"],
-        string="Hey!",
-        next_state="State2")
-
-  def State2(self, responses):
-    del responses  # Unused.
-    self.CallClient(
-        server_stubs.ClientActionStub.classes["Store"],
-        string="Hey!",
-        next_state="Done")
-
-  def Done(self, responses):
-    pass
-
-
 class FlowCreationTest(BasicFlowTest):
   """Test flow creation."""
 
   def testUnknownArg(self):
     """Check that flows reject unknown args."""
-    self.assertRaises(
-        type_info.UnknownArg,
-        flow.StartFlow,
-        client_id=self.client_id,
-        flow_cls=CallStateFlow,
-        foobar=1)
+    with self.assertRaises(type_info.UnknownArg):
+      flow.StartFlow(client_id=self.client_id, flow_cls=CallStateFlow, foobar=1)
 
   def testPendingFlowTermination(self):
     client_mock = ClientMock()
@@ -204,20 +176,18 @@ class FlowCreationTest(BasicFlowTest):
     data_store.REL_DB.UpdateFlow(
         self.client_id, flow_id, pending_termination=pending_termination)
 
-    worker = flow_test_lib.TestWorker(token=True)
-    data_store.REL_DB.RegisterFlowProcessingHandler(worker.ProcessFlow)
+    with flow_test_lib.TestWorker(token=True) as worker:
+      with test_lib.SuppressLogs():
+        flow_test_lib.RunFlow(
+            self.client_id,
+            flow_id,
+            client_mock=client_mock,
+            worker=worker,
+            check_flow_errors=False)
 
-    with test_lib.SuppressLogs():
-      flow_test_lib.RunFlow(
-          self.client_id,
-          flow_id,
-          client_mock=client_mock,
-          worker=worker,
-          check_flow_errors=False)
-
-    flow_obj = data_store.REL_DB.ReadFlowObject(self.client_id, flow_id)
-    self.assertEqual(flow_obj.flow_state, "ERROR")
-    self.assertEqual(flow_obj.error_message, "testing")
+      flow_obj = data_store.REL_DB.ReadFlowObject(self.client_id, flow_id)
+      self.assertEqual(flow_obj.flow_state, "ERROR")
+      self.assertEqual(flow_obj.error_message, "testing")
 
   def testChildTermination(self):
     flow_id = flow.StartFlow(
@@ -282,20 +252,18 @@ class GeneralFlowsTest(notification_test_lib.NotificationTestMixin,
 
     client_mock = ClientMock()
 
-    flow_id = flow.StartFlow(
-        flow_cls=ParentFlow, client_id=self.client_id, creator=username)
-    worker = flow_test_lib.TestWorker(token=True)
-    data_store.REL_DB.RegisterFlowProcessingHandler(worker.ProcessFlow)
-
-    flow_test_lib.RunFlow(
-        self.client_id, flow_id, client_mock=client_mock, worker=worker)
+    flow_id = flow_test_lib.StartAndRunFlow(
+        flow_cls=ParentFlow,
+        client_id=self.client_id,
+        creator=username,
+        client_mock=client_mock)
 
     flow_obj = data_store.REL_DB.ReadFlowObject(self.client_id, flow_id)
     self.assertEqual(flow_obj.creator, username)
 
     child_flows = data_store.REL_DB.ReadChildFlowObjects(
         self.client_id, flow_id)
-    self.assertEqual(len(child_flows), 1)
+    self.assertLen(child_flows, 1)
     child_flow = child_flows[0]
 
     self.assertEqual(child_flow.creator, username)
@@ -306,7 +274,7 @@ class GeneralFlowsTest(notification_test_lib.NotificationTestMixin,
         user_cpu_usage=[10], system_cpu_usage=[10], network_usage=[1000])
 
     flow_test_lib.StartAndRunFlow(
-        CPULimitFlow,
+        flow_test_lib.CPULimitFlow,
         client_mock=client_mock,
         client_id=self.client_id,
         cpu_limit=1000,
@@ -322,7 +290,7 @@ class GeneralFlowsTest(notification_test_lib.NotificationTestMixin,
 
     with test_lib.SuppressLogs():
       flow_id = flow_test_lib.StartAndRunFlow(
-          CPULimitFlow,
+          flow_test_lib.CPULimitFlow,
           client_mock=client_mock,
           client_id=self.client_id,
           cpu_limit=30,
@@ -340,7 +308,7 @@ class GeneralFlowsTest(notification_test_lib.NotificationTestMixin,
 
     with test_lib.SuppressLogs():
       flow_id = flow_test_lib.StartAndRunFlow(
-          CPULimitFlow,
+          flow_test_lib.CPULimitFlow,
           client_mock=client_mock,
           client_id=self.client_id,
           cpu_limit=1000,
@@ -401,7 +369,7 @@ class FlowOutputPluginsTest(BasicFlowTest):
               path="/tmp/evil.txt", pathtype=rdf_paths.PathSpec.PathType.OS))
 
     if client_mock is None:
-      client_mock = hunt_test_lib.SampleHuntMock()
+      client_mock = hunt_test_lib.SampleHuntMock(failrate=2)
 
     flow_urn = flow_test_lib.StartAndRunFlow(
         flow_cls or transfer.GetFile,
@@ -447,8 +415,8 @@ class FlowOutputPluginsTest(BasicFlowTest):
             plugin_name="DummyFlowOutputPlugin")
     ])
 
-    self.assertTrue(
-        "Plugin DummyFlowOutputPlugin successfully processed 1 flow replies." in
+    self.assertIn(
+        "Plugin DummyFlowOutputPlugin successfully processed 1 flow replies.",
         log_messages)
 
   def testFlowLogsFailedOutputPluginProcessing(self):
@@ -456,9 +424,9 @@ class FlowOutputPluginsTest(BasicFlowTest):
         rdf_output_plugin.OutputPluginDescriptor(
             plugin_name="FailingDummyFlowOutputPlugin")
     ])
-    self.assertTrue(
+    self.assertIn(
         "Plugin FailingDummyFlowOutputPlugin failed to process 1 replies "
-        "due to: Oh no!" in log_messages)
+        "due to: Oh no!", log_messages)
 
   def testFlowDoesNotFailWhenOutputPluginFails(self):
     flow_id = self.RunFlow(output_plugins=[

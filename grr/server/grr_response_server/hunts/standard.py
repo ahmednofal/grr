@@ -1,23 +1,18 @@
 #!/usr/bin/env python
 """Some multiclient flows aka hunts."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import logging
-import operator
 
 
-from future.utils import iteritems
-
-from grr_response_core.lib import rdfvalue
 from grr_response_core.lib import registry
-from grr_response_core.lib import utils
 from grr_response_core.lib.rdfvalues import client as rdf_client
 from grr_response_core.lib.rdfvalues import events as rdf_events
 from grr_response_core.lib.rdfvalues import paths as rdf_paths
 from grr_response_core.lib.rdfvalues import structs as rdf_structs
 from grr_response_core.lib.util import collection
-from grr_response_core.stats import stats_collector_instance
 from grr_response_proto import flows_pb2
 from grr_response_server import access_control
 from grr_response_server import aff4
@@ -26,11 +21,11 @@ from grr_response_server import data_store
 from grr_response_server import events
 from grr_response_server import flow
 from grr_response_server import grr_collections
-from grr_response_server import output_plugin
+from grr_response_server import hunt
 from grr_response_server import queue_manager
-from grr_response_server.aff4_objects import cronjobs as aff4_cronjobs
 from grr_response_server.flows.general import transfer
 from grr_response_server.hunts import implementation
+from grr_response_server.rdfvalues import flow_objects as rdf_flow_objects
 from grr_response_server.rdfvalues import flow_runner as rdf_flow_runner
 from grr_response_server.rdfvalues import hunts as rdf_hunts
 from grr_response_server.rdfvalues import output_plugin as rdf_output_plugin
@@ -44,20 +39,42 @@ class RunHunt(cronjobs.CronJobBase):
   """A cron job that starts a hunt."""
 
   def Run(self):
-    action = self.job.args.hunt_cron_action
-    token = access_control.ACLToken(username="Cron")
+    if data_store.RelationalDBReadEnabled("hunts"):
+      hra = self.job.args.hunt_cron_action.hunt_runner_args
+      anbpcl = hra.avg_network_bytes_per_client_limit
+      hunt.CreateAndStartHunt(
+          self.job.args.hunt_cron_action.flow_name,
+          self.job.args.hunt_cron_action.flow_args,
+          "Cron",
+          avg_cpu_seconds_per_client_limit=hra.avg_cpu_seconds_per_client_limit,
+          avg_network_bytes_per_client_limit=anbpcl,
+          avg_results_per_client_limit=hra.avg_results_per_client_limit,
+          client_limit=hra.client_limit,
+          client_rate=hra.client_rate,
+          client_rule_set=hra.client_rule_set,
+          crash_limit=hra.crash_limit,
+          description=hra.description,
+          expiry_time=hra.expiry_time,
+          original_object=hra.original_object,
+          output_plugins=hra.output_plugins,
+          per_client_cpu_limit=hra.per_client_cpu_limit,
+          per_client_network_bytes_limit=hra.per_client_network_limit_bytes,
+      )
+    else:
+      action = self.job.args.hunt_cron_action
+      token = access_control.ACLToken(username="Cron")
 
-    hunt_args = rdf_hunts.GenericHuntArgs(
-        flow_args=action.flow_args,
-        flow_runner_args=rdf_flow_runner.FlowRunnerArgs(
-            flow_name=action.flow_name))
-    with implementation.StartHunt(
-        hunt_name=GenericHunt.__name__,
-        args=hunt_args,
-        runner_args=action.hunt_runner_args,
-        token=token) as hunt:
+      hunt_args = rdf_hunts.GenericHuntArgs(
+          flow_args=action.flow_args,
+          flow_runner_args=rdf_flow_runner.FlowRunnerArgs(
+              flow_name=action.flow_name))
+      with implementation.StartHunt(
+          hunt_name=GenericHunt.__name__,
+          args=hunt_args,
+          runner_args=action.hunt_runner_args,
+          token=token) as hunt_obj:
 
-      hunt.Run()
+        hunt_obj.Run()
 
 
 class CreateGenericHuntFlow(flow.GRRFlow):
@@ -77,19 +94,20 @@ class CreateGenericHuntFlow(flow.GRRFlow):
     with implementation.StartHunt(
         runner_args=self.args.hunt_runner_args,
         args=self.args.hunt_args,
-        token=self.token) as hunt:
+        token=self.token) as hunt_obj:
 
       # Nothing really to do here - hunts are always created in the paused
       # state.
       self.Log("User %s created a new %s hunt (%s)", self.token.username,
-               hunt.args.flow_runner_args.flow_name, hunt.urn)
+               hunt_obj.args.flow_runner_args.flow_name, hunt_obj.urn)
 
 
 class CreateAndRunGenericHuntFlow(flow.GRRFlow):
   """Create and run a GenericHunt with the given name, args and rules.
 
   This flow is different to the CreateGenericHuntFlow in that it
-  immediately runs the hunt it created. """
+  immediately runs the hunt it created.
+  """
 
   args_type = rdf_hunts.CreateGenericHuntFlowArgs
 
@@ -98,12 +116,12 @@ class CreateAndRunGenericHuntFlow(flow.GRRFlow):
     with implementation.StartHunt(
         runner_args=self.args.hunt_runner_args,
         args=self.args.hunt_args,
-        token=self.token) as hunt:
+        token=self.token) as hunt_obj:
 
-      hunt.Run()
+      hunt_obj.Run()
 
       self.Log("User %s created a new %s hunt (%s)", self.token.username,
-               hunt.args.flow_runner_args.flow_name, hunt.urn)
+               hunt_obj.args.flow_runner_args.flow_name, hunt_obj.urn)
 
 
 class SampleHuntArgs(rdf_structs.RDFProtoStruct):
@@ -164,174 +182,6 @@ class SampleHunt(implementation.GRRHunt):
     self.MarkClientDone(client_id)
 
 
-class HuntVerificationError(Error):
-  """Used when something goes wrong during the verification."""
-
-
-class MultiHuntVerificationSummaryError(HuntVerificationError):
-  """Used when problem is detected in at least one verified hunt."""
-
-  def __init__(self, errors):
-    super(MultiHuntVerificationSummaryError, self).__init__()
-    self.errors = errors
-
-  def __str__(self):
-    return "\n".join(str(error) for error in self.errors)
-
-
-class VerifyHuntOutputPluginsCronFlow(aff4_cronjobs.SystemCronFlow):
-  """Runs Verify() method of output plugins of active hunts."""
-
-  frequency = rdfvalue.Duration("4h")
-  lifetime = rdfvalue.Duration("4h")
-
-  NON_VERIFIABLE = "NON_VERIFIABLE"
-
-  def _GroupHuntsAndPluginsByVerifiers(self, hunts):
-    """Opens hunts results metadata in bulk and groups the by verifier type.
-
-    We've traded simplicity for performance here. Initial implementations of
-    VerifyHuntOutputPluginsCronFlow checked the hunts one-by-one, but that
-    turned out to be too slow and inefficient when many hunts had to be
-    checked. To make the checks more effective, MultiVerifyHuntOutput()
-    method was introduced in the verifiers API.
-
-    It's this cron flow's responsibility to group the plugin objects by
-    verifier type, so that we can feed them to MultiVerifyHuntOutput.
-
-    Args:
-      hunts: A list of GRRHunt objects.
-
-    Returns:
-      A dictionary where keys are verifier classes and values are lists of
-      tuples (plugin id, plugin descriptor, plugin object, hunt object).
-      Special constant NON_VERIFIABLE is used as a key for plugins that
-      have no corresponding verifier.
-    """
-    hunts_by_urns = {}
-    for hunt in hunts:
-      hunts_by_urns[hunt.urn] = hunt
-
-    results_metadata_urns = [hunt.results_metadata_urn for hunt in hunts]
-    results_metadata_objects = aff4.FACTORY.MultiOpen(
-        results_metadata_urns,
-        aff4_type=implementation.HuntResultsMetadata,
-        token=self.token)
-
-    results = {}
-    for mdata in results_metadata_objects:
-      hunt_urn = rdfvalue.RDFURN(mdata.urn.Dirname())
-      hunt = hunts_by_urns[hunt_urn]
-
-      plugins = iteritems(mdata.Get(mdata.Schema.OUTPUT_PLUGINS, {}))
-      for plugin_id, (plugin_descriptor, plugin_state) in plugins:
-        plugin_obj = plugin_descriptor.GetPluginForState(plugin_state)
-        opv = output_plugin.OutputPluginVerifier
-        plugin_verifiers_classes = opv.VerifierClassesForPlugin(
-            plugin_descriptor.plugin_name)
-
-        if not plugin_verifiers_classes:
-          results.setdefault(self.NON_VERIFIABLE, []).append(
-              (plugin_id, plugin_descriptor, plugin_obj, hunt))
-        else:
-          for cls in plugin_verifiers_classes:
-            results.setdefault(cls, []).append((plugin_id, plugin_descriptor,
-                                                plugin_obj, hunt))
-
-    return results
-
-  def _FillResult(self, result, plugin_id, plugin_descriptor):
-    result.timestamp = rdfvalue.RDFDatetime.Now()
-    result.plugin_id = plugin_id
-    result.plugin_descriptor = plugin_descriptor
-    return result
-
-  def _VerifyHunts(self, hunts_plugins_by_verifier):
-    results_by_hunt = {}
-
-    errors = []
-    for verifier_cls, hunts_plugins in iteritems(hunts_plugins_by_verifier):
-
-      if verifier_cls == self.NON_VERIFIABLE:
-        for plugin_id, plugin_descriptor, plugin_obj, hunt in hunts_plugins:
-          result = output_plugin.OutputPluginVerificationResult(
-              status=output_plugin.OutputPluginVerificationResult.Status.N_A,
-              status_message=("Plugin %s is not verifiable." %
-                              plugin_obj.__class__.__name__))
-          self._FillResult(result, plugin_id, plugin_descriptor)
-
-          results_by_hunt.setdefault(hunt.urn, []).append(result)
-          stats_collector_instance.Get().IncrementCounter(
-              "hunt_output_plugin_verifications",
-              fields=[utils.SmartStr(result.status)])
-        continue
-
-      verifier = verifier_cls()
-
-      plugins_hunts_pairs = []
-      for plugin_id, plugin_descriptor, plugin_obj, hunt in hunts_plugins:
-        plugins_hunts_pairs.append((plugin_obj, hunt))
-
-      try:
-        for hunt_urn, result in verifier.MultiVerifyHuntOutput(
-            plugins_hunts_pairs):
-          self._FillResult(result, plugin_id, plugin_descriptor)
-
-          results_by_hunt.setdefault(hunt.urn, []).append(result)
-          stats_collector_instance.Get().IncrementCounter(
-              "hunt_output_plugin_verifications",
-              fields=[utils.SmartStr(result.status)])
-
-      except output_plugin.MultiVerifyHuntOutputError as e:
-        logging.exception(e)
-
-        errors.extend(e.errors)
-        stats_collector_instance.Get().IncrementCounter(
-            "hunt_output_plugin_verification_errors", delta=len(e.errors))
-
-    for hunt_urn, results in iteritems(results_by_hunt):
-      yield hunt_urn, results
-
-    if errors:
-      raise MultiHuntVerificationSummaryError(errors)
-
-  def _WriteVerificationResults(self, hunt_urn, results):
-    with aff4.FACTORY.Create(
-        hunt_urn.Add("ResultsMetadata"),
-        aff4_type=implementation.HuntResultsMetadata,
-        mode="w",
-        token=self.token) as results_metadata:
-      results_metadata.Set(
-          results_metadata.Schema.OUTPUT_PLUGINS_VERIFICATION_RESULTS,
-          output_plugin.OutputPluginVerificationResultsList(results=results))
-
-  def Start(self):
-    hunts_root = aff4.FACTORY.Open("aff4:/hunts", token=self.token)
-
-    check_range = self.frequency * 2
-
-    range_end = rdfvalue.RDFDatetime.Now()
-    range_start = rdfvalue.RDFDatetime.Now() - check_range
-
-    children_urns = list(hunts_root.ListChildren(age=(range_start, range_end)))
-    children_urns.sort(key=operator.attrgetter("age"), reverse=True)
-
-    self.Log("Will verify %d hunts." % len(children_urns))
-
-    hunts_to_process = []
-    for hunt in hunts_root.OpenChildren(children_urns):
-      # Skip non-GenericHunts.
-      if not isinstance(hunt, GenericHunt):
-        self.Log("Skipping: %s." % utils.SmartStr(hunt.urn))
-        continue
-
-      hunts_to_process.append(hunt)
-
-    hunts_by_verifier = self._GroupHuntsAndPluginsByVerifiers(hunts_to_process)
-    for hunt_urn, results in self._VerifyHunts(hunts_by_verifier):
-      self._WriteVerificationResults(hunt_urn, results)
-
-
 class GenericHunt(implementation.GRRHunt):
   """This is a hunt to start any flow on multiple clients."""
 
@@ -373,7 +223,7 @@ class GenericHunt(implementation.GRRHunt):
 
   STOP_BATCH_SIZE = 10000
 
-  def Stop(self, reason=None):
+  def _StopLegacy(self, reason=None):
     super(GenericHunt, self).Stop(reason=reason)
 
     started_flows = grr_collections.RDFUrnCollection(
@@ -402,12 +252,33 @@ class GenericHunt(implementation.GRRHunt):
 
     self.Log("%d flows terminated.", num_terminated_flows)
 
+  def _StopRelational(self, reason=None):
+    super(GenericHunt, self).Stop(reason=reason)
+    started_flows = grr_collections.RDFUrnCollection(
+        self.started_flows_collection_urn)
+
+    client_id_flow_id_pairs = []
+    for flow_urn in started_flows:
+      components = flow_urn.Split()
+      client_id_flow_id_pairs.append((components[0], components[2]))
+
+    data_store.REL_DB.UpdateFlows(
+        client_id_flow_id_pairs,
+        pending_termination=rdf_flow_objects.PendingFlowTermination(
+            reason="Parent hunt stopped."))
+
+  def Stop(self, reason=None):
+    if data_store.RelationalDBFlowsEnabled():
+      self._StopRelational(reason=reason)
+    else:
+      self._StopLegacy(reason=reason)
+
   def GetLaunchedFlows(self, flow_type="outstanding"):
     """Returns the session IDs of all the flows we launched.
 
     Args:
       flow_type: The type of flows to fetch. Can be "all", "outstanding" or
-      "finished".
+        "finished".
 
     Returns:
       A list of flow URNs.

@@ -1,14 +1,15 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 """Tests for checks."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import os
 
 
+from future.builtins import str
 from future.utils import iterkeys
-import yaml
 
 from grr_response_core import config
 from grr_response_core.lib import flags
@@ -17,6 +18,7 @@ from grr_response_core.lib.parsers import linux_cmd_parser
 from grr_response_core.lib.parsers import wmi_parser
 from grr_response_core.lib.rdfvalues import anomaly as rdf_anomaly
 from grr_response_core.lib.rdfvalues import client as rdf_client
+from grr_response_core.lib.util import yaml
 from grr_response_server.check_lib import checks
 from grr_response_server.check_lib import checks_test_lib
 from grr_response_server.check_lib import filters
@@ -52,10 +54,11 @@ def GetWMIData():
   # Load some wmi data
   parser = wmi_parser.WMIInstalledSoftwareParser()
   test_data = os.path.join(CHECKS_DIR, "data/wmi_sw.yaml")
-  with open(test_data, "rb") as f:
-    wmi = yaml.safe_load(f)
-    for sw in wmi:
-      WMI_SW.extend(parser.Parse(sw))
+  wmi = yaml.ReadFromPath(test_data)
+  for sw in wmi:
+    WMI_SW.extend(parser.Parse(sw))
+
+  return WMI_SW
 
 
 def GetSSHDConfig():
@@ -122,10 +125,10 @@ class MatchMethodTests(test_lib.GRRBaseTest):
     """ALL operations return anomalies if input and result counts differ."""
     matcher = checks.Matcher(["ALL"], self.hint)
     will_detect = [(self.one, self.one), (self.some, self.some)]
-    not_detect = [(self.none, self.none), (self.some, self.one), (self.some,
-                                                                  self.none)]
-    will_raise = [(self.none, self.one), (self.one, self.some), (self.none,
-                                                                 self.some)]
+    not_detect = [(self.none, self.none), (self.some, self.one),
+                  (self.some, self.none)]
+    will_raise = [(self.none, self.one), (self.one, self.some),
+                  (self.none, self.some)]
     for base, result in will_detect:
       self.assertIsInstance(matcher.Detect(base, result), checks.CheckResult)
     for base, result in not_detect:
@@ -148,7 +151,7 @@ class CheckLoaderTests(test_lib.GRRBaseTest):
 
   def testLoadToDict(self):
     result = checks.LoadConfigsFromFile(os.path.join(CHECKS_DIR, "sshd.yaml"))
-    self.assertItemsEqual(["SSHD-CHECK", "SSHD-PERMS"], result)
+    self.assertCountEqual(["SSHD-CHECK", "SSHD-PERMS"], result)
     # Start with basic check attributes.
     result_check = result["SSHD-CHECK"]
     self.assertEqual("SSHD-CHECK", result_check["check_id"])
@@ -177,7 +180,7 @@ class CheckLoaderTests(test_lib.GRRBaseTest):
     result_check = result["SSHD-PERMS"]
     probe = result_check["method"][0]["probe"][0]
     result_context = str(probe["result_context"])
-    self.assertItemsEqual("RAW", result_context)
+    self.assertCountEqual("RAW", result_context)
 
   def testLoadFromFiles(self):
     check_defs = [os.path.join(CHECKS_DIR, "sshd.yaml")]
@@ -230,37 +233,29 @@ class CheckRegistryTests(test_lib.GRRBaseTest):
     expect = ["SW-CHECK"]
     result = checks.CheckRegistry.FindChecks(
         artifact="WMIInstalledSoftware", os_name="Windows")
-    self.assertItemsEqual(expect, result)
+    self.assertCountEqual(expect, result)
     result = checks.CheckRegistry.FindChecks(
         artifact="DebianPackagesStatus", os_name="Linux")
-    self.assertItemsEqual(expect, result)
+    self.assertCountEqual(expect, result)
     result = checks.CheckRegistry.FindChecks(
         artifact="DebianPackagesStatus", labels="foo")
-    self.assertItemsEqual(expect, result)
+    self.assertCountEqual(expect, result)
 
-    expect = set(["SSHD-CHECK"])
-    result = set(
+    self.assertIn(
+        "SSHD-CHECK",
         checks.CheckRegistry.FindChecks(
             artifact="SshdConfigFile", os_name="Darwin"))
-    residual = expect - result
-    self.assertFalse(residual)
 
-    result = set(
+    self.assertIn(
+        "SSHD-CHECK",
         checks.CheckRegistry.FindChecks(
             artifact="SshdConfigFile", os_name="Linux"))
-    residual = expect - result
-    self.assertFalse(residual)
 
     # All sshd config checks specify an OS, so should get no results.
-    expect = set([])
-    result = set(checks.CheckRegistry.FindChecks(artifact="SshdConfigFile"))
-    residual = expect - result
-    self.assertFalse(residual)
-    result = set(
+    self.assertEmpty(checks.CheckRegistry.FindChecks(artifact="SshdConfigFile"))
+    self.assertEmpty(
         checks.CheckRegistry.FindChecks(
             artifact="SshdConfigFile", os_name="Windows"))
-    residual = expect - result
-    self.assertFalse(residual)
 
   def testRestrictChecksFiltersCheckOptions(self):
     result = set(
@@ -268,7 +263,7 @@ class CheckRegistryTests(test_lib.GRRBaseTest):
             artifact="SshdConfigFile",
             os_name="Linux",
             restrict_checks=["SSHD-CHECK"]))
-    self.assertItemsEqual(["SSHD-CHECK"], result)
+    self.assertCountEqual(["SSHD-CHECK"], result)
     result = set(
         checks.CheckRegistry.FindChecks(
             artifact="SshdConfigFile",
@@ -279,28 +274,22 @@ class CheckRegistryTests(test_lib.GRRBaseTest):
   def testMapArtifactsToTriggers(self):
     """Identify the artifacts that should be collected based on criteria."""
     # Test whether all expected checks were mapped.
-    expect = set(["DebianPackagesStatus", "SshdConfigFile"])
-    result = set(checks.CheckRegistry.SelectArtifacts(os_name="Linux"))
-    residual = expect - result
-    self.assertFalse(residual)
+    self.assertContainsSubset(
+        ["DebianPackagesStatus", "SshdConfigFile"],
+        checks.CheckRegistry.SelectArtifacts(os_name="Linux"))
 
-    expect = set(["WMIInstalledSoftware"])
-    result = set(checks.CheckRegistry.SelectArtifacts(os_name="Windows"))
-    residual = expect - result
-    self.assertFalse(residual)
+    self.assertIn("WMIInstalledSoftware",
+                  checks.CheckRegistry.SelectArtifacts(os_name="Windows"))
 
-    expect = set(["DebianPackagesStatus"])
-    result = set(
+    self.assertIn(
+        "DebianPackagesStatus",
         checks.CheckRegistry.SelectArtifacts(
             os_name=None, cpe=None, labels="foo"))
-    residual = expect - result
-    self.assertFalse(residual)
 
-    expect = set(["DebianPackagesStatus"])
-    result = set(
+    self.assertIn(
+        "DebianPackagesStatus",
         checks.CheckRegistry.SelectArtifacts(
             os_name="Linux", restrict_checks=["SW-CHECK"]))
-    self.assertItemsEqual(expect, result)
 
 
 class ProcessHostDataTests(checks_test_lib.HostCheckTest):
@@ -412,11 +401,10 @@ class ProbeTest(ChecksTestBase):
     super(ProbeTest, self).setUp(**kwargs)
     if not self.configs:
       config_file = os.path.join(CHECKS_DIR, "probes.yaml")
-      with open(config_file, "rb") as data:
-        for cfg in yaml.safe_load_all(data):
-          name = cfg.get("name")
-          probe_cfg = cfg.get("probe", [{}])
-          self.configs[name] = probe_cfg[0]
+      for cfg in yaml.ReadManyFromPath(config_file):
+        name = cfg.get("name")
+        probe_cfg = cfg.get("probe", [{}])
+        self.configs[name] = probe_cfg[0]
 
   def Init(self, name, artifact, handler_class, result_context):
     """Helper method to verify that the Probe sets up the right handler."""
@@ -425,7 +413,7 @@ class ProbeTest(ChecksTestBase):
     self.assertEqual(artifact, probe.artifact)
     self.assertIsInstance(probe.handler, handler_class)
     self.assertIsInstance(probe.matcher, checks.Matcher)
-    self.assertItemsEqual(result_context, str(probe.result_context))
+    self.assertCountEqual(result_context, str(probe.result_context))
 
   def testInitialize(self):
     """Tests the input/output sequence validation."""
@@ -456,9 +444,8 @@ class MethodTest(ChecksTestBase):
     super(MethodTest, self).setUp(**kwargs)
     if not self.configs:
       config_file = os.path.join(CHECKS_DIR, "sw.yaml")
-      with open(config_file, "rb") as data:
-        check_def = yaml.safe_load(data)
-        self.configs = check_def["method"]
+      check_def = yaml.ReadFromPath(config_file)
+      self.configs = check_def["method"]
 
   def testMethodRegistersTriggers(self):
     m_1, m_2, m_3 = [checks.Method(**cfg) for cfg in self.configs]
@@ -488,8 +475,7 @@ class CheckTest(ChecksTestBase):
     super(CheckTest, self).setUp(**kwargs)
     if not self.cfg:
       config_file = os.path.join(CHECKS_DIR, "sw.yaml")
-      with open(config_file, "rb") as data:
-        self.cfg = yaml.safe_load(data)
+      self.cfg = yaml.ReadFromPath(config_file)
       self.host_data = {
           "DebianPackagesStatus": {
               "ANOMALY": [],
@@ -506,16 +492,16 @@ class CheckTest(ChecksTestBase):
   def testInitializeCheck(self):
     chk = checks.Check(**self.cfg)
     self.assertEqual("SW-CHECK", chk.check_id)
-    self.assertItemsEqual(["ANY"], [str(c) for c in chk.match])
+    self.assertCountEqual(["ANY"], [str(c) for c in chk.match])
 
   def testGenerateTriggerMap(self):
     chk = checks.Check(**self.cfg)
     expect = [TRIGGER_1, TRIGGER_3]
     result = [c.attr for c in chk.triggers.Search("DebianPackagesStatus")]
-    self.assertItemsEqual(expect, result)
+    self.assertCountEqual(expect, result)
     expect = [TRIGGER_2]
     result = [c.attr for c in chk.triggers.Search("WMIInstalledSoftware")]
-    self.assertItemsEqual(expect, result)
+    self.assertCountEqual(expect, result)
 
   def testParseCheckFromConfig(self):
     chk = checks.Check(**self.cfg)
@@ -566,8 +552,7 @@ class HintDefinitionTests(ChecksTestBase):
     super(HintDefinitionTests, self).setUp(**kwargs)
     if not self.configs:
       config_file = os.path.join(CHECKS_DIR, "sw.yaml")
-      with open(config_file, "rb") as data:
-        cfg = yaml.safe_load(data)
+      cfg = yaml.ReadFromPath(config_file)
     chk = checks.Check(**cfg)
     self.lin_method, self.win_method, self.foo_method = list(chk.method)
 

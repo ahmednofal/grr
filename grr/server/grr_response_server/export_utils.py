@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Utils exporting data from AFF4 to the rest of the world."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import logging
@@ -28,6 +29,8 @@ from grr_response_server.flows.general import collectors
 from grr_response_server.hunts import results
 
 BUFFER_SIZE = 16 * 1024 * 1024
+
+THREADPOOL_JOIN_TIMEOUT = 1200
 
 
 def GetAllClients(token=None):
@@ -90,7 +93,7 @@ class IterateAllClientUrns(object):
         break
 
     # Join and stop to clean up the threadpool.
-    self.thread_pool.Stop()
+    self.thread_pool.Stop(join_timeout=THREADPOOL_JOIN_TIMEOUT)
 
   def IterFunction(self, *args):
     """Function to run on each input. This can be overridden."""
@@ -206,7 +209,7 @@ def RecursiveDownload(dir_obj,
 
   # Join and stop the threadpool.
   if depth <= 1:
-    thread_pool.Stop()
+    thread_pool.Stop(join_timeout=THREADPOOL_JOIN_TIMEOUT)
 
 
 def _OpenCollectionPath(coll_path):
@@ -238,14 +241,15 @@ def DownloadCollection(coll_path,
       version of the client object to the root path. This is useful for seeing
       the hostname/users of the machine the client id refers to.
     flatten: If True, produce a "files" flat folder with links to all the found
-             files.
+      files.
     max_threads: Use this many threads to do the downloads.
   """
   completed_clients = set()
   coll = _OpenCollectionPath(coll_path)
   if coll is None:
-    logging.error("%s is not a valid collection. Typo? "
-                  "Are you sure something was written to it?", coll_path)
+    logging.error(
+        "%s is not a valid collection. Typo? "
+        "Are you sure something was written to it?", coll_path)
     return
 
   thread_pool = threadpool.ThreadPool.Factory("Downloader", max_threads)
@@ -325,7 +329,7 @@ def DownloadCollection(coll_path,
     thread_pool.AddTask(target=target, args=args, name="Downloader")
 
   # Join and stop the threadpool.
-  thread_pool.Stop()
+  thread_pool.Stop(join_timeout=THREADPOOL_JOIN_TIMEOUT)
 
 
 def CopyAFF4ToLocal(aff4_urn, target_dir, token=None, overwrite=False):

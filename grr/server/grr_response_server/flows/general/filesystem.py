@@ -14,7 +14,6 @@ from future.utils import iteritems
 from future.utils import iterkeys
 
 from grr_response_core.lib import rdfvalue
-from grr_response_core.lib import utils
 from grr_response_core.lib.rdfvalues import artifacts as rdf_artifacts
 from grr_response_core.lib.rdfvalues import client as rdf_client
 from grr_response_core.lib.rdfvalues import client_action as rdf_client_action
@@ -46,14 +45,6 @@ def CreateAFF4Object(stat_response, client_id_urn, mutation_pool, token=None):
 
   urn = stat_response.pathspec.AFF4Path(client_id_urn)
 
-  if stat_response.pathspec.last.stream_name:
-    # This is an ads. In that case we always need to create a file or
-    # we won't be able to access the data. New clients send the correct mode
-    # already but to make sure, we set this to a regular file anyways.
-    # Clear all file type bits:
-    stat_response.st_mode &= ~stat_type_mask
-    stat_response.st_mode |= stat.S_IFREG
-
   if stat.S_ISDIR(stat_response.st_mode):
     ftype = standard.VFSDirectory
   else:
@@ -74,12 +65,23 @@ def WriteStatEntries(stat_entries, client_id, mutation_pool, token=None):
     mutation_pool: A mutation pool used for writing into the AFF4 data store.
     token: A token used for writing into the AFF4 data store.
   """
-  for stat_entry in stat_entries:
-    CreateAFF4Object(
-        stat_entry,
-        client_id_urn=rdf_client.ClientURN(client_id),
-        mutation_pool=mutation_pool,
-        token=token)
+
+  for stat_response in stat_entries:
+    if stat_response.pathspec.last.stream_name:
+      # This is an ads. In that case we always need to create a file or
+      # we won't be able to access the data. New clients send the correct mode
+      # already but to make sure, we set this to a regular file anyways.
+      # Clear all file type bits:
+      stat_response.st_mode &= ~stat_type_mask
+      stat_response.st_mode |= stat.S_IFREG
+
+  if data_store.AFF4Enabled():
+    for stat_entry in stat_entries:
+      CreateAFF4Object(
+          stat_entry,
+          client_id_urn=rdf_client.ClientURN(client_id),
+          mutation_pool=mutation_pool,
+          token=token)
 
   if data_store.RelationalDBWriteEnabled():
     path_infos = list(map(rdf_objects.PathInfo.FromStatEntry, stat_entries))
@@ -145,14 +147,15 @@ class ListDirectoryMixin(object):
     self.Log("Listed %s", self.state.urn)
 
     with data_store.DB.GetMutationPool() as pool:
-      with aff4.FACTORY.Create(
-          self.state.urn,
-          standard.VFSDirectory,
-          mode="w",
-          mutation_pool=pool,
-          token=self.token) as fd:
-        fd.Set(fd.Schema.PATHSPEC(self.state.stat.pathspec))
-        fd.Set(fd.Schema.STAT(self.state.stat))
+      if data_store.AFF4Enabled():
+        with aff4.FACTORY.Create(
+            self.state.urn,
+            standard.VFSDirectory,
+            mode="w",
+            mutation_pool=pool,
+            token=self.token) as fd:
+          fd.Set(fd.Schema.PATHSPEC(self.state.stat.pathspec))
+          fd.Set(fd.Schema.STAT(self.state.stat))
 
       if data_store.RelationalDBWriteEnabled():
         path_info = rdf_objects.PathInfo.FromStatEntry(self.state.stat)
@@ -174,17 +177,23 @@ class ListDirectoryMixin(object):
       super(ListDirectoryMixin, self).NotifyAboutEnd()
       return
 
-    components = self.state.urn.Split()
-    file_ref = None
-    if len(components) > 3:
-      file_ref = rdf_objects.VfsFileReference(
-          client_id=components[0],
-          path_type=components[2].upper(),
-          path_components=components[3:])
+    st = self.state.stat
+
+    ps_path_type = st.pathspec.last.pathtype
+    path_type = rdf_objects.PathInfo.PathTypeFromPathspecPathType(ps_path_type)
+
+    full_path = st.pathspec.CollapsePath()
+    path_components = full_path.strip("/").split("/")
+
+    file_ref = rdf_objects.VfsFileReference(
+        client_id=self.client_id,
+        path_type=path_type,
+        path_components=path_components)
+
     notification.Notify(
         self.token.username,
         rdf_objects.UserNotification.Type.TYPE_VFS_LIST_DIRECTORY_COMPLETED,
-        "Listed {0}".format(utils.SmartStr(self.args.pathspec)),
+        "Listed {0}".format(full_path),
         rdf_objects.ObjectReference(
             reference_type=rdf_objects.ObjectReference.Type.VFS_FILE,
             vfs_file=file_ref))
@@ -514,8 +523,7 @@ class MakeNewAFF4SparseImageArgs(rdf_structs.RDFProtoStruct):
   ]
 
 
-@flow_base.DualDBFlow
-class MakeNewAFF4SparseImageMixin(object):
+class MakeNewAFF4SparseImage(flow.GRRFlow):
   """Gets a new file from the client, possibly as an AFF4SparseImage.
 
   If the filesize is >= the size threshold, then we get the file as an empty
@@ -633,8 +641,6 @@ class GlobLogic(object):
       # Nothing to do.
       return
 
-    client = aff4.FACTORY.Open(self.client_id, token=self.token)
-
     self.state.pathtype = pathtype
     self.state.root_path = root_path
     self.state.process_non_regular_files = process_non_regular_files
@@ -645,7 +651,8 @@ class GlobLogic(object):
     # copies of the pattern, one for each variation. e.g.:
     # /home/%%Usernames%%/* -> [ /home/user1/*, /home/user2/* ]
     for path in paths:
-      patterns.extend(path.Interpolate(client=client))
+      patterns.extend(
+          path.Interpolate(knowledge_base=self.client_knowledge_base))
 
     # Sort the patterns so that if there are files whose paths conflict with
     # directory paths, the files get handled after the conflicting directories
@@ -999,6 +1006,7 @@ class GlobMixin(GlobLogic):
   def GlobReportMatch(self, stat_response):
     """Called when we've found a matching StatEntry."""
     super(GlobMixin, self).GlobReportMatch(stat_response)
+
     self.SendReply(stat_response)
 
 
@@ -1033,12 +1041,10 @@ class DiskVolumeInfoMixin(object):
   behaviours = flow.GRRFlow.behaviours + "ADVANCED"
 
   def Start(self):
-    client = aff4.FACTORY.Open(self.client_id, token=self.token)
-    self.state.system = client.Get(client.Schema.SYSTEM)
     self.state.drive_letters = set()
     self.state.system_root_required = False
 
-    if self.state.system == "Windows":
+    if self.client_os == "Windows":
       # Handle the case where a path is specified without the drive letter by
       # collecting systemroot and making sure we report the disk usage for it.
       for path in self.args.path_list:
@@ -1078,7 +1084,7 @@ class DiskVolumeInfoMixin(object):
 
   def CollectVolumeInfo(self, responses):
     del responses
-    if self.state.system == "Windows":
+    if self.client_os == "Windows":
       # No dependencies for WMI
       deps = rdf_artifacts.ArtifactCollectorFlowArgs.Dependency.IGNORE_DEPS
       self.CallFlow(

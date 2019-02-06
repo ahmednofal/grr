@@ -1,14 +1,15 @@
 #!/usr/bin/env python
-# -*- mode: python; encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import os
 import tempfile
 
-from google.protobuf import text_format
-import unittest
+from absl.testing import absltest
 
+from google.protobuf import text_format
 from grr_response_core.lib import flags
 from grr_response_core.lib import rdfvalue
 from grr_response_core.lib.rdfvalues import client_fs as rdf_client_fs
@@ -74,22 +75,14 @@ def MakeClient():
   return client
 
 
-class ObjectTest(unittest.TestCase):
+class ObjectTest(absltest.TestCase):
 
-  def testInvalidClientID(self):
-
-    # No id.
-    with self.assertRaises(ValueError):
-      rdf_objects.ClientSnapshot()
-
-    # One digit short.
-    with self.assertRaises(ValueError):
-      rdf_objects.ClientSnapshot(client_id="C.000000000000000")
-
-    with self.assertRaises(ValueError):
-      rdf_objects.ClientSnapshot(client_id="not a real id")
-
-    rdf_objects.ClientSnapshot(client_id="C.0000000000000000")
+  def testDeserializeClientSnapshot(self):
+    snapshot = rdf_objects.ClientSnapshot(client_id="C.1234567890123456")
+    client_info = rdf_objects.ClientFullInfo(last_snapshot=snapshot)
+    deserialized = rdf_objects.ClientFullInfo.FromSerializedString(
+        client_info.SerializeToString())
+    self.assertEqual(deserialized.last_snapshot, snapshot)
 
   def testClientBasics(self):
     client = MakeClient()
@@ -100,8 +93,8 @@ class ObjectTest(unittest.TestCase):
 
   def testClientAddresses(self):
     client = MakeClient()
-    self.assertEqual(
-        sorted(client.GetIPAddresses()), ["8.8.8.8", "fe80:102:300::"])
+    self.assertCountEqual(client.GetIPAddresses(),
+                          ["8.8.8.8", "fe80:102:300::"])
     self.assertEqual(client.GetMacAddresses(), ["010203040102030401020304"])
 
   def testClientSummary(self):
@@ -110,8 +103,7 @@ class ObjectTest(unittest.TestCase):
     self.assertEqual(summary.system_info.fqdn, "test123.examples.com")
     self.assertEqual(summary.cloud_instance_id,
                      "us-central1-a/myproject/1771384456894610289")
-    self.assertEqual(
-        sorted([u.username for u in summary.users]), ["fred", "joe"])
+    self.assertCountEqual([u.username for u in summary.users], ["fred", "joe"])
 
   def testClientSummaryTimestamp(self):
     client = MakeClient()
@@ -155,7 +147,7 @@ class PathIDTest(rdf_test_base.RDFValueTestMixin, test_lib.GRRBaseTest):
     self.assertEqual(string, "PathID('{}')".format("0" * 64))
 
 
-class PathInfoTest(unittest.TestCase):
+class PathInfoTest(absltest.TestCase):
 
   def testValidateEmptyComponent(self):
     with self.assertRaisesRegexp(ValueError, "Empty"):
@@ -310,14 +302,14 @@ class PathInfoTest(unittest.TestCase):
     path_info = rdf_objects.PathInfo(components=["foo"])
 
     results = list(path_info.GetAncestors())
-    self.assertEqual(len(results), 1)
+    self.assertLen(results, 1)
     self.assertEqual(results[0].components, [])
 
   def testGetAncestorsOrder(self):
     path_info = rdf_objects.PathInfo(components=["foo", "bar", "baz", "quux"])
 
     results = list(path_info.GetAncestors())
-    self.assertEqual(len(results), 4)
+    self.assertLen(results, 4)
     self.assertEqual(results[0].components, ["foo", "bar", "baz"])
     self.assertEqual(results[1].components, ["foo", "bar"])
     self.assertEqual(results[2].components, ["foo"])
@@ -414,7 +406,7 @@ class PathInfoTest(unittest.TestCase):
                      rdfvalue.RDFDatetime.FromHumanReadable("2018-01-01"))
 
 
-class CategorizedPathTest(unittest.TestCase):
+class CategorizedPathTest(absltest.TestCase):
 
   def testParseOs(self):
     path_type, components = rdf_objects.ParseCategorizedPath("fs/os/foo/bar")
@@ -485,7 +477,7 @@ class CategorizedPathTest(unittest.TestCase):
       rdf_objects.ToCategorizedPath("MEMORY", ("foo", "bar"))
 
 
-class VfsFileReferenceTest(unittest.TestCase):
+class VfsFileReferenceTest(absltest.TestCase):
 
   def setUp(self):
     super(VfsFileReferenceTest, self).setUp()

@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
+from absl.testing import absltest
 import mock
 
-import unittest
 from grr_response_core.lib import flags
 from grr_response_core.lib import parser
 from grr_response_core.lib import parsers
@@ -43,10 +44,10 @@ class WithAnnotationTestMixin(object):
 
   # TODO(hanuszczak): This could actually be moved to some base test class.
   def assertTypesEqual(self, instances, types):
-    self.assertItemsEqual(map(type, instances), types)
+    self.assertCountEqual(map(type, instances), types)
 
 
-class WithParserTest(WithAnnotationTestMixin, unittest.TestCase):
+class WithParserTest(WithAnnotationTestMixin, absltest.TestCase):
 
   def testSingleParser(self):
 
@@ -84,7 +85,7 @@ class WithParserTest(WithAnnotationTestMixin, unittest.TestCase):
     self.assertTypesEqual(SingleFileParsers(), [])
 
 
-class WithAllParsersTest(WithAnnotationTestMixin, unittest.TestCase):
+class WithAllParsersTest(WithAnnotationTestMixin, absltest.TestCase):
 
   def testWithCustomRegisterMethod(self):
 

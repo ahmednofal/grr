@@ -1,27 +1,25 @@
 #!/usr/bin/env python
 """This module contains regression tests for user API handlers."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 from grr_response_core.lib import flags
-from grr_response_core.lib import rdfvalue
 
 from grr_response_server import aff4
 from grr_response_server import data_store
-from grr_response_server import flow
 from grr_response_server import notification
 from grr_response_server.aff4_objects import cronjobs as aff4_cronjobs
 from grr_response_server.aff4_objects import users as aff4_users
 from grr_response_server.flows.general import discovery
 from grr_response_server.gui import api_regression_test_lib
 from grr_response_server.gui.api_plugins import user as user_plugin
-from grr_response_server.hunts import implementation
-from grr_response_server.hunts import standard
 from grr_response_server.rdfvalues import cronjobs as rdf_cronjobs
 from grr_response_server.rdfvalues import hunts as rdf_hunts
 from grr_response_server.rdfvalues import objects as rdf_objects
 
 from grr.test_lib import acl_test_lib
+from grr.test_lib import flow_test_lib
 from grr.test_lib import hunt_test_lib
 from grr.test_lib import test_lib
 
@@ -38,12 +36,13 @@ class ApiGetClientApprovalHandlerRegressionTest(
       self.CreateAdminUser(u"approver")
 
       clients = self.SetupClients(2)
-      for client_id in clients:
-        # Delete the certificate as it's being regenerated every time the
-        # client is created.
-        with aff4.FACTORY.Open(
-            client_id, mode="rw", token=self.token) as grr_client:
-          grr_client.DeleteAttribute(grr_client.Schema.CERT)
+      if data_store.AFF4Enabled():
+        for client_id in clients:
+          # Delete the certificate as it's being regenerated every time the
+          # client is created.
+          with aff4.FACTORY.Open(
+              client_id, mode="rw", token=self.token) as grr_client:
+            grr_client.DeleteAttribute(grr_client.Schema.CERT)
 
     with test_lib.FakeTime(44):
       approval1_id = self.RequestClientApproval(
@@ -95,11 +94,12 @@ class ApiGrantClientApprovalHandlerRegressionTest(
       self.CreateAdminUser(u"requestor")
 
       client_id = self.SetupClient(0)
-      # Delete the certificate as it's being regenerated every time the
-      # client is created.
-      with aff4.FACTORY.Open(
-          client_id, mode="rw", token=self.token) as grr_client:
-        grr_client.DeleteAttribute(grr_client.Schema.CERT)
+      if data_store.AFF4Enabled():
+        # Delete the certificate as it's being regenerated every time the
+        # client is created.
+        with aff4.FACTORY.Open(
+            client_id, mode="rw", token=self.token) as grr_client:
+          grr_client.DeleteAttribute(grr_client.Schema.CERT)
 
     with test_lib.FakeTime(44):
       approval_id = self.RequestClientApproval(
@@ -131,11 +131,12 @@ class ApiCreateClientApprovalHandlerRegressionTest(
 
       client_id = self.SetupClient(0)
 
-      # Delete the certificate as it's being regenerated every time the
-      # client is created.
-      with aff4.FACTORY.Open(
-          client_id, mode="rw", token=self.token) as grr_client:
-        grr_client.DeleteAttribute(grr_client.Schema.CERT)
+      if data_store.AFF4Enabled():
+        # Delete the certificate as it's being regenerated every time the
+        # client is created.
+        with aff4.FACTORY.Open(
+            client_id, mode="rw", token=self.token) as grr_client:
+          grr_client.DeleteAttribute(grr_client.Schema.CERT)
 
     def ReplaceApprovalId():
       approvals = self.ListClientApprovals()
@@ -165,12 +166,13 @@ class ApiListClientApprovalsHandlerRegressionTest(
       self.CreateAdminUser(u"approver")
 
       clients = self.SetupClients(2)
-      for client_id in clients:
-        # Delete the certificate as it's being regenerated every time the
-        # client is created.
-        with aff4.FACTORY.Open(
-            client_id, mode="rw", token=self.token) as grr_client:
-          grr_client.DeleteAttribute(grr_client.Schema.CERT)
+      if data_store.AFF4Enabled():
+        for client_id in clients:
+          # Delete the certificate as it's being regenerated every time the
+          # client is created.
+          with aff4.FACTORY.Open(
+              client_id, mode="rw", token=self.token) as grr_client:
+            grr_client.DeleteAttribute(grr_client.Schema.CERT)
 
     with test_lib.FakeTime(44):
       approval1_id = self.RequestClientApproval(
@@ -223,11 +225,8 @@ class ApiGetHuntApprovalHandlerRegressionTest(
     with test_lib.FakeTime(42):
       self.CreateAdminUser(u"approver")
 
-      with self.CreateHunt(description="hunt1") as hunt_obj:
-        hunt1_id = hunt_obj.urn.Basename()
-
-      with self.CreateHunt(description="hunt2") as hunt_obj:
-        hunt2_id = hunt_obj.urn.Basename()
+      hunt1_id = self.StartHunt(description="hunt1").Basename()
+      hunt2_id = self.StartHunt(description="hunt2").Basename()
 
     with test_lib.FakeTime(44):
       approval1_id = self.RequestHuntApproval(
@@ -250,7 +249,7 @@ class ApiGetHuntApprovalHandlerRegressionTest(
               approval_id=approval1_id),
           replace={
               hunt1_id: "H:123456",
-              approval1_id: "approval:111111"
+              approval1_id: "approval:111111",
           })
       self.Check(
           "GetHuntApproval",
@@ -267,15 +266,11 @@ class ApiGetHuntApprovalHandlerRegressionTest(
     with test_lib.FakeTime(42):
       self.CreateAdminUser(u"approver")
 
-      with self.CreateHunt(description="original hunt") as hunt_obj:
-        hunt1_urn = hunt_obj.urn
-        hunt1_id = hunt1_urn.Basename()
+      hunt1_id = self.StartHunt(description="original hunt").Basename()
 
       ref = rdf_hunts.FlowLikeObjectReference.FromHuntId(hunt1_id)
-      with self.CreateHunt(
-          description="copied hunt", original_object=ref) as hunt_obj:
-        hunt2_urn = hunt_obj.urn
-        hunt2_id = hunt2_urn.Basename()
+      hunt2_id = self.StartHunt(
+          description="copied hunt", original_object=ref).Basename()
 
     with test_lib.FakeTime(44):
       approval_id = self.RequestHuntApproval(
@@ -299,18 +294,16 @@ class ApiGetHuntApprovalHandlerRegressionTest(
       self.CreateAdminUser(u"approver")
 
       client_urn = self.SetupClient(0)
-      flow_urn = flow.StartAFF4Flow(
-          flow_name=discovery.Interrogate.__name__,
+      flow_id = flow_test_lib.StartFlow(
+          discovery.Interrogate,
           client_id=client_urn,
-          token=self.token)
+          creator=self.token.username,
+          notify_to_user=True)
 
       ref = rdf_hunts.FlowLikeObjectReference.FromFlowIdAndClientId(
-          flow_urn.Basename(), client_urn.Basename())
-      with self.CreateHunt(
-          description="hunt started from flow",
-          original_object=ref) as hunt_obj:
-        hunt_urn = hunt_obj.urn
-        hunt_id = hunt_urn.Basename()
+          flow_id, client_urn.Basename())
+      hunt_id = self.StartHunt(
+          description="hunt started from flow", original_object=ref).Basename()
 
     with test_lib.FakeTime(44):
       approval_id = self.RequestHuntApproval(
@@ -324,9 +317,16 @@ class ApiGetHuntApprovalHandlerRegressionTest(
               hunt_id=hunt_id,
               approval_id=approval_id),
           replace={
-              flow_urn.Basename(): "F:112233",
-              hunt_id: "H:667788",
-              approval_id: "approval:444444"
+              # TODO(user): remove this replacement as soon as REL_DB
+              # migration is done.
+              "%s/%s" % (client_urn.Basename(), flow_id):
+                  "%s/flows/F:112233" % (client_urn.Basename()),
+              flow_id:
+                  "F:112233",
+              hunt_id:
+                  "H:667788",
+              approval_id:
+                  "approval:444444"
           })
 
   def Run(self):
@@ -346,10 +346,7 @@ class ApiGrantHuntApprovalHandlerRegressionTest(
   def Run(self):
     with test_lib.FakeTime(42):
       self.CreateAdminUser(u"requestor")
-
-      with self.CreateHunt(description="a hunt") as hunt_obj:
-        hunt_urn = hunt_obj.urn
-        hunt_id = hunt_urn.Basename()
+      hunt_id = self.StartHunt(description="a hunt").Basename()
 
     with test_lib.FakeTime(44):
       approval_id = self.RequestHuntApproval(
@@ -380,9 +377,7 @@ class ApiCreateHuntApprovalHandlerRegressionTest(
   def Run(self):
     with test_lib.FakeTime(42):
       self.CreateUser(u"approver")
-
-      with self.CreateHunt(description="foo") as hunt_obj:
-        hunt_id = hunt_obj.urn.Basename()
+      hunt_id = self.StartHunt(description="foo").Basename()
 
     def ReplaceHuntAndApprovalIds():
       approvals = self.ListHuntApprovals()
@@ -401,7 +396,8 @@ class ApiCreateHuntApprovalHandlerRegressionTest(
 
 
 class ApiListHuntApprovalsHandlerRegressionTest(
-    acl_test_lib.AclTestMixin, api_regression_test_lib.ApiRegressionTest):
+    hunt_test_lib.StandardHuntTestMixin,
+    api_regression_test_lib.ApiRegressionTest):
   """Regression test for ApiListClientApprovalsHandlerTest."""
 
   api_method = "ListHuntApprovals"
@@ -410,13 +406,12 @@ class ApiListHuntApprovalsHandlerRegressionTest(
   def Run(self):
     with test_lib.FakeTime(42):
       self.CreateAdminUser(u"approver")
-
-      hunt = implementation.StartHunt(
-          hunt_name=standard.GenericHunt.__name__, token=self.token)
+      hunt_urn = self.StartHunt(
+          description="foo", token=self.token, paused=True)
 
     with test_lib.FakeTime(43):
       approval_id = self.RequestHuntApproval(
-          hunt.urn.Basename(),
+          hunt_urn.Basename(),
           reason=self.token.reason,
           approver=u"approver",
           requestor=self.token.username)
@@ -425,7 +420,7 @@ class ApiListHuntApprovalsHandlerRegressionTest(
       self.Check(
           "ListHuntApprovals",
           replace={
-              hunt.urn.Basename(): "H:123456",
+              hunt_urn.Basename(): "H:123456",
               approval_id: "approval:112233"
           })
 
@@ -560,12 +555,13 @@ class ApiGetOwnGrrUserHandlerRegresstionTest(
 
   def Run(self):
     user_urn = aff4.ROOT_URN.Add("users").Add(self.token.username)
-    with test_lib.FakeTime(42):
-      with aff4.FACTORY.Create(
-          user_urn, aff4_type=aff4_users.GRRUser, mode="w",
-          token=self.token) as user_fd:
-        user_fd.Set(user_fd.Schema.GUI_SETTINGS,
-                    aff4_users.GUISettings(mode="ADVANCED", canary_mode=True))
+    if data_store.AFF4Enabled():
+      with test_lib.FakeTime(42):
+        with aff4.FACTORY.Create(
+            user_urn, aff4_type=aff4_users.GRRUser, mode="w",
+            token=self.token) as user_fd:
+          user_fd.Set(user_fd.Schema.GUI_SETTINGS,
+                      aff4_users.GUISettings(mode="ADVANCED", canary_mode=True))
 
     # Setup relational DB.
     data_store.REL_DB.WriteGRRUser(
@@ -574,8 +570,9 @@ class ApiGetOwnGrrUserHandlerRegresstionTest(
     self.Check("GetGrrUser")
 
     # Make user an admin and do yet another request.
-    with aff4.FACTORY.Open(user_urn, mode="rw", token=self.token) as user_fd:
-      user_fd.SetLabel("admin", owner="GRR")
+    if data_store.AFF4Enabled():
+      with aff4.FACTORY.Open(user_urn, mode="rw", token=self.token) as user_fd:
+        user_fd.SetLabel("admin", owner="GRR")
     data_store.REL_DB.WriteGRRUser(
         username=self.token.username,
         user_type=rdf_objects.GRRUser.UserType.USER_TYPE_ADMIN)
@@ -677,55 +674,29 @@ class ApiListAndResetUserNotificationsHandlerRegressionTest(
           args=user_plugin.ApiListAndResetUserNotificationsArgs(filter="other"))
 
 
-class ApiListPendingGlobalNotificationsHandlerRegressionTest(
-    api_regression_test_lib.ApiRegressionTest):
-  """Regression test for ApiListPendingGlobalNotificationsHandler."""
+class ApiListApproverSuggestionsHandlerRegressionTest(
+    acl_test_lib.AclTestMixin, api_regression_test_lib.ApiRegressionTest):
+  """Regression test for ApiListApproverSuggestionsHandler."""
 
-  api_method = "ListPendingGlobalNotifications"
-  handler = user_plugin.ApiListPendingGlobalNotificationsHandler
-
-  # Global notifications are only shown in a certain time interval. By default,
-  # this is from the moment they are created until two weeks later. Create
-  # a notification that is too old to be returned and two valid ones.
-  NOW = rdfvalue.RDFDatetime.Now()
-  TIME_TOO_EARLY = NOW - rdfvalue.Duration("4w")
-  TIME_0 = NOW - rdfvalue.Duration("12h")
-  TIME_1 = NOW - rdfvalue.Duration("1h")
+  api_method = "ListApproverSuggestions"
+  handler = user_plugin.ApiListApproverSuggestionsHandler
 
   def Run(self):
-    with aff4.FACTORY.Create(
-        aff4_users.GlobalNotificationStorage.DEFAULT_PATH,
-        aff4_type=aff4_users.GlobalNotificationStorage,
-        mode="rw",
-        token=self.token) as storage:
-      storage.AddNotification(
-          aff4_users.GlobalNotification(
-              type=aff4_users.GlobalNotification.Type.ERROR,
-              header="Oh no, we're doomed!",
-              content="Houston, Houston, we have a prob...",
-              link="http://www.google.com",
-              show_from=self.TIME_0))
+    self.CreateUser("sanchezmorty")
+    self.CreateUser("sanchezrick")
+    self.CreateUser("sanchezsummer")
 
-      storage.AddNotification(
-          aff4_users.GlobalNotification(
-              type=aff4_users.GlobalNotification.Type.INFO,
-              header="Nothing to worry about!",
-              link="http://www.google.com",
-              show_from=self.TIME_1))
+    # Check 0 suggestions, since empty repeated field serialization varies with
+    # api version.
+    self.Check(
+        "ListApproverSuggestions",
+        args=user_plugin.ApiListApproverSuggestionsArgs(username_query="foo"))
 
-      storage.AddNotification(
-          aff4_users.GlobalNotification(
-              type=aff4_users.GlobalNotification.Type.WARNING,
-              header="Nothing to worry, we won't see this!",
-              link="http://www.google.com",
-              show_from=self.TIME_TOO_EARLY))
-
-    replace = {
-        ("%d" % self.TIME_0.AsMicrosecondsSinceEpoch()): "0",
-        ("%d" % self.TIME_1.AsMicrosecondsSinceEpoch()): "0"
-    }
-
-    self.Check("ListPendingGlobalNotifications", replace=replace)
+    # Check formatting of multiple suggestions.
+    self.Check(
+        "ListApproverSuggestions",
+        args=user_plugin.ApiListApproverSuggestionsArgs(
+            username_query="sanchez"))
 
 
 def main(argv):

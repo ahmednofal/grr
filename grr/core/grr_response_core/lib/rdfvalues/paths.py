@@ -228,7 +228,7 @@ class PathSpec(rdf_structs.RDFProtoStruct):
     dev = first_component.path
     if first_component.HasField("offset"):
       # We divide here just to get prettier numbers in the GUI
-      dev += ":" + str(first_component.offset // 512)
+      dev += ":{}".format(first_component.offset // 512)
 
     if (len(self) > 1 and first_component.pathtype == PathSpec.PathType.OS and
         self[1].pathtype == PathSpec.PathType.TSK):
@@ -250,7 +250,7 @@ class PathSpec(rdf_structs.RDFProtoStruct):
       # reversible since we always use the PathSpec when accessing files on the
       # client.
       if p.HasField("offset"):
-        component += ":" + str(p.offset // 512)
+        component += ":{}".format(p.offset // 512)
 
       # Support ADS names.
       if p.HasField("stream_name"):
@@ -283,11 +283,8 @@ class GlobExpression(rdfvalue.RDFString):
     if len(self.RECURSION_REGEX.findall(self._value)) > 1:
       raise ValueError("Only one ** is permitted per path: %s." % self._value)
 
-  def Interpolate(self, knowledge_base=None, client=None):
-    if client is not None:
-      kb = client.Get(client.Schema.KNOWLEDGE_BASE)
-    else:
-      kb = knowledge_base
+  def Interpolate(self, knowledge_base=None):
+    kb = knowledge_base
     patterns = artifact_utils.InterpolateKbAttributes(self._value, kb)
 
     for pattern in patterns:

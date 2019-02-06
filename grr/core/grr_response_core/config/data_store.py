@@ -2,6 +2,7 @@
 """Configuration parameters for the data stores."""
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 from grr_response_core.lib import config_lib
@@ -23,6 +24,13 @@ config_lib.DEFINE_bool(
     "Database.useForReads", False,
     "Use relational database for reading as well as for writing.")
 
+config_lib.DEFINE_bool("Database.useForReads.audit", False,
+                       "Use relational database for reading audit logs.")
+
+config_lib.DEFINE_bool(
+    "Database.useForReads.artifacts", False,
+    "Enable reading artifact data from the relational database.")
+
 config_lib.DEFINE_bool(
     "Database.useForReads.message_handlers", False,
     "Enable message handlers using the relational database.")
@@ -30,13 +38,20 @@ config_lib.DEFINE_bool(
 config_lib.DEFINE_bool("Database.useForReads.cronjobs", False,
                        "Enable storing cronjobs in the relational database.")
 
-config_lib.DEFINE_bool("Database.useForReads.flows", False,
+# Previously `Database.useForReads.flows`. This has been changed to allow
+# testing relational flows separately and prevent confusion in the usage of
+# RelationalDBReadEnabled(). This flag should not be True, when
+# Database.useForReads is False.
+config_lib.DEFINE_bool("Database.useRelationalFlows", False,
                        "Enable storing flows in the relational database.")
 
 config_lib.DEFINE_bool(
     "Database.useForReads.client_messages", False,
     "Enable storing client messages in the relational "
     "database.")
+
+config_lib.DEFINE_bool("Database.useForReads.client_stats", False,
+                       "Use relational database for reading ClientStats.")
 
 config_lib.DEFINE_bool("Database.useForReads.foreman", False,
                        "Enable the foreman using the relational database.")
@@ -47,6 +62,21 @@ config_lib.DEFINE_bool("Database.useForReads.vfs", False,
 config_lib.DEFINE_bool(
     "Database.useForReads.filestore", False,
     "Use relational database for reading files from filestore.")
+
+config_lib.DEFINE_bool("Database.useForReads.stats", False,
+                       "Read server metrics from the relational database.")
+
+config_lib.DEFINE_bool("Database.useForReads.signed_binaries", False,
+                       "Read signed binary data from the relational database.")
+
+config_lib.DEFINE_bool("Database.useForReads.client_reports", False,
+                       "Read client-report data from the relational database.")
+
+config_lib.DEFINE_bool("Database.useForReads.hunts", False,
+                       "Read hunts from the relational database by default.")
+
+config_lib.DEFINE_bool("Database.aff4_enabled", True,
+                       "Enables reading/writing to the legacy data store.")
 
 DATASTORE_PATHING = [
     r"%{(?P<path>files/hash/generic/sha256/...).*}",
@@ -104,64 +134,103 @@ config_lib.DEFINE_integer(
     help=("Number of file handles kept in the SQLite "
           "data_store cache."))
 
-# MySQLAdvanced data store.
+# MySQL configuration (relational database and legacy MySQLAdvancedDataStore).
 config_lib.DEFINE_string("Mysql.host", "localhost",
                          "The MySQL server hostname.")
 
 config_lib.DEFINE_integer("Mysql.port", 0, "The MySQL server port.")
 
 config_lib.DEFINE_string(
-    "Mysql.database_name", default="grr", help="Name of the database to use.")
-
-config_lib.DEFINE_string(
-    "Mysql.table_name", default="aff4", help="Name of the table to use.")
-
-config_lib.DEFINE_string(
-    "Mysql.database_username",
+    "Mysql.username",
     default="root",
     help="The user to connect to the database.")
 
 config_lib.DEFINE_string(
-    "Mysql.database_password",
+    "Mysql.password",
     default="",
     help="The password to connect to the database.")
 
+config_lib.DEFINE_string(
+    "Mysql.database", default="grr_db", help="Name of the database to use.")
+
 config_lib.DEFINE_integer(
     "Mysql.conn_pool_max",
-    10,
-    help=("The maximum number of open connections to keep"
-          " available in the pool."))
+    default=10,
+    help="The maximum number of open connections to keep available in the pool."
+)
+
+# Support for MySQL SSL connections.
+
+config_lib.DEFINE_string(
+    "Mysql.client_key_path",
+    default="",
+    help="The path name of the client private key file.")
+
+config_lib.DEFINE_string(
+    "Mysql.client_cert_path",
+    default="",
+    help="The path name of the client public key certificate file.")
+
+config_lib.DEFINE_string(
+    "Mysql.ca_cert_path",
+    default="",
+    help="The path name of the Certificate Authority (CA) certificate file. "
+    "This option, if used, must specify the same certificate used by the "
+    "server.")
+
+# Legacy MySQLAdvancedDataStore used as AFF4 backend.
+config_lib.DEFINE_string(
+    "Mysql.database_name",
+    default="grr",
+    help="Name of the database to use for legacy MySQL-AFF4.")
+
+config_lib.DEFINE_string(
+    "Mysql.table_name",
+    default="aff4",
+    help="Name of the table to use for legacy MySQL-AFF4.")
+
+config_lib.DEFINE_string(
+    "Mysql.database_username",
+    default="root",
+    help="The user to connect to the database for legacy MySQL-AFF4.")
+
+config_lib.DEFINE_string(
+    "Mysql.database_password",
+    default="",
+    help="The password to connect to the database for legacy MySQL-AFF4.")
 
 config_lib.DEFINE_integer(
     "Mysql.conn_pool_min",
     5,
-    help=("The minimum number of open connections to keep"
-          " available in the pool."))
+    help="The minimum number of open connections to keep"
+    " available in the pool for legacy MySQL-AFF4.")
 
 config_lib.DEFINE_integer(
     "Mysql.max_connect_wait",
     600,
-    help=("Total number of seconds we wait for a "
-          "connection before failing (0 means we wait "
-          "forever)."))
+    help="Total number of seconds we wait for a "
+    "connection before failing (0 means we wait "
+    "forever) for legacy MySQL-AFF4..")
 
 config_lib.DEFINE_integer(
     "Mysql.max_query_size",
     8 * 1024 * 1024,
-    help=("Maximum query size (in bytes). Queries sent by GRR to MySQL "
-          "may be slightly bigger than the specified maximum. This "
-          "value has to be smaller than MySQL's max_allowed_packet "
-          "configuration value."))
+    help="Maximum query size (in bytes). Queries sent by GRR to MySQL "
+    "may be slightly bigger than the specified maximum. This "
+    "value has to be smaller than MySQL's max_allowed_packet "
+    "configuration value (for legacy MySQL-AFF4).")
 
 config_lib.DEFINE_integer(
     "Mysql.max_values_per_query",
     10000,
-    help=("Maximum number of subjects touched by a single query."))
+    help="Maximum number of subjects touched by a single query "
+    "for legacy MySQL-AFF4.")
 
 config_lib.DEFINE_integer(
     "Mysql.max_retries",
     10,
-    help="Maximum number of retries (happens in case a query fails).")
+    help="Maximum number of retries (happens in case a query fails) "
+    "for legacy MySQL-AFF4.")
 
 # CloudBigTable data store.
 config_lib.DEFINE_string(

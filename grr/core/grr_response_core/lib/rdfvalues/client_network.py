@@ -1,17 +1,22 @@
 #!/usr/bin/env python
 """Network-related client rdfvalues."""
-
 from __future__ import absolute_import
+from __future__ import division
 
-import socket
+from __future__ import unicode_literals
 
-import ipaddr
+from future.builtins import str
 
-from grr_response_core.lib import ipv6_utils
+import ipaddress
+
+from typing import Optional
+from typing import Text
+from typing import Union
+
 from grr_response_core.lib import rdfvalue
-
 from grr_response_core.lib.rdfvalues import protodict as rdf_protodict
 from grr_response_core.lib.rdfvalues import structs as rdf_structs
+from grr_response_core.lib.util import precondition
 
 from grr_response_proto import jobs_pb2
 from grr_response_proto import sysinfo_pb2
@@ -34,6 +39,9 @@ class Connections(rdf_protodict.RDFValueArray):
   rdf_type = NetworkConnection
 
 
+IPAddress = Union[ipaddress.IPv4Address, ipaddress.IPv6Address]
+
+
 class NetworkAddress(rdf_structs.RDFProtoStruct):
   """A network address.
 
@@ -48,42 +56,41 @@ class NetworkAddress(rdf_structs.RDFProtoStruct):
 
   @property
   def human_readable_address(self):
-    if self.human_readable:
-      return self.human_readable
+    addr = self.AsIPAddr()
+    if addr is not None:
+      return str(addr)
     else:
-      try:
-        if self.address_type == NetworkAddress.Family.INET:
-          return ipv6_utils.InetNtoP(socket.AF_INET, str(self.packed_bytes))
-        else:
-          return ipv6_utils.InetNtoP(socket.AF_INET6, str(self.packed_bytes))
-      except ValueError as e:
-        return str(e)
+      return ""
 
   @human_readable_address.setter
   def human_readable_address(self, value):
-    if ":" in value:
-      # IPv6
+    precondition.AssertType(value, Text)
+    addr = ipaddress.ip_address(value)
+
+    if isinstance(addr, ipaddress.IPv6Address):
       self.address_type = NetworkAddress.Family.INET6
-      self.packed_bytes = ipv6_utils.InetPtoN(socket.AF_INET6, value)
-    else:
-      # IPv4
+    elif isinstance(addr, ipaddress.IPv4Address):
       self.address_type = NetworkAddress.Family.INET
-      self.packed_bytes = ipv6_utils.InetPtoN(socket.AF_INET, value)
+    else:
+      message = "IP address parsed to an unexpected value: {}".format(addr)
+      raise AssertionError(message)
+
+    self.packed_bytes = addr.packed
 
   def AsIPAddr(self):
-    """Returns the ip as an ipaddr.IPADdress object.
+    """Returns the IP as an `IPAddress` object (if packed bytes are defined)."""
+    if self.packed_bytes is None:
+      return None
 
-    Raises a ValueError if the stored data does not represent a valid ip.
-    """
-    try:
-      if self.address_type == NetworkAddress.Family.INET:
-        return ipaddr.IPv4Address(self.human_readable_address)
-      elif self.address_type == NetworkAddress.Family.INET6:
-        return ipaddr.IPv6Address(self.human_readable_address)
-      else:
-        raise ValueError("Unknown address type: %d" % self.address_type)
-    except ipaddr.AddressValueError:
-      raise ValueError("Invalid IP address: %s" % self.human_readable_address)
+    packed_bytes = self.packed_bytes.AsBytes()
+
+    if self.address_type == NetworkAddress.Family.INET:
+      return ipaddress.IPv4Address(packed_bytes)
+    if self.address_type == NetworkAddress.Family.INET6:
+      return ipaddress.IPv6Address(packed_bytes)
+
+    message = "IP address has invalid type: {}".format(self.address_type)
+    raise ValueError(message)
 
 
 class DNSClientConfiguration(rdf_structs.RDFProtoStruct):
@@ -116,15 +123,10 @@ class Interface(rdf_structs.RDFProtoStruct):
     """Return a list of IP addresses."""
     results = []
     for address in self.addresses:
-      if address.human_readable:
-        results.append(address.human_readable)
-      else:
-        if address.address_type == NetworkAddress.Family.INET:
-          results.append(
-              ipv6_utils.InetNtoP(socket.AF_INET, str(address.packed_bytes)))
-        else:
-          results.append(
-              ipv6_utils.InetNtoP(socket.AF_INET6, str(address.packed_bytes)))
+      human_readable_address = address.human_readable_address
+      if human_readable_address is not None:
+        results.append(human_readable_address)
+
     return results
 
 

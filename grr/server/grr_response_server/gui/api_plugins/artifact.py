@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """API handlers for accessing artifacts."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 from grr_response_core.lib import parser
@@ -84,8 +85,11 @@ class ApiUploadArtifactHandler(api_call_handler_base.ApiCallHandler):
   args_type = ApiUploadArtifactArgs
 
   def Handle(self, args, token=None):
+    # TODO: Make `ApiUploadArtifactArgs` be a unicode string rather
+    # than byte string.
+    content = args.artifact.decode("utf-8")
     artifact.UploadArtifactYamlFile(
-        args.artifact, overwrite=True, overwrite_system_artifacts=False)
+        content, overwrite=True, overwrite_system_artifacts=False)
 
 
 class ApiDeleteArtifactsArgs(rdf_structs.RDFProtoStruct):

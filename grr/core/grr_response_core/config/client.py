@@ -2,6 +2,7 @@
 """Configuration parameters for the client."""
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 from grr_response_core.lib import config_lib
@@ -51,11 +52,6 @@ config_lib.DEFINE_string(
     default=r"%(SystemRoot|env)\\System32\\%(name)\\%(Template.version_string)",
     help="Where the client binaries are installed.")
 
-config_lib.DEFINE_string(
-    name="Client.rekall_profile_cache_path",
-    default=r"%(Client.install_path)\\rekall_profiles",
-    help="Where GRR stores cached Rekall profiles needed for memory analysis")
-
 config_lib.DEFINE_list(
     name="Client.server_urls", default=[], help="Base URL for client control.")
 
@@ -68,16 +64,18 @@ config_lib.DEFINE_integer("Client.http_timeout", 100,
                           "Timeout for HTTP requests.")
 
 config_lib.DEFINE_string("Client.plist_path",
-                         "/Library/LaunchDaemons/com.google.code.grrd.plist",
+                         "/Library/LaunchDaemons/%(Client.plist_filename)",
                          "Location of our launchctl plist.")
 
-config_lib.DEFINE_string("Client.plist_filename", None,
+config_lib.DEFINE_string("Client.plist_filename", "%(Client.plist_label).plist",
                          "Filename of launchctl plist.")
 
-config_lib.DEFINE_string("Client.plist_label", None,
-                         "Identifier label for launchd")
+config_lib.DEFINE_string(
+    "Client.plist_label",
+    "%(Client.plist_label_prefix).google.code.%(Client.name)",
+    "Identifier label for launchd")
 
-config_lib.DEFINE_string("Client.plist_label_prefix", None,
+config_lib.DEFINE_string("Client.plist_label_prefix", "com",
                          "Domain for launchd label.")
 
 config_lib.DEFINE_float("Client.poll_min", 0.2,
@@ -140,13 +138,13 @@ config_lib.DEFINE_list(
 # Windows client specific options.
 config_lib.DEFINE_string(
     "Client.config_hive",
-    r"HKEY_LOCAL_MACHINE",
+    "HKEY_LOCAL_MACHINE",
     help="The registry hive where the client "
     "configuration will be stored.")
 
 config_lib.DEFINE_string(
     "Client.config_key",
-    r"Software\\GRR",
+    r"Software\\%(Client.name)",
     help="The registry key where  client configuration "
     "will be stored.")
 
@@ -186,11 +184,13 @@ config_lib.DEFINE_integer(
 # The following configuration options are defined here but are used in
 # the windows nanny code (grr/client/nanny/windows_nanny.h).
 config_lib.DEFINE_string(
-    "Nanny.child_binary", "GRR.exe", help="The location to the client binary.")
+    "Nanny.child_binary",
+    r"%(Client.install_path)\\%(Client.binary_name)",
+    help="The location to the client binary.")
 
 config_lib.DEFINE_string(
-    "Nanny.child_command_line",
-    "%(Nanny.child_binary)",
+    "Nanny.child_command_line", r"%(child_binary) --config "
+    r"\"%(Client.install_path)\\%(Client.binary_name).yaml\"",
     help="The command line to launch the client binary.")
 
 config_lib.DEFINE_string("Client.transaction_log_file",
@@ -198,18 +198,17 @@ config_lib.DEFINE_string("Client.transaction_log_file",
                          "The file where we write the nanny transaction log.")
 
 config_lib.DEFINE_string(
-    "Nanny.service_name", "GRR Service", help="The name of the nanny.")
+    "Nanny.service_name",
+    "%(Client.name) Monitor",
+    help="The name of the nanny.")
 
 config_lib.DEFINE_string(
     "Nanny.service_description",
-    "GRR Service",
+    "%(Client.name) Monitor Service",
     help="The description of the nanny service.")
 
-config_lib.DEFINE_string("Nanny.statusfile", "%(Logging.path)/nanny.status",
+config_lib.DEFINE_string("Nanny.statusfile", "/var/run/nanny.status",
                          "The file where we write the nanny status.")
-
-config_lib.DEFINE_string("Nanny.status", "",
-                         "The regkey where we write the nanny status.")
 
 config_lib.DEFINE_string(
     "Nanny.binary",

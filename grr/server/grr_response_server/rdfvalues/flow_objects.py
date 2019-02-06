@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 """Rdfvalues for flows."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import re
+from future.utils import iteritems
 
 from grr_response_core.lib import rdfvalue
 from grr_response_core.lib.rdfvalues import client as rdf_client
@@ -13,6 +15,7 @@ from grr_response_core.lib.rdfvalues import protodict as rdf_protodict
 from grr_response_core.lib.rdfvalues import structs as rdf_structs
 from grr_response_proto import flows_pb2
 from grr_response_proto import jobs_pb2
+from grr_response_server import output_plugin
 from grr_response_server.rdfvalues import flow_runner as rdf_flow_runner
 from grr_response_server.rdfvalues import objects as rdf_objects
 
@@ -38,17 +41,55 @@ class FlowResponse(FlowMessage, rdf_structs.RDFProtoStruct):
   protobuf = flows_pb2.FlowResponse
   rdf_deps = []
 
+  def AsLegacyGrrMessage(self):
+    return rdf_flows.GrrMessage(
+        session_id="%s/flows/%s" % (self.client_id, self.flow_id),
+        request_id=self.request_id,
+        response_id=self.response_id,
+        type=rdf_flows.GrrMessage.Type.MESSAGE,
+        timestamp=self.timestamp,
+        payload=self.payload)
+
 
 class FlowIterator(FlowMessage, rdf_structs.RDFProtoStruct):
   protobuf = flows_pb2.FlowIterator
   rdf_deps = []
 
+  def AsLegacyGrrMessage(self):
+    return rdf_flows.GrrMessage(
+        session_id="%s/flows/%s" % (self.client_id, self.flow_id),
+        request_id=self.request_id,
+        response_id=self.response_id,
+        type=rdf_flows.GrrMessage.Type.ITERATOR,
+        timestamp=self.timestamp)
+
 
 class FlowStatus(FlowMessage, rdf_structs.RDFProtoStruct):
+  """The flow status object."""
+
   protobuf = flows_pb2.FlowStatus
   rdf_deps = [
       rdf_client_stats.CpuSeconds,
   ]
+
+  def AsLegacyGrrMessage(self):
+    payload = rdf_flows.GrrStatus(status=inv_status_map[self.status])
+    if self.error_message:
+      payload.error_message = self.error_message
+    if self.backtrace:
+      payload.backtrace = self.backtrace
+    if self.cpu_time_used:
+      payload.cpu_time_used = self.cpu_time_used
+    if self.network_bytes_sent:
+      payload.network_bytes_sent = self.network_bytes_sent
+
+    return rdf_flows.GrrMessage(
+        session_id="%s/flows/%s" % (self.client_id, self.flow_id),
+        request_id=self.request_id,
+        response_id=self.response_id,
+        type="STATUS",
+        timestamp=self.timestamp,
+        payload=payload)
 
 
 class FlowResult(rdf_structs.RDFProtoStruct):
@@ -57,12 +98,40 @@ class FlowResult(rdf_structs.RDFProtoStruct):
       rdfvalue.RDFDatetime,
   ]
 
+  def AsLegacyGrrMessage(self):
+    return rdf_flows.GrrMessage(
+        session_id="%s/flows/%s" % (self.client_id, self.flow_id),
+        source=self.client_id,
+        type="MESSAGE",
+        timestamp=self.timestamp,
+        payload=self.payload)
+
 
 class FlowLogEntry(rdf_structs.RDFProtoStruct):
   protobuf = flows_pb2.FlowLogEntry
   rdf_deps = [
       rdfvalue.RDFDatetime,
   ]
+
+
+class FlowOutputPluginLogEntry(rdf_structs.RDFProtoStruct):
+  """Log entry of a flow output plugin."""
+
+  protobuf = flows_pb2.FlowOutputPluginLogEntry
+  rdf_deps = [
+      rdfvalue.RDFDatetime,
+  ]
+
+  def ToOutputPluginBatchProcessingStatus(self):
+    if self.log_entry_type == self.LogEntryType.LOG:
+      status = output_plugin.OutputPluginBatchProcessingStatus.Status.SUCCESS
+    elif self.log_entry_type == self.LogEntryType.ERROR:
+      status = output_plugin.OutputPluginBatchProcessingStatus.Status.ERROR
+    else:
+      raise ValueError("Unexpected log_entry_type: %r" % self.log_entry_type)
+
+    return output_plugin.OutputPluginBatchProcessingStatus(
+        summary=self.message, batch_index=0, batch_size=0, status=status)
 
 
 class Flow(rdf_structs.RDFProtoStruct):
@@ -80,11 +149,19 @@ class Flow(rdf_structs.RDFProtoStruct):
 
 
 def _ClientIDFromSessionID(session_id):
-  client_id = session_id.Split(3)[0]
-  if not re.match(r"C\.[0-9a-f]{16}", client_id):
-    raise ValueError(
-        "Unable to parse client id from session_id: %s" % session_id)
-  return client_id
+  """Extracts the client id from a session id."""
+
+  parts = session_id.Split(4)
+  client_id = parts[0]
+  if re.match(r"C\.[0-9a-f]{16}", client_id):
+    return client_id
+
+  # Maybe it's a legacy hunt id (aff4:/hunts/<hunt_id>/<client_id>/...
+  client_id = parts[2]
+  if re.match(r"C\.[0-9a-f]{16}", client_id):
+    return client_id
+
+  raise ValueError("Unable to parse client id from session_id: %s" % session_id)
 
 
 status_map = {
@@ -99,6 +176,8 @@ status_map = {
     rdf_flows.GrrStatus.ReturnedStatus.GENERIC_ERROR:
         FlowStatus.Status.ERROR,
 }
+
+inv_status_map = {v: k for k, v in iteritems(status_map)}
 
 
 def FlowResponseForLegacyResponse(legacy_msg):

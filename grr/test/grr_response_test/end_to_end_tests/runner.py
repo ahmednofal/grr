@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Helper for running end-to-end tests."""
 from __future__ import absolute_import
+from __future__ import division
 
 import collections
 import getpass
@@ -14,6 +15,7 @@ import unittest
 from future.moves.urllib import parse as urlparse
 from future.utils import iteritems
 from future.utils import itervalues
+from future.utils import string_types
 import requests
 
 from grr_api_client import api
@@ -63,9 +65,9 @@ class E2ETestRunner(object):
                max_test_attempts=3):
     if not api_endpoint:
       raise ValueError("GRR api_endpoint is required.")
-    if isinstance(whitelisted_tests, basestring):
+    if isinstance(whitelisted_tests, string_types):
       raise ValueError("whitelisted_tests should be a list.")
-    if isinstance(blacklisted_tests, basestring):
+    if isinstance(blacklisted_tests, string_types):
       raise ValueError("blacklisted_tests should be a list.")
     if max_test_attempts < 1:
       raise ValueError(
@@ -188,13 +190,13 @@ class E2ETestRunner(object):
     if not results:
       logging.warning("Failed to find any matching tests for %s.",
                       client.client_id)
-      return []
+      return {}, []
 
     # Log test results.
     report_lines = self._GenerateReportLines(client_id, results)
     for line in report_lines:
       logging.info(line)
-    return report_lines
+    return results, report_lines
 
   def _GetClient(self, client_id):
     """Fetches the given client from the GRR API.
@@ -219,7 +221,7 @@ class E2ETestRunner(object):
     while True:
       try:
         client = self._grr_api.Client(client_id).Get()
-        if client.data.os_info.system:
+        if client.data.os_info.system and client.data.knowledge_base.os:
           return client
         if DeadlineExceeded():
           raise E2ETestError("Timeout of %d seconds exceeded for %s." %

@@ -2,19 +2,22 @@
 """Tests for building and repacking clients."""
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import io
 import os
 
+
+from future.builtins import str
 import mock
-import yaml
 
 from grr_response_core import config
 from grr_response_core.lib import build
 from grr_response_core.lib import config_lib
 from grr_response_core.lib import flags
 from grr_response_core.lib.rdfvalues import client as rdf_client
+from grr_response_core.lib.util import yaml
 from grr.test_lib import test_lib
 
 
@@ -56,7 +59,7 @@ class BuildTests(test_lib.GRRBaseTest):
         builder.WriteBuildYaml(fd)
 
     fd.seek(0)
-    self.assertEqual(dict(yaml.load(fd)), expected)
+    self.assertEqual(yaml.Parse(fd.getvalue().decode("utf-8")), expected)
 
   def testGenClientConfig(self):
     with test_lib.ConfigOverrider({"Client.build_environment": "test_env"}):

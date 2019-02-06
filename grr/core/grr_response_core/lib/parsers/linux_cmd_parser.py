@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Simple parsers for the output of linux commands."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import logging
@@ -31,7 +32,7 @@ class YumListCmdParser(parser.CommandParser):
     """Parse the yum output."""
     _ = stderr, time_taken, args, knowledge_base  # Unused.
     self.CheckReturn(cmd, return_val)
-    for line in stdout.splitlines()[1:]:  # Ignore first line
+    for line in stdout.decode("utf-8").splitlines()[1:]:  # Ignore first line
       cols = line.split()
       name_arch, version, source = cols
       name, arch = name_arch.split(".")
@@ -62,7 +63,7 @@ class YumRepolistCmdParser(parser.CommandParser):
     """Parse the yum repolist output."""
     _ = stderr, time_taken, args, knowledge_base  # Unused.
     self.CheckReturn(cmd, return_val)
-    output = iter(stdout.splitlines())
+    output = iter(stdout.decode("utf-8").splitlines())
 
     repo_regexes = {
         "name": self._re_compile("Repo-name"),
@@ -75,6 +76,7 @@ class YumRepolistCmdParser(parser.CommandParser):
     }
 
     repo_id_re = self._re_compile("Repo-id")
+
     for line in output:
       match = repo_id_re.match(line)
       if match:
@@ -86,7 +88,7 @@ class YumRepolistCmdParser(parser.CommandParser):
             if match:
               setattr(repo_info, attr, match.group(1).strip())
               break
-          line = output.next()
+          line = next(output)
         yield repo_info
 
 
@@ -129,7 +131,7 @@ class DpkgCmdParser(parser.CommandParser):
     self.CheckReturn(cmd, return_val)
     column_lengths = []
     i = 0
-    for i, line in enumerate(stdout.splitlines()):
+    for i, line in enumerate(stdout.decode("utf-8").splitlines()):
       if line.startswith("+++-"):
         # This is a special header line that determines column size.
         for col in line.split("-")[1:]:
@@ -184,7 +186,7 @@ class DmidecodeCmdParser(parser.CommandParser):
     """Parse the dmidecode output. All data is parsed into a dictionary."""
     _ = stderr, time_taken, args, knowledge_base  # Unused.
     self.CheckReturn(cmd, return_val)
-    output = iter(stdout.splitlines())
+    output = iter(stdout.decode("utf-8").splitlines())
 
     # Compile all regexes in advance.
     sys_info_re = re.compile(r"\s*System Information")
@@ -219,7 +221,7 @@ class DmidecodeCmdParser(parser.CommandParser):
             if match:
               setattr(dmi_info, attr, match.group(1).strip())
               break
-          line = output.next()
+          line = next(output)
 
       elif bios_info_re.match(line):
         # Collect all BIOS Information until we hit a blank line.
@@ -229,7 +231,7 @@ class DmidecodeCmdParser(parser.CommandParser):
             if match:
               setattr(dmi_info, attr, match.group(1).strip())
               break
-          line = output.next()
+          line = next(output)
 
     yield dmi_info
 

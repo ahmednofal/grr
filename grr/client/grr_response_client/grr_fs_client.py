@@ -2,6 +2,7 @@
 r"""This is the GRR client for Fleetspeak enabled installations.
 """
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import pdb
@@ -46,4 +47,4 @@ def main(unused_args):
 
 
 if __name__ == "__main__":
-  flags.StartMain(main)
+  flags.StartMain(main, requires_root=True)

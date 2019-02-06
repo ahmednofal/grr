@@ -1,17 +1,18 @@
 #!/usr/bin/env python
+# -*- encoding: utf-8 -*-
 """Tests for grr.lib.client_index."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
-import socket
 
-
-from builtins import range  # pylint: disable=redefined-builtin
+from future.builtins import range
 from future.utils import iteritems
 from future.utils import iterkeys
 
+import ipaddress
+
 from grr_response_core.lib import flags
-from grr_response_core.lib import ipv6_utils
 from grr_response_core.lib import utils
 from grr_response_core.lib.rdfvalues import client as rdf_client
 from grr_response_core.lib.rdfvalues import client_network as rdf_client_network
@@ -40,10 +41,12 @@ class AFF4ClientIndexTest(aff4_test_lib.AFF4ObjectTest):
         client.Schema.CLIENT_INFO(
             client_name="grr monitor", labels=["client-label-23"]))
     kb = rdf_client.KnowledgeBase()
+    # Using cyrillic characters to make sure non-latin username and fullname
+    # works fine.
     kb.users.Append(
         rdf_client.User(
-            username="Bert",
-            full_name="Eric (Bertrand ) 'Russell' \"Logician\" Jacobson"))
+            username="ЛевТолстой",
+            full_name="Лев (граф ) 'Николаевич' \"Толстой\" ЛНТ"))
     kb.users.Append(
         rdf_client.User(username="Ernie", full_name="Steve O'Bryan"))
     client.Set(client.Schema.KNOWLEDGE_BASE(kb))
@@ -53,23 +56,23 @@ class AFF4ClientIndexTest(aff4_test_lib.AFF4ObjectTest):
     self.assertNotIn("", keywords)
 
     # OS of the client
-    self.assertIn("windows", keywords)
+    self.assertIn(b"windows", keywords)
 
     # Users of the client.
-    self.assertIn("bert", keywords)
-    self.assertIn("bertrand", keywords)
+    self.assertIn(b"левтолстой", keywords)
+    self.assertIn(b"граф", keywords)
     self.assertNotIn(")", keywords)
-    self.assertIn("russell", keywords)
-    self.assertIn("logician", keywords)
-    self.assertIn("ernie", keywords)
-    self.assertIn("eric", keywords)
-    self.assertIn("jacobson", keywords)
-    self.assertIn("steve o'bryan", keywords)
-    self.assertIn("o'bryan", keywords)
+    self.assertIn(b"николаевич", keywords)
+    self.assertIn(b"толстой", keywords)
+    self.assertIn(b"ernie", keywords)
+    self.assertIn(b"лев", keywords)
+    self.assertIn(b"лнт", keywords)
+    self.assertIn(b"steve o'bryan", keywords)
+    self.assertIn(b"o'bryan", keywords)
 
     # Client information.
-    self.assertIn("grr monitor", keywords)
-    self.assertIn("client-label-23", keywords)
+    self.assertIn(b"grr monitor", keywords)
+    self.assertIn(b"client-label-23", keywords)
 
   def testAddLookupClients(self):
     index = client_index.CreateClientIndex(token=self.token)
@@ -126,7 +129,7 @@ class AFF4ClientIndexTest(aff4_test_lib.AFF4ObjectTest):
         [rdf_client.ClientURN("aff4:/C.1000000000000002")])
 
     # Universal keyword should find everything.
-    self.assertEqual(len(index.LookupClients(["."])), 42)
+    self.assertLen(index.LookupClients(["."]), 42)
 
   def testAddTimestamp(self):
     index = client_index.CreateClientIndex(token=self.token)
@@ -220,7 +223,7 @@ class AFF4ClientIndexTest(aff4_test_lib.AFF4ObjectTest):
         utils.SmartStr(c.Get("Host")).lower()
         for c in aff4.FACTORY.MultiOpen(urns, token=self.token)
     ]
-    self.assertItemsEqual(hosts, result)
+    self.assertCountEqual(hosts, result)
 
   def testBulkLabelClients(self):
     index = client_index.CreateClientIndex(token=self.token)
@@ -248,7 +251,7 @@ class AFF4ClientIndexTest(aff4_test_lib.AFF4ObjectTest):
     # host-0: label-0
     # host-1: label-0
     self._HostsHaveLabel(hosts, "label-0", index)
-    self.assertItemsEqual(
+    self.assertCountEqual(
         index.LookupClients(["label-0"]), [m[host] for host in hosts])
 
     # Add another label only changes the new host.
@@ -258,12 +261,12 @@ class AFF4ClientIndexTest(aff4_test_lib.AFF4ObjectTest):
     # host-0: label-0
     # host-1: label-0, label-1
     self._HostsHaveLabel(hosts, "label-1", index)
-    self.assertItemsEqual(
+    self.assertCountEqual(
         index.LookupClients(["label-1"]), [m[host] for host in hosts])
     # and other labels remain unchanged.
     hosts = ["host-0", "host-1"]
     self._HostsHaveLabel(hosts, "label-0", index)
-    self.assertItemsEqual(
+    self.assertCountEqual(
         index.LookupClients(["label-0"]), [m[host] for host in hosts])
 
     # Relabeling updates the label on already labeled hosts.
@@ -273,12 +276,12 @@ class AFF4ClientIndexTest(aff4_test_lib.AFF4ObjectTest):
     # host-0: label-0
     # host-1: label-1
     self._HostsHaveLabel(hosts, "label-0", index)
-    self.assertItemsEqual(
+    self.assertCountEqual(
         index.LookupClients(["label-0"]), [m[host] for host in hosts])
     # and other labels remain unchanged.
     hosts = ["host-1"]
     self._HostsHaveLabel(hosts, "label-1", index)
-    self.assertItemsEqual(
+    self.assertCountEqual(
         index.LookupClients(["label-1"]), [m[host] for host in hosts])
 
 
@@ -330,20 +333,16 @@ class ClientIndexTest(aff4_test_lib.AFF4ObjectTest):
       client.knowledge_base.os = "Windows"
       client.knowledge_base.fqdn = "host-%d.example.com" % i
 
+      ipv4_addr = rdf_client_network.NetworkAddress(
+          address_type=rdf_client_network.NetworkAddress.Family.INET,
+          packed_bytes=ipaddress.IPv4Address("192.168.0.%d" % i).packed)
+      ipv6_addr = rdf_client_network.NetworkAddress(
+          address_type=rdf_client_network.NetworkAddress.Family.INET6,
+          packed_bytes=ipaddress.IPv6Address("2001:abcd::%d" % i).packed)
+
       client.interfaces = [
           rdf_client_network.Interface(
-              addresses=[
-                  rdf_client_network.NetworkAddress(
-                      address_type=rdf_client_network.NetworkAddress.Family.
-                      INET,
-                      packed_bytes=ipv6_utils.InetPtoN(socket.AF_INET,
-                                                       "192.168.0.%d" % i)),
-                  rdf_client_network.NetworkAddress(
-                      address_type=rdf_client_network.NetworkAddress.Family.
-                      INET6,
-                      packed_bytes=ipv6_utils.InetPtoN(socket.AF_INET6,
-                                                       "2001:abcd::%d" % i))
-              ],
+              addresses=[ipv4_addr, ipv6_addr],
               mac_address=("aabbccddee0%d" % i).decode("hex"))
       ]
       res[client_id] = client
@@ -379,7 +378,7 @@ class ClientIndexTest(aff4_test_lib.AFF4ObjectTest):
         index.LookupClients(["mac:aa:bb:cc:dd:ee:01"]), ["C.1000000000000001"])
 
     # IP prefixes of octets should work:
-    self.assertItemsEqual(index.LookupClients(["192.168.0"]), list(clients))
+    self.assertCountEqual(index.LookupClients(["192.168.0"]), list(clients))
 
     # Hostname prefixes of tokens should work.
     self.assertEqual(
@@ -390,7 +389,7 @@ class ClientIndexTest(aff4_test_lib.AFF4ObjectTest):
         index.LookupClients(["192.168.0", "Host-2"]), ["C.1000000000000002"])
 
     # Universal keyword should find everything.
-    self.assertItemsEqual(index.LookupClients(["."]), list(clients))
+    self.assertCountEqual(index.LookupClients(["."]), list(clients))
 
   def testAddTimestamp(self):
     index = client_index.ClientIndex()
@@ -410,7 +409,7 @@ class ClientIndexTest(aff4_test_lib.AFF4ObjectTest):
         len(index.LookupClients([".", "start_date:2014-10-21"])), 0)
 
     # Ignore the keyword if the date is not readable.
-    self.assertEqual(len(index.LookupClients([".", "start_date:XXX"])), 0)
+    self.assertLen(index.LookupClients([".", "start_date:XXX"]), 0)
 
   def testRemoveLabels(self):
     client_id = next(iterkeys(self._SetupClients(1)))
@@ -446,7 +445,7 @@ class ClientIndexTest(aff4_test_lib.AFF4ObjectTest):
       if not data:
         continue
       labelled_hosts.append(data.hostname)
-    self.assertItemsEqual(expected_hosts, labelled_hosts)
+    self.assertCountEqual(expected_hosts, labelled_hosts)
 
 
 def main(argv):

@@ -6,6 +6,7 @@ protocol- and server-independent. End-to-end tests are meant to use
 the full GRR server stack (web server + API client library).
 """
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import logging
@@ -35,6 +36,7 @@ class ApiE2ETest(test_lib.GRRBaseTest, acl_test_lib.AclTestMixin):
     api_auth_manager.APIACLInit.InitApiAuthManager()
     self.token.username = "api_test_robot_user"
     webauth.WEBAUTH_MANAGER.SetUserName(self.token.username)
+    self.CreateUser(self.token.username)
 
     self.port = ApiE2ETest.server_port
     self.endpoint = "http://localhost:%s" % self.port
@@ -59,14 +61,20 @@ class ApiE2ETest(test_lib.GRRBaseTest, acl_test_lib.AclTestMixin):
       if not ApiE2ETest._api_set_up_done:
 
         # Set up HTTP server
-        port = portpicker.PickUnusedPort()
+        port = portpicker.pick_unused_port()
         ApiE2ETest.server_port = port
         logging.info("Picked free AdminUI port for HTTP %d.", port)
 
-        ApiE2ETest.trd = wsgiapp_testlib.ServerThread(port)
+        ApiE2ETest.trd = wsgiapp_testlib.ServerThread(
+            port, name="api_e2e_server")
         ApiE2ETest.trd.StartAndWaitUntilServing()
 
         ApiE2ETest._api_set_up_done = True
+
+  @classmethod
+  def tearDownClass(cls):
+    super(ApiE2ETest, cls).tearDownClass()
+    ApiE2ETest.trd.Stop()
 
 
 class RootApiBinaryManagementTestRouter(
@@ -81,9 +89,8 @@ class RootApiE2ETest(ApiE2ETest):
   def setUp(self):
     super(RootApiE2ETest, self).setUp()
 
-    self.root_api_config_overrider = test_lib.ConfigOverrider({
-        "API.DefaultRouter": RootApiBinaryManagementTestRouter.__name__
-    })
+    self.root_api_config_overrider = test_lib.ConfigOverrider(
+        {"API.DefaultRouter": RootApiBinaryManagementTestRouter.__name__})
     self.root_api_config_overrider.Start()
 
     # Force creation of new APIAuthorizationManager, so that configuration

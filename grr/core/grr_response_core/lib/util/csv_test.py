@@ -1,13 +1,64 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
+from absl.testing import absltest
+
 from grr_response_core.lib.util import csv
-import unittest
 
 
-class CsvWriterTest(unittest.TestCase):
+class CsvReaderTest(absltest.TestCase):
+
+  def testEmpty(self):
+    reader = csv.Reader("")
+
+    self.assertEqual(list(reader), [])
+
+  def testSingleRow(self):
+    reader = csv.Reader("foo,bar,baz")
+
+    self.assertEqual(list(reader), [["foo", "bar", "baz"]])
+
+  def testMultipleRows(self):
+    reader = csv.Reader("foo,quux\nbar,norf\nbaz,thud")
+
+    self.assertEqual(
+        list(reader), [
+            ["foo", "quux"],
+            ["bar", "norf"],
+            ["baz", "thud"],
+        ])
+
+  def testUnicode(self):
+    reader = csv.Reader("wąwóz,źdźbło\ngrzęda,wątły\ndźwig,ścieżka")
+
+    self.assertEqual(
+        list(reader), [
+            ["wąwóz", "źdźbło"],
+            ["grzęda", "wątły"],
+            ["dźwig", "ścieżka"],
+        ])
+
+  def testCustomDelimiter(self):
+    reader = csv.Reader("foo|bar|baz", delimiter="|")
+
+    self.assertEqual(list(reader), [["foo", "bar", "baz"]])
+
+  def testMultipleUsages(self):
+    reader = csv.Reader("foo")
+
+    self.assertEqual(list(reader), [["foo"]])
+    self.assertEqual(list(reader), [["foo"]])
+
+  def testDefaultQuotechar(self):
+    reader = csv.Reader("foo,\"bar, baz, quux\",norf,\"thud\"")
+
+    self.assertEqual(list(reader), [["foo", "bar, baz, quux", "norf", "thud"]])
+
+
+class CsvWriterTest(absltest.TestCase):
 
   def testEmpty(self):
     writer = csv.Writer()
@@ -42,7 +93,7 @@ class CsvWriterTest(unittest.TestCase):
     self.assertEqual(writer.Content(), "foo|bar|baz\n")
 
 
-class CsvDictWriter(unittest.TestCase):
+class CsvDictWriter(absltest.TestCase):
 
   def testEmpty(self):
     writer = csv.DictWriter(["foo", "bar", "baz"])
@@ -90,4 +141,4 @@ class CsvDictWriter(unittest.TestCase):
 
 
 if __name__ == "__main__":
-  unittest.main()
+  absltest.main()

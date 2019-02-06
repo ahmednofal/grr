@@ -2,6 +2,7 @@
 """Simple parsers for configuration files."""
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import logging
@@ -13,6 +14,7 @@ import stat
 from builtins import zip  # pylint: disable=redefined-builtin
 from future.utils import iteritems
 from future.utils import itervalues
+from typing import Text
 
 from grr_response_core.lib import lexer
 from grr_response_core.lib import parser
@@ -62,7 +64,7 @@ class LSBInitLexer(lexer.Lexer):
     self.buffer = []
 
   def ParseEntries(self, data):
-    precondition.AssertType(data, unicode)
+    precondition.AssertType(data, Text)
     self.entries = {}
     self.Reset()
     self.Feed(data)

@@ -10,6 +10,7 @@ import time
 import zlib
 
 
+from future.builtins import str
 from future.utils import with_metaclass
 
 from grr_response_core.lib import rdfvalue
@@ -21,9 +22,8 @@ from grr_response_core.stats import stats_collector_instance
 from grr_response_core.stats import stats_utils
 
 
-# TODO(user): Move this to server_metrics.py after server and client
-# Communicators have been decoupled. These metrics should not be tracked on
-# the client.
+# Although these metrics are never queried on the client, removing them from the
+# client code seems not worth the effort.
 def GetMetricMetadata():
   """Returns a list of MetricMetadata for communicator-related metrics."""
   return [
@@ -53,7 +53,7 @@ class DecryptionError(DecodingError):
   counter = "grr_decryption_error"
 
 
-class UnknownClientCert(DecodingError):
+class UnknownClientCertError(DecodingError):
   """Raised when the client key is not retrieved."""
   counter = "grr_client_unknown"
 
@@ -247,6 +247,7 @@ class ReceivedCipher(Cipher):
 
     Args:
       remote_public_key: The remote public key.
+
     Returns:
       None
     Raises:
@@ -268,6 +269,7 @@ class ReceivedCipher(Cipher):
 class Communicator(with_metaclass(abc.ABCMeta, object)):
   """A class responsible for encoding and decoding comms."""
   server_name = None
+  common_name = None
 
   def __init__(self, certificate=None, private_key=None):
     """Creates a communicator.
@@ -331,16 +333,11 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
     This function signs and then encrypts the payload.
 
     Args:
-       message_list: A MessageList rdfvalue containing a list of
-       GrrMessages.
-
+       message_list: A MessageList rdfvalue containing a list of GrrMessages.
        result: A ClientCommunication rdfvalue which will be filled in.
-
        destination: The CN of the remote system this should go to.
-
        timestamp: A timestamp to use for the signed messages. If None - use the
-              current time.
-
+         current time.
        api_version: The api version which this should be encoded in.
 
     Returns:
@@ -496,7 +493,7 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
                                           cipher)
           cipher_verified = True
 
-      except UnknownClientCert:
+      except UnknownClientCertError:
         # We don't know who we are talking to.
         remote_public_key = None
 
@@ -506,7 +503,7 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
       packed_message_list = rdf_flows.PackedMessageList.FromSerializedString(
           plain)
     except rdfvalue.DecodeError as e:
-      raise DecryptionError(str(e))
+      raise DecryptionError(e)
 
     message_list = self.DecompressMessageList(packed_message_list)
 
@@ -546,6 +543,7 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
       cipher_verified: If True, the cipher's signature is not verified again.
       api_version: The api version we should use.
       remote_public_key: The public key of the source.
+
     Returns:
       An rdf_flows.GrrMessage.AuthorizationState.
 
@@ -563,7 +561,7 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
 
     # Check for replay attacks. We expect the server to return the same
     # timestamp nonce we sent.
-    if packed_message_list.timestamp != self.timestamp:
+    if packed_message_list.timestamp != self.timestamp:  # pytype: disable=attribute-error
       result = rdf_flows.GrrMessage.AuthorizationState.UNAUTHENTICATED
 
     if not cipher.cipher_metadata:

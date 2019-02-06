@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Test for client comms."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import time
@@ -198,7 +199,7 @@ class HTTPManagerTest(test_lib.GRRBaseTest):
     self.assertEqual(result.data, "Also Good")
 
     # But we actually made two requests.
-    self.assertEqual(len(instrumentor.actions), 2)
+    self.assertLen(instrumentor.actions, 2)
 
     # And we waited 60 seconds to make the second one.
     self.assertEqual(instrumentor.actions[0][0], 0)
@@ -226,7 +227,7 @@ class HTTPManagerTest(test_lib.GRRBaseTest):
     self.assertEqual(result.code, 406)
 
     # We should not search for proxy/url combinations.
-    self.assertEqual(len(instrumentor.actions), 1)
+    self.assertLen(instrumentor.actions, 1)
 
     # A 406 message is not considered an error.
     self.assertEqual(manager.consecutive_connection_errors, 0)
@@ -262,7 +263,7 @@ class SizeLimitedQueueTest(test_lib.GRRBaseTest):
       limited_queue.Put(msg_c)
 
     result = limited_queue.GetMessages()
-    self.assertItemsEqual(list(result.job), [msg_c] * 10 + [msg_a, msg_b] * 10)
+    self.assertCountEqual(list(result.job), [msg_c] * 10 + [msg_a, msg_b] * 10)
 
     # Tests a partial Get().
     for _ in range(7):
@@ -273,7 +274,7 @@ class SizeLimitedQueueTest(test_lib.GRRBaseTest):
     result = limited_queue.GetMessages(
         soft_size_limit=len(msg_a.SerializeToString()) * 5 - 1)
 
-    self.assertEqual(len(list(result.job)), 5)
+    self.assertLen(list(result.job), 5)
 
     for _ in range(3):
       limited_queue.Put(msg_a)
@@ -282,7 +283,34 @@ class SizeLimitedQueueTest(test_lib.GRRBaseTest):
 
     # Append the remaining messages to the same result.
     result.job.Extend(limited_queue.GetMessages().job)
-    self.assertItemsEqual(list(result.job), [msg_c] * 10 + [msg_a, msg_b] * 10)
+    self.assertCountEqual(list(result.job), [msg_c] * 10 + [msg_a, msg_b] * 10)
+
+  def testSizeLimitedQueueSize(self):
+
+    q = comms.SizeLimitedQueue(1000)
+    msg_a = rdf_flows.GrrMessage(name="A")
+    msg_b = rdf_flows.GrrMessage(name="B")
+    msg_c = rdf_flows.GrrMessage(name="C")
+    msg_d = rdf_flows.GrrMessage(name="D")
+    messages = [msg_a, msg_b, msg_c, msg_d]
+
+    in_queue = set()
+    self.assertEqual(q.Size(), 0)
+
+    for m in messages:
+      q.Put(m, block=False)
+      in_queue.add(m)
+
+      self.assertEqual(q.Size(),
+                       sum([len(m.SerializeToString()) for m in in_queue]))
+
+    for _ in range(len(messages)):
+      msg_list = q.GetMessages(1)
+      self.assertLen(msg_list.job, 1)
+      in_queue.remove(msg_list.job[0])
+
+      self.assertEqual(q.Size(),
+                       sum([len(m.SerializeToString()) for m in in_queue]))
 
   def testSizeLimitedQueueOverflow(self):
 
@@ -326,16 +354,22 @@ class GRRClientWorkerTest(test_lib.GRRBaseTest):
 
   def setUp(self):
     super(GRRClientWorkerTest, self).setUp()
-    self.client_worker = comms.GRRClientWorker()
+    # GRRClientWorker starts a stats collector thread that will send replies
+    # shortly after starting up. Those replies interfere with the test below so
+    # we disable the ClientStatsCollector thread here.
+    with utils.Stubber(comms.GRRClientWorker,
+                       "StartStatsCollector", lambda self: None):
+      self.client_worker = comms.GRRClientWorker(
+          internal_nanny_monitoring=False)
 
   def testSendReplyHandlesFalseyPrimitivesCorrectly(self):
     self.client_worker.SendReply(rdfvalue.RDFDatetime(0))
     messages = self.client_worker.Drain().job
 
-    self.assertEqual(len(messages), 1)
+    self.assertLen(messages, 1)
     self.assertEqual(messages[0].args_rdf_name,
                      compatibility.GetName(rdfvalue.RDFDatetime))
-    self.assertTrue(isinstance(messages[0].payload, rdfvalue.RDFDatetime))
+    self.assertIsInstance(messages[0].payload, rdfvalue.RDFDatetime)
     self.assertEqual(messages[0].payload, rdfvalue.RDFDatetime(0))
 
 

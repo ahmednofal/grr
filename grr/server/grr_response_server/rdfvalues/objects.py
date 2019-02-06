@@ -5,17 +5,20 @@ This package contains the rdfvalue wrappers around the top level datastore
 objects defined by objects.proto.
 """
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
+import binascii
 import functools
 import hashlib
 import itertools
 import os
-import re
 import stat
 
 
+from future.builtins import str
 from future.utils import python_2_unicode_compatible
+from typing import Text
 
 from grr_response_core.lib import rdfvalue
 from grr_response_core.lib.rdfvalues import client as rdf_client
@@ -61,26 +64,16 @@ class ClientSnapshot(rdf_structs.RDFProtoStruct):
       rdfvalue.RDFDatetime,
   ]
 
-  def __init__(self, skip_verification=False, *args, **kwargs):
+  def __init__(self, *args, **kwargs):
     super(ClientSnapshot, self).__init__(*args, **kwargs)
-    if not skip_verification:
-      self.ValidateClientId()
     self.timestamp = None
-
-  def ValidateClientId(self):
-    if not self.client_id:
-      raise ValueError(
-          "Trying to instantiate a Client object without client id.")
-    if not re.match(r"C\.[0-9a-f]{16}", self.client_id):
-      raise ValueError("Client id invalid: %s" % self.client_id)
 
   @classmethod
   def FromSerializedString(cls, value, age=None):
-    res = cls(skip_verification=True)
+    res = cls()
     res.ParseFromString(value)
     if age:
       res.age = age
-    res.ValidateClientId()
     return res
 
   def Uname(self):
@@ -261,7 +254,10 @@ class HashID(rdfvalue.RDFValue):
     return self._value
 
   def AsHexString(self):
-    return self._value.encode("hex")
+    return binascii.hexlify(self._value)
+
+  def AsHashDigest(self):
+    return rdfvalue.HashDigest(self._value)
 
   def __repr__(self):
     return "%s(%s)" % (self.__class__.__name__, repr(self._value.encode("hex")))
@@ -301,7 +297,7 @@ class PathID(HashID):
       # could force a hash collision. So we explicitly include the lengths of
       # the components.
       string = "{lengths}:{path}".format(
-          lengths=",".join(unicode(len(component)) for component in components),
+          lengths=",".join(str(len(component)) for component in components),
           path="/".join(components))
       result = hashlib.sha256(string.encode("utf-8")).digest()
     else:
@@ -347,21 +343,25 @@ class PathInfo(rdf_structs.RDFProtoStruct):
     return cls(*args, path_type=cls.PathType.REGISTRY, **kwargs)
 
   @classmethod
-  def FromPathSpec(cls, pathspec):
-    if pathspec.pathtype == rdf_paths.PathSpec.PathType.OS:
-      if (len(pathspec) > 1 and
-          pathspec[1].pathtype == rdf_paths.PathSpec.PathType.TSK):
-        path_type = cls.PathType.TSK
-      else:
-        path_type = cls.PathType.OS
-    elif pathspec.pathtype == rdf_paths.PathSpec.PathType.TSK:
-      path_type = cls.PathType.TSK
-    elif pathspec.pathtype == rdf_paths.PathSpec.PathType.REGISTRY:
-      path_type = cls.PathType.REGISTRY
-    elif pathspec.pathtype == rdf_paths.PathSpec.PathType.TMPFILE:
-      path_type = cls.PathType.TEMP
+  def PathTypeFromPathspecPathType(cls, ps_path_type):
+    if ps_path_type == rdf_paths.PathSpec.PathType.OS:
+      return cls.PathType.OS
+    elif ps_path_type == rdf_paths.PathSpec.PathType.TSK:
+      return cls.PathType.TSK
+    elif ps_path_type == rdf_paths.PathSpec.PathType.REGISTRY:
+      return cls.PathType.REGISTRY
+    elif ps_path_type == rdf_paths.PathSpec.PathType.TMPFILE:
+      return cls.PathType.TEMP
     else:
-      raise ValueError("Unexpected path type: %s" % pathspec.pathtype)
+      raise ValueError("Unexpected path type: %s" % ps_path_type)
+
+  @classmethod
+  def FromPathSpec(cls, pathspec):
+    # Note that since PathSpec objects may contain more information than what is
+    # stored in a PathInfo object, we can only create a PathInfo object from a
+    # PathSpec, never the other way around.
+
+    path_type = cls.PathTypeFromPathspecPathType(pathspec.last.pathtype)
 
     components = []
     for pathelem in pathspec:
@@ -404,23 +404,6 @@ class PathInfo(rdf_structs.RDFProtoStruct):
       return ""
     else:
       return self.components[-1]
-
-  def AsPathSpec(self):
-    pathspec = rdf_paths.PathSpec()
-    if self.path_type == self.PathType.TSK:
-      pathspec.pathtype = pathspec.PathType.TSK
-    elif self.path_type == self.PathType.OS:
-      pathspec.pathtype = pathspec.PathType.OS
-    elif self.path_type == self.PathType.REGISTRY:
-      pathspec.pathtype = pathspec.PathType.REGISTRY
-    elif self.path_type == self.PathType.TMPFILE:
-      pathspec.pathtype = pathspec.PathType.TEMP
-    else:
-      raise ValueError("Invalid path_type: %r" % self.path_type)
-
-    pathspec.path = "/".join(self.components)
-
-    return pathspec
 
   def GetPathID(self):
     return PathID.FromComponents(self.components)
@@ -485,11 +468,11 @@ class PathInfo(rdf_structs.RDFProtoStruct):
 
     self.last_stat_entry_timestamp = max(self.last_stat_entry_timestamp,
                                          src.last_stat_entry_timestamp)
-    self.directory |= src.directory
+    self.directory = self.directory or src.directory
 
 
 def _ValidatePathComponent(component):
-  if not isinstance(component, unicode):
+  if not isinstance(component, Text):
     raise TypeError("Non-unicode path component")
   if not component:
     raise ValueError("Empty path component")
@@ -692,3 +675,36 @@ class SerializedValueOfUnrecognizedType(rdf_structs.RDFProtoStruct):
   """
   protobuf = objects_pb2.SerializedValueOfUnrecognizedType
   rdf_deps = []
+
+
+class APIAuditEntry(rdf_structs.RDFProtoStruct):
+  """Audit entry for API calls, persistend in the relational database."""
+  protobuf = objects_pb2.APIAuditEntry
+  rdf_deps = [rdfvalue.RDFDatetime]
+
+  # Use dictionaries instead of if-statements to look up mappings to increase
+  # branch coverage during testing. This way, all constants are accessed,
+  # without requiring a test for every single one.
+  _HTTP_STATUS_TO_CODE = {
+      200: objects_pb2.APIAuditEntry.OK,
+      403: objects_pb2.APIAuditEntry.FORBIDDEN,
+      404: objects_pb2.APIAuditEntry.NOT_FOUND,
+      500: objects_pb2.APIAuditEntry.ERROR,
+      501: objects_pb2.APIAuditEntry.NOT_IMPLEMENTED,
+  }
+
+  @classmethod
+  def FromHttpRequestResponse(cls, request, response):
+    response_code = APIAuditEntry._HTTP_STATUS_TO_CODE.get(
+        response.status_code, objects_pb2.APIAuditEntry.ERROR)
+
+    return cls(
+        http_request_path=request.full_path,  # include query string
+        router_method_name=response.headers.get("X-API-Method", ""),
+        username=request.user,
+        response_code=response_code,
+    )
+
+
+class SignedBinaryID(rdf_structs.RDFProtoStruct):
+  protobuf = objects_pb2.SignedBinaryID

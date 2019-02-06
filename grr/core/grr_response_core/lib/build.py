@@ -6,6 +6,7 @@ handling Visual Studio, pyinstaller and other packaging mechanisms.
 """
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import io
@@ -19,10 +20,10 @@ import tempfile
 import zipfile
 
 
+from future.builtins import str
 from future.utils import iteritems
 from future.utils import iterkeys
 from future.utils import itervalues
-import yaml
 
 # pylint: disable=g-import-not-at-top,unused-import
 # This is a workaround so we don't need to maintain the whole PyInstaller
@@ -55,6 +56,7 @@ from grr_response_core.lib import utils
 from grr_response_core.lib.local import plugins
 from grr_response_core.lib.rdfvalues import client as rdf_client
 from grr_response_core.lib.rdfvalues import crypto as rdf_crypto
+from grr_response_core.lib.util import yaml
 
 # pylint: enable=g-import-not-at-top,unused-import
 
@@ -181,12 +183,21 @@ class ClientBuilder(BuilderBase):
       dir_path = os.path.join(self.output_dir, path)
       try:
         shutil.rmtree(dir_path)
-        os.mkdir(dir_path)
-        # Create an empty file so the directories get put in the installers.
-        with open(os.path.join(dir_path, path), "wb"):
-          pass
       except OSError:
-        pass
+        logging.error("Unable to remove directory: %s", dir_path)
+
+      try:
+        os.mkdir(dir_path)
+      except OSError:
+        logging.error("Unable to create directory: %s", dir_path)
+
+      file_path = os.path.join(dir_path, path)
+      try:
+        # Create an empty file so the directories get put in the installers.
+        with open(file_path, "wb"):
+          pass
+      except IOError:
+        logging.error("Unable to create file: %s", file_path)
 
     version_ini = version.VersionPath()
     shutil.copy(version_ini, os.path.join(self.output_dir, "version.ini"))
@@ -227,7 +238,7 @@ class ClientBuilder(BuilderBase):
     if output_keys != self.REQUIRED_BUILD_YAML_KEYS:
       raise RuntimeError("Bad build.yaml: expected %s, got %s" %
                          (self.REQUIRED_BUILD_YAML_KEYS, output_keys))
-    fd.write(yaml.dump(output))
+    fd.write(yaml.Dump(output).encode("utf-8"))
 
   def CopyMissingModules(self):
     """Copy any additional DLLs that cant be found."""
@@ -326,7 +337,7 @@ class ClientRepacker(BuilderBase):
         new_config.Set("Client.fleetspeak_enabled", True)
 
       if deploy_timestamp:
-        deploy_time_string = unicode(rdfvalue.RDFDatetime.Now())
+        deploy_time_string = str(rdfvalue.RDFDatetime.Now())
         new_config.Set("Client.deploy_time", deploy_time_string)
       new_config.Write()
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- mode: python; encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 """An implementation of a data store based on mysql."""
 from __future__ import absolute_import
 from __future__ import division
@@ -9,13 +9,14 @@ import logging
 import os
 import threading
 import time
-from warnings import filterwarnings
+import warnings
 
 
 import _thread
 from builtins import range  # pylint: disable=redefined-builtin
 from future.utils import iteritems
 from future.utils import itervalues
+from future.utils import string_types
 import MySQLdb
 from MySQLdb import cursors
 from past.builtins import long
@@ -28,7 +29,8 @@ from grr_response_server import aff4
 from grr_response_server import data_store
 
 # We use INSERT IGNOREs which generate useless duplicate entry warnings.
-filterwarnings("ignore", category=MySQLdb.Warning, message=r"Duplicate entry.*")
+warnings.filterwarnings(
+    "ignore", category=MySQLdb.Warning, message=r"Duplicate entry.*")
 
 
 # pylint: disable=nonstandard-exception
@@ -98,8 +100,20 @@ class MySQLConnection(object):
             host=config.CONFIG["Mysql.host"],
             port=config.CONFIG["Mysql.port"])
 
-        dbh = MySQLdb.connect(**connection_args)
-        return dbh
+        key_path = config.CONFIG["Mysql.client_key_path"]
+        if key_path:
+          cert_path = config.CONFIG["Mysql.client_cert_path"]
+          ca_cert_path = config.CONFIG["Mysql.ca_cert_path"]
+          logging.debug("Client key file configured, trying to use SSL.")
+
+          connection_args["ssl"] = {
+              "key": key_path,
+              "cert": cert_path,
+              "ca": ca_cert_path,
+          }
+
+        return MySQLdb.connect(**connection_args)
+
       except MySQLdb.OperationalError as e:
         # This is a fatal error, we just raise the top level exception here.
         if "Access denied" in str(e):
@@ -189,6 +203,16 @@ class MySQLAdvancedDataStore(data_store.DataStore):
       logging.debug("Recreating Tables")
       self.RecreateTables()
 
+    key_path = config.CONFIG["Mysql.client_key_path"]
+    if key_path:
+      cursor = self.pool.GetConnection().cursor
+      cursor.execute("SHOW VARIABLES LIKE 'have_ssl'")
+      res = cursor.fetchone()
+      if res["Value"] == "YES":
+        logging.debug("SSL enabled successfully")
+      else:
+        raise RuntimeError("Unable to establish SSL connection to MySQL.")
+
   @classmethod
   def SetupTestDB(cls):
     super(MySQLAdvancedDataStore, cls).SetupTestDB()
@@ -248,7 +272,7 @@ class MySQLAdvancedDataStore(data_store.DataStore):
     if not attributes:
       return
 
-    if isinstance(attributes, basestring):
+    if isinstance(attributes, string_types):
       raise ValueError(
           "String passed to DeleteAttributes (non string iterable expected).")
 
@@ -305,7 +329,7 @@ class MySQLAdvancedDataStore(data_store.DataStore):
   def ResolvePrefix(self, subject, attribute_prefix, timestamp=None,
                     limit=None):
     """ResolvePrefix."""
-    if isinstance(attribute_prefix, basestring):
+    if isinstance(attribute_prefix, string_types):
       attribute_prefix = [attribute_prefix]
 
     results = []
@@ -586,9 +610,10 @@ class MySQLAdvancedDataStore(data_store.DataStore):
         return result
       except MySQLdb.OperationalError as e:
         self.pool.DropConnection(connection)
-        logging.error("OperationalError: %s. This may be due to an incorrect "
-                      "MySQL 'max_allowed_packet' setting (try increasing "
-                      "it). Retrying.", str(e))
+        logging.error(
+            "OperationalError: %s. This may be due to an incorrect "
+            "MySQL 'max_allowed_packet' setting (try increasing "
+            "it). Retrying.", str(e))
         time.sleep(1)
       except MySQLdb.Error as e:
         self.pool.DropConnection(connection)
@@ -768,6 +793,7 @@ class MySQLAdvancedDataStore(data_store.DataStore):
     Args:
       start: Start timestamp.
       end: End timestamp.
+
     Returns:
       A tuple (start, end) of converted timestamps or None for all time.
     """

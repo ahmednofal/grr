@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """setup.py file for a GRR API client library."""
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import os
@@ -14,7 +15,7 @@ from setuptools import find_packages
 from setuptools import setup
 from setuptools.command.sdist import sdist
 
-# TODO(hanuszczak): Fix this import once support for Python 2 is dropped.
+# TODO: Fix this import once support for Python 2 is dropped.
 # pylint: disable=g-import-not-at-top
 if sys.version_info.major == 2:
   import ConfigParser as configparser
@@ -99,7 +100,7 @@ setup_args = dict(
     },
     packages=find_packages(),
     install_requires=[
-        "protobuf==3.3.0",
+        "protobuf==3.6.1",
     ],
     data=["version.ini"])
 
