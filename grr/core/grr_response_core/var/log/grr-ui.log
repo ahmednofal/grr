@@ -1,0 +1,21 @@
+ERROR:2019-02-06 22:03:53,010 2971 MainProcess 140205935007488 Thread-541 wsgiapp:328] http exception: /dist/bootstrap.css.map [GET]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-02-06 22:48:59,630 13540 MainProcess 140542805538560 Thread-96 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-02-06 22:49:08,769 13540 MainProcess 140542805538560 Thread-105 wsgiapp:328] http exception: /dist/bootstrap.css.map [GET]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found

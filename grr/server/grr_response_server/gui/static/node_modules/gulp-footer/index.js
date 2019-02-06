@@ -1,12 +1,12 @@
 /* jshint node: true */
 'use strict';
 
-var es = require('event-stream');
+var mapStream = require('map-stream');
 var template = require('./template');
 
 var footerPlugin = function(footerText, data) {
   footerText = footerText || '';
-  return es.map(function(file, cb){
+  return mapStream(function(file, cb){
     file.contents = Buffer.concat([
       file.contents,
       new Buffer(template(footerText, Object.assign({file : file}, data)))

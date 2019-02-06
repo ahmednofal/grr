@@ -41,10 +41,6 @@ def register_functions_in_jsonrpc():
     # TODO: Restrict Access to admin_obj api that can modify clients and users to clients in keycloak
     # TODO: Restiction will be in the image of whitelist/exposing certain api rather than blacklisting some
 
-
-
-
-
 # @Request.application
 def application(request):
     acauthority_object.auth_keycloak_admin()
