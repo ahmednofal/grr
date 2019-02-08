@@ -224,6 +224,7 @@ CA.certificate: '-----BEGIN CERTIFICATE-----
   -----END CERTIFICATE-----'
 Server.initialized: true
 Datastore.implementation: MySQLAdvancedDataStore
+Client.server_serial_number: 2
 Frontend.certificate: '-----BEGIN CERTIFICATE-----
 
   MIICuTCCAaGgAwIBAgIBAjANBgkqhkiG9w0BAQsFADAgMREwDwYDVQQDDAhncnJf
@@ -311,4 +312,3 @@ Client.private_key: '-----BEGIN RSA PRIVATE KEY-----
   35UFIP9EyUhW73dn9ciXzsDd4SrVXb+Ap0wPZceO31wsIXxFXkzF
 
   -----END RSA PRIVATE KEY-----'
-Client.server_serial_number: 2

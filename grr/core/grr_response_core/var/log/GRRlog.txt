@@ -499,3 +499,30 @@ INFO:2019-02-06 23:16:18,416 comms:1189] aff4:/C.f28825fa1c88991b: Sending 0(634
 DEBUG:2019-02-06 23:20:27,987 connectionpool:205] Starting new HTTP connection (1): naufal:8080
 DEBUG:2019-02-06 23:20:28,035 connectionpool:393] http://naufal:8080 "POST /control?api=3 HTTP/1.1" 200 616
 INFO:2019-02-06 23:20:28,038 comms:1189] aff4:/C.f28825fa1c88991b: Sending 1(682), Received 0 messages in 0.0513370037079 sec. Sleeping for 286.627393299 sec.
+DEBUG:2019-02-06 23:26:39,570 connectionpool:205] Starting new HTTP connection (1): naufal:8080
+DEBUG:2019-02-06 23:26:39,619 connectionpool:393] http://naufal:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-02-06 23:26:39,623 comms:1189] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0523910522461 sec. Sleeping for 329.621502294 sec.
+DEBUG:2019-02-06 23:35:57,620 connectionpool:205] Starting new HTTP connection (1): naufal:8080
+DEBUG:2019-02-06 23:35:57,693 connectionpool:393] http://naufal:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-02-06 23:35:57,700 comms:1189] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0767509937286 sec. Sleeping for 379.064727638 sec.
+DEBUG:2019-02-06 23:42:17,224 connectionpool:205] Starting new HTTP connection (1): naufal:8080
+DEBUG:2019-02-06 23:42:17,285 connectionpool:393] http://naufal:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-02-06 23:42:17,292 comms:1189] aff4:/C.f28825fa1c88991b: Sending 1(1835), Received 0 messages in 0.0655078887939 sec. Sleeping for 435.924436784 sec.
+DEBUG:2019-02-06 23:49:34,280 connectionpool:205] Starting new HTTP connection (1): naufal:8080
+DEBUG:2019-02-06 23:49:34,326 connectionpool:393] http://naufal:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-02-06 23:49:34,333 comms:1189] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0510311126709 sec. Sleeping for 501.313102301 sec.
+DEBUG:2019-02-06 23:57:56,273 connectionpool:205] Starting new HTTP connection (1): naufal:8080
+DEBUG:2019-02-06 23:57:56,337 connectionpool:393] http://naufal:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-02-06 23:57:56,344 comms:1189] aff4:/C.f28825fa1c88991b: Sending 1(682), Received 0 messages in 0.068058013916 sec. Sleeping for 576.510067646 sec.
+DEBUG:2019-02-07 07:00:53,470 connectionpool:205] Starting new HTTP connection (1): naufal:8080
+DEBUG:2019-02-07 07:00:53,589 connectionpool:393] http://naufal:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-02-07 07:00:53,598 comms:1189] aff4:/C.f28825fa1c88991b: Sending 2(811), Received 0 messages in 0.122126102448 sec. Sleeping for 600.0 sec.
+DEBUG:2019-02-07 07:10:54,327 connectionpool:205] Starting new HTTP connection (1): naufal:8080
+DEBUG:2019-02-07 07:10:54,374 connectionpool:393] http://naufal:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-02-07 07:10:54,381 comms:1189] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0517070293427 sec. Sleeping for 600.0 sec.
+DEBUG:2019-02-07 07:20:55,144 connectionpool:205] Starting new HTTP connection (1): naufal:8080
+DEBUG:2019-02-07 07:20:55,192 connectionpool:393] http://naufal:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-02-07 07:20:55,199 comms:1189] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0517349243164 sec. Sleeping for 600.0 sec.
+DEBUG:2019-02-07 07:30:55,963 connectionpool:205] Starting new HTTP connection (1): naufal:8080
+DEBUG:2019-02-07 07:30:56,026 connectionpool:393] http://naufal:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-02-07 07:30:56,033 comms:1189] aff4:/C.f28825fa1c88991b: Sending 1(682), Received 0 messages in 0.0686500072479 sec. Sleeping for 600.0 sec.

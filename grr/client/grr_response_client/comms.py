@@ -697,12 +697,16 @@ class GRRClientWorker(threading.Thread):
       if action_cls is None:
         raise RuntimeError("Client action %r not known" % message.name)
 
+      # For debugging purposes only
+      # TODO: Remove before packaging
+      print("action_cls is "+ str(action_cls))
       action = action_cls(grr_worker=self)
 
       # Write the message to the transaction log.
       self.transaction_log.Write(message)
 
       # Heartbeat so we have the full period to work on this message.
+      # TODO : Add here code to verify the token sent by the server obtained from the AC
       action.Progress()
       action.Execute(message)
 

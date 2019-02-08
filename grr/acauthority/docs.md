@@ -47,3 +47,86 @@ The token datastructure
 
 Looking into current implementations of tokens, might have to serialize and deserialize 
 internally 
+
+
+in 
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/client/grr_response_client/grr_fs_client.py
+
+
+flags.DEFINE_bool("install", False, "Specify this to install the client.")
+
+flags.DEFINE_bool(
+    "break_on_start", False,
+    "If True break into a pdb shell immediately on startup. This"
+    " can be used for debugging the client manually.")
+
+
+
+Check /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/worker_lib.py
+
+
+Check 
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/worker.py
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/server_startup.py
+
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow.py
+def StartFlow(client_id=None,
+              cpu_limit=None,
+              creator=None,
+              flow_args=None,
+              flow_cls=None,
+              network_bytes_limit=None,
+              original_flow=None,
+              output_plugins=None,
+              start_at=None,
+              parent_flow_obj=None,
+              parent_hunt_id=None,
+              **kwargs):
+  """The main factory function for creating and executing a new flow.
+
+  Args:
+    client_id: ID of the client this flow should run on.
+
+
+also for the ac authority we can use the function
+
+  flow_args.Validate()
+
+  when we try to validate the flows and roles used by the client to create roles in the client side
+
+  check 
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/webhistory.py
+
+
+
+
+def StartFlow(client_id=None,
+              cpu_limit=None,
+              creator=None,
+              flow_args=None,
+              flow_cls=None,
+              network_bytes_limit=None,
+              original_flow=None,
+              output_plugins=None,
+              start_at=None,
+              parent_flow_obj=None,
+              parent_hunt_id=None,
+              **kwargs):
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow.py
+
+
+very promising
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/client/grr_response_client/comms.py
+▼ GRRClientWorker : class
+   +ChargeBytesToSession : function
+   +Drain : function
+   +HandleMessage : function
+
+
+
