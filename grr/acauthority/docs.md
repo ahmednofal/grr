@@ -129,4 +129,31 @@ very promising
    +HandleMessage : function
 
 
+For the server entry point
+
+
+The entry point is  
+  def CallFlow(self,
+               flow_name=None,
+               next_state=None,
+               request_data=None,
+               client_id=None,
+               base_session_id=None,
+               **kwargs):
+    """Creates a new flow and send its responses to a state.
+
+    This creates a new flow. The flow may send back many responses which will be
+
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_base.py
+
+4. The child flow calls CallClient() which schedules some messages for the client. Since its runner has a parent runner, the messages are queued on the
+   parent runner's message queues.
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py
+
+
+  def Start(self):
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/webhistory.py
 
