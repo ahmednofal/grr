@@ -63,6 +63,7 @@ Check /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/gr
 
 
 Check 
+
 /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/worker.py
 
 /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/server_startup.py
@@ -140,8 +141,34 @@ The entry point is
 
     This creates a new flow. The flow may send back many responses which will be
 
+    also
+    client_messages instance member data in flow_base file classes
+    also
 
+  def CallState(self, next_state="", start_time=None):
+    """This method is used to schedule a new state on a different worker.
+
+    This is basically the same as CallFlow() except we are calling
+    ourselves. The state will be invoked at a later time.
+
+    Args:
+       next_state: The state in this flow to be invoked.
+       start_time: Start the flow at this time. This delays notification for
+         flow processing into the future. Note that the flow may still be
+         processed earlier if there are client responses waiting.
+
+    Raises:
+       FlowRunnerError: if the next state is not valid.
+    """
+
+
+    self.QueueResponse(msg, start_time)
+
+    # Notify the worker about it.
+    self.QueueNotification(session_id=self.session_id, timestamp=start_time)
 /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_base.py
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py
 
 4. The child flow calls CallClient() which schedules some messages for the client. Since its runner has a parent runner, the messages are queued on the
    parent runner's message queues.
@@ -152,4 +179,61 @@ The entry point is
   def Start(self):
 
 /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/webhistory.py
+
+
+
+  def _QueueRequest(self, request, timestamp=None):
+    if request.HasField("request") and request.request.name:
+      # This message contains a client request as well.
+      self.queue_manager.QueueClientMessage(
+          request.request, timestamp=timestamp)
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py
+
+
+  def WaitUntilDone(self, timeout=None):
+    """Wait until the flow completes.
+
+    Args:
+      timeout: timeout in seconds. None means default timeout (1 hour).
+               0 means no timeout (wait forever).
+    Returns:
+      Fresh flow object.
+    Raises:
+      PollTimeoutError: if timeout is reached.
+      FlowFailedError: if the flow is not successful.
+    """
+
+    f = utils.Poll(
+        generator=self.Get,
+        condition=lambda f: f.data.state != f.data.RUNNING,
+        timeout=timeout)
+    if f.data.state != f.data.TERMINATED:
+      raise errors.FlowFailedError("Flow %s (%s) failed: %s" %
+                                   (self.flow_id, self.client_id,
+                                    f.data.context.current_state))
+    return f
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/api_client/python/grr_api_client/flow.py
+
+
+Confusing stuffffff
+
+
+▶ imports
+
+▼ PoolGRRClient : class
+   +Run : function
+   +Stop : function
+   +__init__ : function
+   +run : function
+
+ +CheckLocation : function
+
+ +CreateClientPool : function
+
+ +main : function
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/client/grr_response_client/poolclient.py
+
 

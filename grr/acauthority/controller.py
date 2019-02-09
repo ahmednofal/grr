@@ -152,8 +152,10 @@ class ACAuthority:
         pass
 
     # This is going to be moved into the incomingrequesthandler
-    # TODO: This might need to be removed in using the rpc instead of the old client-server implementation
-    # except for actually the registration part, that has to go through some checking, and also ther should be
+    # TODO: This might need to be removed in using the rpc instead of the old
+    # client-server implementation
+    # except for actually the registration part, that has to go through some
+    # checking, and also ther should be
     # a legalizer for us, to check if the proposed role is actually legal, or actually we can enforce that the
     # client (grr client) will have to choose in the interface a set of flows to include in the access role
     # made available to assumers
