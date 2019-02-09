@@ -19,3 +19,10 @@ Traceback (most recent call last):
   File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
     raise NotFound()
 NotFound: 404: Not Found
+ERROR:2019-02-09 13:55:04,561 27133 MainProcess 140668164896512 Thread-321 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found

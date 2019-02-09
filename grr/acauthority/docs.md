@@ -1,7 +1,7 @@
 Access Control Box
 ==============================
 
-According to the proposed architecture ACBOX (Access Control Box) will be an intermediatry 
+According to the proposed architecture ACBOX (Access Control Box) will be an intermediatry
 between the client and the server and delegates access control tokens from the server to the
 client
 
@@ -12,6 +12,7 @@ It can be deployed as part of the client, server or neither of them and as a sep
 
 Philosophy
 ==========
+
 
 The entire idea behind delegation is to keep the client as thin as possible, no resources to 
 be spent on gathering files
@@ -194,15 +195,21 @@ Confusing stuffffff
 
 ▼ PoolGRRClient : class
    +Run : function
+
    +Stop : function
+
    +__init__ : function
+
    +run : function
+
 
  +CheckLocation : function
 
  +CreateClientPool : function
 
  +main : function
+
+ edited
 
 /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/client/grr_response_client/poolclient.py
 
@@ -212,16 +219,16 @@ Confusing stuffffff
 
 # Information extracted from looking at the code
 
-"""
 
+1.
+"""
 FlowBase and FlowRunner have the exact same functions almost,we need to check
 which of the them is the entry point to the server,
 and inject the ac code in it
 TODO: check which to use between FLowRunner and FlowBase
-
-
 """
 
+2.
 """
 almost all flows have a Start() method that calls CallFlow() method
 """
@@ -230,9 +237,14 @@ almost all flows have a Start() method that calls CallFlow() method
 grr_api_client folder has flow.py which contains FlowBase class
 """
 
+"""
+The cronjob flow get executed using the Start() method and the
+cron job gets executed using the Run method
+"""
 
 """
 grr_api_client is the entry point for the flow definition engine
+particularly the flow.py file
 """
 # Good paths to consider in general for server
 
