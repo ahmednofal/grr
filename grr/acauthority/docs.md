@@ -42,13 +42,9 @@ The token datastructure
 =======================
 
 Looking into current implementations of tokens, might have to serialize and deserialize 
-internally 
+internally
 
-
-in 
-
-/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/client/grr_response_client/grr_fs_client.py
-
+# res start
 
 flags.DEFINE_bool("install", False, "Specify this to install the client.")
 
@@ -57,19 +53,15 @@ flags.DEFINE_bool(
     "If True break into a pdb shell immediately on startup. This"
     " can be used for debugging the client manually.")
 
+in
 
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/client/grr_response_client/grr_fs_client.py
 
-Check /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/worker_lib.py
+# res done
 
+# res start
+Check
 
-Check 
-
-/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/worker.py
-
-/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/server_startup.py
-
-
-/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow.py
 def StartFlow(client_id=None,
               cpu_limit=None,
               creator=None,
@@ -87,49 +79,32 @@ def StartFlow(client_id=None,
   Args:
     client_id: ID of the client this flow should run on.
 
-
+"""
 also for the ac authority we can use the function
 
   flow_args.Validate()
 
   when we try to validate the flows and roles used by the client to create roles in the client side
 
-  check 
-
-/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/webhistory.py
-
-
-
-
-def StartFlow(client_id=None,
-              cpu_limit=None,
-              creator=None,
-              flow_args=None,
-              flow_cls=None,
-              network_bytes_limit=None,
-              original_flow=None,
-              output_plugins=None,
-              start_at=None,
-              parent_flow_obj=None,
-              parent_hunt_id=None,
-              **kwargs):
+in
 
 /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow.py
+# res end
 
-
-very promising
-
-/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/client/grr_response_client/comms.py
+# res start
 ▼ GRRClientWorker : class
    +ChargeBytesToSession : function
    +Drain : function
    +HandleMessage : function
 
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/client/grr_response_client/comms.py
+# res end
 
+# res start
 For the server entry point
 
 
-The entry point is  
+The entry point is
   def CallFlow(self,
                flow_name=None,
                next_state=None,
@@ -143,8 +118,8 @@ The entry point is
 
     also
     client_messages instance member data in flow_base file classes
+"""
     also
-
   def CallState(self, next_state="", start_time=None):
     """This method is used to schedule a new state on a different worker.
 
@@ -161,26 +136,28 @@ The entry point is
        FlowRunnerError: if the next state is not valid.
     """
 
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_base.py
 
+also
+FlowRunner like FlowBase can CallClient CallFlow CallState and
+CallStateInLine
+
+# res end
+
+# res start 
     self.QueueResponse(msg, start_time)
 
     # Notify the worker about it.
     self.QueueNotification(session_id=self.session_id, timestamp=start_time)
-/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_base.py
 
-/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py
+
 
 4. The child flow calls CallClient() which schedules some messages for the client. Since its runner has a parent runner, the messages are queued on the
    parent runner's message queues.
 
-/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py
-
-
-  def Start(self):
-
-/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/webhistory.py
-
-
+also
+FlowRunner like FlowBase can CallClient CallFlow CallState and
+CallStateInLine
 
   def _QueueRequest(self, request, timestamp=None):
     if request.HasField("request") and request.request.name:
@@ -190,35 +167,28 @@ The entry point is
 
 /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py
 
+# res end
 
-  def WaitUntilDone(self, timeout=None):
-    """Wait until the flow completes.
 
-    Args:
-      timeout: timeout in seconds. None means default timeout (1 hour).
-               0 means no timeout (wait forever).
-    Returns:
-      Fresh flow object.
-    Raises:
-      PollTimeoutError: if timeout is reached.
-      FlowFailedError: if the flow is not successful.
-    """
 
-    f = utils.Poll(
-        generator=self.Get,
-        condition=lambda f: f.data.state != f.data.RUNNING,
-        timeout=timeout)
-    if f.data.state != f.data.TERMINATED:
-      raise errors.FlowFailedError("Flow %s (%s) failed: %s" %
-                                   (self.flow_id, self.client_id,
-                                    f.data.context.current_state))
-    return f
 
-/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/api_client/python/grr_api_client/flow.py
+
+
+# res start
+  def Start(self):
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/webhistory.py
+
+
+# res end
+
+
 
 
 Confusing stuffffff
 
+
+# res start
 
 ▶ imports
 
@@ -236,4 +206,47 @@ Confusing stuffffff
 
 /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/client/grr_response_client/poolclient.py
 
+# res end
 
+
+
+# Information extracted from looking at the code
+
+"""
+
+FlowBase and FlowRunner have the exact same functions almost,we need to check
+which of the them is the entry point to the server,
+and inject the ac code in it
+TODO: check which to use between FLowRunner and FlowBase
+
+
+"""
+
+"""
+almost all flows have a Start() method that calls CallFlow() method
+"""
+
+"""
+grr_api_client folder has flow.py which contains FlowBase class
+"""
+
+
+"""
+grr_api_client is the entry point for the flow definition engine
+"""
+# Good paths to consider in general for server
+
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/worker_lib.py
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/worker.py
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/server_startup.py
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/webhistory.py
+
+
+# Good paths to consider in general for the client
+
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/api_client/python/grr_api_client/flow.py
