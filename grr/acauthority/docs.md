@@ -30,9 +30,9 @@ Access Control List
 ===================
 
 The acbox has an ACL of the roles of the users on certain servers which the client approves of
-So the access control list is kept at the acbox NOT in the client side, simply the acts are 
+So the access control list is kept at the acbox NOT in the client side, simply the acts are
 approved based on the tokens. The server sends the client the request, the requests is
-forwarded to the acbox and checked for the identity of the server and the client and then the 
+forwarded to the acbox and checked for the identity of the server and the client and then the
 role in the acl
 
 
@@ -42,7 +42,7 @@ The api exists either thr
 The token datastructure
 =======================
 
-Looking into current implementations of tokens, might have to serialize and deserialize 
+Looking into current implementations of tokens, might have to serialize and deserialize
 internally
 
 # res
@@ -282,6 +282,29 @@ class GRRFSServer(object):
 # res end
 
 
+
+# res
+
+▼ RootGrrApi : class
+   +__init__ : function
+   +CreateGrrUser : function
+   +GrrUser : function
+   +ListGrrUsers : function
+   +GrrBinary : function
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/api_client/python/grr_api_client/root.py
+# res end
+# res 
+The entry point for the flows on the server side, the code could be
+modified to include a function to be called to include in the flow body
+an AC token
+  
+▼ GRRWorker : class
+   +ProcessFlow : function
+
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/worker_lib.py
+# res end
+
 # Information extracted from looking at the code
 
 
@@ -381,6 +404,41 @@ Note that Fleetspeak is not yet enabled in GRR so while you can in theory use it
 issue:https://github.com/google/grr/issues/639 
 
 """
+13.
+"""
+It seems though the implementation of the comms protocol is included in the 
+client side in the comms.py and in the server side in the front_end.py file
+"""
+14.
+"""
+for future reference RDF value is just
+Resource Description Framework value
+"""
+
+15.
+"""
+might be able to implement initialization code in most of the grr flows
+because the GRRFlow inherits from the FlowBase class and calls the Initialize
+function of the super class, hence we can go into the super function
+and then just add a call to the function that will do some access
+control related work
+grr/grr_response_server/flow.py
+"""
+
+16.
+"""
+
+This file is needed in the grr_api_client/api.py probably because to expose
+api for the grr_server such that it retains access to the current
+environment with the information it withholds you need context
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/api_client/python/grr_api_client/context.py
+"""
+
+17.
+"""
+for any work with grr_api
+https://github.com/google/grr/tree/master/api_client/python#initializing-the-grr-api-object
+"""
 # Good paths to consider in general for server
 
 
@@ -396,6 +454,7 @@ issue:https://github.com/google/grr/issues/639
 
 /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/fleetspeak_connector.py
 
+/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/frontend_lib.py
 # Good paths to consider in general for the client
 
 

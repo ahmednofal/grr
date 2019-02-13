@@ -1,0 +1,17 @@
+searching through SendReply and HandleMessage 
+functions of the GRRClientWorker
+Aftewards we will be revisiting the server 
+frontend.py file which contains similar
+info that relates to the communication protocol
+
+We can use the Drain method of the GRRClientWorker
+through checking if any other class instantiates 
+GRRClientWorkers, then we can check if there are 
+any queues containing the GRRClientWorkers(s) and
+from the instances in the queue we can use the drain
+method and retrieve all of the GRRMessages
+
+GRRClientWorker is used in GRRHTTPClient which
+is used by the client.py file which is the 
+entry point/script for the client after installation
+
