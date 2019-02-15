@@ -277,7 +277,7 @@ class GRRFSServer(object):
   This class is only responsible for the read end of Fleetspeak comms. The write
   end is used in Fleetspeak frontend, worker and admin_ui processes.
   """
-  
+
 /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/fleetspeak_frontend.py
 # res end
 
@@ -298,7 +298,7 @@ class GRRFSServer(object):
 The entry point for the flows on the server side, the code could be
 modified to include a function to be called to include in the flow body
 an AC token
-  
+
 ▼ GRRWorker : class
    +ProcessFlow : function
 
@@ -392,21 +392,21 @@ tools
 """
 11.
 """
-   reading the grr messages of Fleetspeak comms is at the grrfsserver. The 
+   reading the grr messages of Fleetspeak comms is at the grrfsserver. The
    write end is used in Fleetspeak frontend, worker and admin_ui processes.
-   so 3 code bases or logical code bases to look into 
+   so 3 code bases or logical code bases to look into
 """
 
 12.
 """
 Note that Fleetspeak is not yet enabled in GRR so while you can in theory use it, currently the default GRR installation uses its own comms protocol.
 
-issue:https://github.com/google/grr/issues/639 
+issue:https://github.com/google/grr/issues/639
 
 """
 13.
 """
-It seems though the implementation of the comms protocol is included in the 
+It seems though the implementation of the comms protocol is included in the
 client side in the comms.py and in the server side in the front_end.py file
 """
 14.

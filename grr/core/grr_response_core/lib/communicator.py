@@ -8,6 +8,7 @@ import abc
 import struct
 import time
 import zlib
+import jwt
 
 
 from future.builtins import str
@@ -20,6 +21,7 @@ from grr_response_core.lib.rdfvalues import crypto as rdf_crypto
 from grr_response_core.lib.rdfvalues import flows as rdf_flows
 from grr_response_core.stats import stats_collector_instance
 from grr_response_core.stats import stats_utils
+# from grr_resonse_server.rbac import server_comm as ac_server_comm
 
 
 # Although these metrics are never queried on the client, removing them from the
@@ -284,6 +286,9 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
 
     # A cache for encrypted ciphers
     self.encrypted_cipher_cache = utils.FastStore(max_size=50000)
+    # TODO(ahmednofal)Check firstly if this is a server instance
+    # self.ac_server_communicator = ac_server_comm.ACServerCommunicator()
+    # self.register_keycloak_user()
 
   @abc.abstractmethod
   def _GetRemotePublicKey(self, server_name):
@@ -322,6 +327,26 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
     self.server_cipher_age = rdfvalue.RDFDatetime.Now()
     return self.server_cipher
 
+  def TokenizeMessage(self,
+                      message_obj,
+                      flow_type):
+      """ This method takes in a GRRMessage and checks
+      if it is carrying a flow , checks the flow type
+      , then talks to the ac server and asks it for a
+      jwt token to encode in the message for the client
+      to check with the server afterwards
+
+      :message_obj: the GRRMessage Object
+      :flow_type: the type of the flow to be executed on the client
+      :returns: GRRMessage carrying a JWT token or raises
+      :raises: failure to tokenize, with an error code indicating
+      if the failure was due to role it is indicated in the code
+      """
+
+      # Communicate with the ac server and get the token
+      # token = request_role_token(flow_type, server_resolve)
+      pass
+
   def EncodeMessages(self,
                      message_list,
                      result,
@@ -355,15 +380,26 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
     # communicator classes already, one for the client, one for the
     # server. This should be different methods, not a single one that
     # gets passed a destination (server side) or not (client side).
+
+    # TODO(ahmednofal): Remove Comment
+    # Client Side
     if destination is None:
       destination = self.server_name
       # For the client it makes sense to cache the server cipher since
       # it's the only cipher it ever uses.
       cipher = self._GetServerCipher()
     else:
+    # Server side
+      for message in message_list.job:
+          message.leased_by = "hamdalease"
+          print("this is the lease of the message \
+                " + message.leased_by)
+        # Iterate over the messages and add to them the token
+        # get the token first
       remote_public_key = self._GetRemotePublicKey(destination)
       cipher = Cipher(self.common_name, self.private_key, remote_public_key)
 
+    # Insert token here
     # Make a nonce for this transaction
     if timestamp is None:
       self.timestamp = timestamp = int(time.time() * 1000000)

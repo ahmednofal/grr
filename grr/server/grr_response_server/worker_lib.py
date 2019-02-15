@@ -417,6 +417,8 @@ class GRRWorker(object):
 
     data_store.REL_DB.AckFlowProcessingRequests([flow_processing_request])
 
+    # TODO: REMOVE
+    print("this is a string in ProcessFlow")
     try:
       rdf_flow = data_store.REL_DB.ReadFlowForProcessing(
           client_id, flow_id, processing_time=rdfvalue.Duration("6h"))

@@ -195,7 +195,7 @@ class ACAuthority:
             created_role = self.adminobj.create_client_role()
         return created_role
 
-    def modyify_client_roles(client, new_role):
+    def modyify_client_roles(self, client, new_role):
         """checks if the client has that role and then checks if the available new role and new access rights
         associated with the role can be applied
 
@@ -221,19 +221,10 @@ class ACAuthority:
         analyst = self.request_analyst(request)
         return self.adminobj.get_client_roles(analyst)
 
-    # TODO: why do we have this ?????
-    def identity_as_db_entry(self,identity):
-        self.auth_keycloak_admin()
-
     def get_identity(self, request):
         self.auth_keycloak_admin()
         current_users = self.adminobj.get_users()
         db_entry = self.identity_as_db_entry(self.request)
-
-    # TODO: What is this supposed to do ?????
-    def facilitate_roles(self, request):
-        self.auth_keycloak_admin()
-        identity = self.get_identity(request)
 
     # DEPRECATED or is it ?
     def identity_roles(self,server_IP):

@@ -699,7 +699,7 @@ class GRRClientWorker(threading.Thread):
 
       # For debugging purposes only
       # TODO: Remove before packaging
-      print("action_cls is "+ str(action_cls))
+      print("the message lease is "+ str(message.leased_by))
       action = action_cls(grr_worker=self)
 
       # Write the message to the transaction log.
@@ -1115,6 +1115,8 @@ class GRRHTTPClient(object):
 
     # If any outbound messages require fast poll we switch to fast poll mode.
     for message in message_list.job:
+      print("this is the name of the message lease by is \
+                " + message.leased_by)
       if message.require_fastpoll:
         self.timer.FastPoll()
         break

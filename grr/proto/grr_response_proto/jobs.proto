@@ -146,6 +146,7 @@ message GrrMessage {
       type: "RDFDatetime",
       description: "An optional timestamp when this message was stored.",
     }];
+  optional string JWT_token = 23;
 };
 
 // This is a list of messages

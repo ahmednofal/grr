@@ -26,3 +26,10 @@ Traceback (most recent call last):
   File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
     raise NotFound()
 NotFound: 404: Not Found
+ERROR:2019-02-15 20:59:16,018 4019 MainProcess 139631039334144 Thread-177 wsgiapp:328] http exception: /favicon.ico [GET]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found

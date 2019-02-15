@@ -1,0 +1,21 @@
+ERROR:2019-02-15 20:22:27,106 19388 MainProcess 140106329487104 Thread-8 mysql_advanced_data_store:616] OperationalError: (1213, 'Deadlock found when trying to get lock; try restarting transaction'). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-02-15 20:46:46,286 31139 MainProcess 139801395832576 Thread-2 frontend:205] Had to respond with status 500.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 199, in do_POST
+    self.Control()
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 55, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 33, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 259, in Control
+    request_comms, responses_comms)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 55, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 33, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/frontend_lib.py", line 417, in HandleMessageBundles
+    api_version=request_comms.api_version)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/communicator.py", line 395, in EncodeMessages
+    " + message.JWT_Token)
+AttributeError: 'GrrMessage' object has no attribute 'JWT_Token'
+ERROR:2019-02-15 21:01:56,548 6717 MainProcess 140384199460608 Thread-16 mysql_advanced_data_store:616] OperationalError: (1213, 'Deadlock found when trying to get lock; try restarting transaction'). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.

@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package = acservice;
+
+service ACService{
+        rpc register_client(ClientRegistrationRequest)
+}
+message ClientRegistrationRequest{
+        string JWT_Token = 1;
+        string client_password = 3;
+        string client_
+}
