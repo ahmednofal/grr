@@ -112,6 +112,10 @@ from request_types import *
 from jsonrpc import Dispatcher
 
 
+# TODO: use the get_client_roles_of_user method in the KeycloakAdmin
+# obj 
+# TODO: use the get_client_roles to check if the client has actually
+# created those roles
 
 class ACAuthority:
     # Needed because the server apparently kicks us out every few ms, oh well such is life ....

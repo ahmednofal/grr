@@ -104,6 +104,8 @@ from grr_response_core.lib.rdfvalues import crypto as rdf_crypto
 from grr_response_core.lib.rdfvalues import flows as rdf_flows
 from grr_response_core.lib.rdfvalues import protodict as rdf_protodict
 from grr_response_core.stats import stats_collector_instance
+from grr_response_client.rbac import server_comm
+from acauthority.config import ACSERVER
 
 
 class HTTPObject(object):
@@ -507,6 +509,13 @@ class GRRClientWorker(threading.Thread):
     threading.Thread.__init__(self)
 
     # A reference to the parent client that owns us.
+    # TODO(ahmednofal)  : Check if giving the clientworker an acserver handler
+    # is bad and has side effects
+    # Check if the calling is right from the point of view of modules and
+    # packages
+
+    self.ac_server_communicator = server_comm.ACServerCommunicator()
+
     self.client = client
 
     self._is_active = False
@@ -690,6 +699,7 @@ class GRRClientWorker(threading.Thread):
 
     Raises:
         RuntimeError: The client action requested was not found.
+        RuntimeError: The token was not verified
     """
     self._is_active = True
     try:
@@ -707,15 +717,27 @@ class GRRClientWorker(threading.Thread):
 
       # Heartbeat so we have the full period to work on this message.
       # TODO : Add here code to verify the token sent by the server obtained from the AC
-      action.Progress()
-      action.Execute(message)
+      # TODO : you can actually just check the name of the action
+      # that has been verified by the ac authorit if the name
+      # Of the action does not conform with the one in the token
+      # just do not execute the action
+      if self.ac_server_communicator.token_verified(message.JWT_token):
+        action.Progress()
+        action.Execute(message)
 
-      # If we get here without exception, we can remove the transaction.
-      self.transaction_log.Clear()
-    finally:
-      self._is_active = False
-      # We want to send ClientStats when client action is complete.
-      self.stats_collector.RequestSend()
+        # If we get here without exception, we can remove the transaction.
+        self.transaction_log.Clear()
+      finally:
+        self._is_active = False
+        # We want to send ClientStats when client action is complete.
+        self.stats_collector.RequestSend()
+      else:
+        raise RuntimeError("GRR Server token was not verified
+        \n Either the client does not allow % to
+        \n be executed on it, or the server sending the action
+        \n has not assumed the role before asking the access
+        \n control authority to issue a JWT token for the role")
+
 
   def MemoryExceeded(self):
     """Returns True if our memory footprint is too large."""

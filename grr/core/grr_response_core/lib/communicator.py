@@ -21,7 +21,7 @@ from grr_response_core.lib.rdfvalues import crypto as rdf_crypto
 from grr_response_core.lib.rdfvalues import flows as rdf_flows
 from grr_response_core.stats import stats_collector_instance
 from grr_response_core.stats import stats_utils
-# from grr_resonse_server.rbac import server_comm as ac_server_comm
+from grr_resonse_server.rbac import server_comm as ac_server_comm
 
 
 # Although these metrics are never queried on the client, removing them from the
@@ -287,7 +287,7 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
     # A cache for encrypted ciphers
     self.encrypted_cipher_cache = utils.FastStore(max_size=50000)
     # TODO(ahmednofal)Check firstly if this is a server instance
-    # self.ac_server_communicator = ac_server_comm.ACServerCommunicator()
+    self.ac_server_communicator = ac_server_comm.ACServerCommunicator()
     # self.register_keycloak_user()
 
   @abc.abstractmethod
@@ -327,7 +327,7 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
     self.server_cipher_age = rdfvalue.RDFDatetime.Now()
     return self.server_cipher
 
-  def TokenizeMessage(self,
+  def TokenizedMessage(self,
                       message_obj,
                       flow_type):
       """ This method takes in a GRRMessage and checks
@@ -344,8 +344,11 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
       """
 
       # Communicate with the ac server and get the token
-      # token = request_role_token(flow_type, server_resolve)
-      pass
+      # source is the grr_server user which is an access control user
+      # as well
+      token = request_role_token(message_obj.name, message_obj.source)
+      message_obj.JWT_token = token
+      return message_obj
 
   def EncodeMessages(self,
                      message_list,
@@ -391,9 +394,10 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
     else:
     # Server side
       for message in message_list.job:
-          message.leased_by = "hamdalease"
-          print("this is the lease of the message \
-                " + message.leased_by)
+        # here we are using the source and name(this is the action
+        # name),
+        # TODO:  get the flow name later
+        message = TokenizedMessage(message)
         # Iterate over the messages and add to them the token
         # get the token first
       remote_public_key = self._GetRemotePublicKey(destination)

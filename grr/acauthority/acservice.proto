@@ -2,11 +2,71 @@ syntax = "proto2";
 
 package = acservice;
 
+enum status{
+     OK = 1;
+     FAILED = 2;
+}
 service ACService{
         rpc register_client(ClientRegistrationRequest)
+        returns (ACServerResponse);
+        
+        rpc authenticate_client(ClientAuthenticationRequest)
+        returns (ACServerResponse);
+
+        rpc add_role(ClientAddRoleRequest)
+        returns (ACServerResponse);
+
+        rpc delete_role(ClientAddRoleRequest)
+        returns (ACServerResponse);
+
+        rpc modify_role(ClientModifyRoleRequest)
+        returns (ACServerReponse);
 }
+
+
+/*
+
+        rpc RegisterClient(ClientRegistrationRequest)
+        returns (ACServerResponse);
+        
+        rpc AuthenticateClient(ClientAuthenticationRequest)
+        returns (ACServerResponse);
+
+        rpc AddRole(ClientAddRoleRequest)
+        returns (ACServerResponse);
+
+        rpc DeleteRole(ClientAddRoleRequest)
+        returns (ACServerResponse);
+
+        rpc ModifyRole(ClientModifyRoleRequest)
+        returns (ACServerReponse);
+
+
+
+
+
+
+
+
+
+*/
+
 message ClientRegistrationRequest{
-        string JWT_Token = 1;
+        string ac_bearer_token = 1
+        string client_id = 2;
         string client_password = 3;
-        string client_
+}
+
+message ACServerResponse{
+        enum status = 1;
+}
+
+message ClientAuthenticationRequest{
+        string bearer_token = 1
+        string client_id = 2;
+        string client_password = 3;
+}
+message ClientAddRoleRequest{
+        string bearer_token = 1;
+        string role = 2;
 }
