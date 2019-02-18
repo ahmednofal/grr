@@ -89,6 +89,7 @@ import queue
 import requests
 
 from grr_response_client import actions
+from grr_response_client.actions import ActionPlugin
 from grr_response_client import client_stats
 from grr_response_client import client_utils
 from grr_response_client.client_actions import admin
@@ -104,8 +105,8 @@ from grr_response_core.lib.rdfvalues import crypto as rdf_crypto
 from grr_response_core.lib.rdfvalues import flows as rdf_flows
 from grr_response_core.lib.rdfvalues import protodict as rdf_protodict
 from grr_response_core.stats import stats_collector_instance
-from grr_response_client.rbac import server_comm
-from acauthority.config import ACSERVER
+from grr_response_client.ac import action_auth
+from grr_response_ac.config import ACSERVER
 
 
 class HTTPObject(object):
@@ -514,7 +515,7 @@ class GRRClientWorker(threading.Thread):
     # Check if the calling is right from the point of view of modules and
     # packages
 
-    self.ac_server_communicator = server_comm.ACServerCommunicator()
+    # self.ac_server_communicator = server_comm.ACServerCommunicator()
 
     self.client = client
 
@@ -559,6 +560,26 @@ class GRRClientWorker(threading.Thread):
     self.StartStatsCollector()
 
     self.daemon = True
+
+  #TODO(ahmednofal) : Remove my code
+  def action_accessible(self, action_name):
+    """
+    This function checks if the action si accessible to the server from the
+    client side
+    :returns: boolean indicating if the action can be executed
+    """
+    print("\t\t\t\tthe action name is\t\t\t\t\n\n\n\n")
+    print(action_name)
+    print("\n\n\n\n\n\n\n\n")
+
+    print("\t\t\t\tthe action list is\t\t\t\t\n\n\n\n")
+    print(unicode(ActionPlugin.classes.keys()))
+    print("\n\n\n\n\n\n\n\n")
+
+    # action_name is unicode, apples to apples
+    # return action_name in unicode(ActionPlugin.classes.keys())
+    return "hamada" in unicode(ActionPlugin.classes.keys())
+    # return True
 
   def QueueResponse(self, message, blocking=True):
     """Pushes the Serialized Message on the output queue."""
@@ -702,40 +723,43 @@ class GRRClientWorker(threading.Thread):
         RuntimeError: The token was not verified
     """
     self._is_active = True
-    try:
-      action_cls = actions.ActionPlugin.classes.get(message.name)
-      if action_cls is None:
-        raise RuntimeError("Client action %r not known" % message.name)
+    if self.action_accessible(message.name):
+      print("yes the action is accessible")
+      try:
+        action_cls = actions.ActionPlugin.classes.get(message.name)
+        if action_cls is None:
+          raise RuntimeError("Client action %r not known" % message.name)
 
-      # For debugging purposes only
-      # TODO: Remove before packaging
-      print("the message lease is "+ str(message.leased_by))
-      action = action_cls(grr_worker=self)
+        # For debugging purposes only
+        # TODO: Remove before packaging
+        print("the message lease is "+ str(message.leased_by))
+        print("the actions in client are\n ")
+        print(ActionPlugin.classes)
+        action = action_cls(grr_worker=self)
 
-      # Write the message to the transaction log.
-      self.transaction_log.Write(message)
+        # Write the message to the transaction log.
+        self.transaction_log.Write(message)
 
-      # Heartbeat so we have the full period to work on this message.
-      # TODO : Add here code to verify the token sent by the server obtained from the AC
-      # TODO : you can actually just check the name of the action
-      # that has been verified by the ac authorit if the name
-      # Of the action does not conform with the one in the token
-      # just do not execute the action
-      if self.ac_server_communicator.token_verified(message.JWT_token):
+        # Heartbeat so we have the full period to work on this message.
+        # TODO : Add here code to verify the token sent by the server obtained from the AC
+        # TODO : you can actually just check the name of the action
+        # that has been verified by the ac authorit if the name
+        # Of the action does not conform with the one in the token
+        # just do not execute the action
+        # if self.ac_server_communicator.token_verified(message.JWT_token):
         action.Progress()
         action.Execute(message)
-
         # If we get here without exception, we can remove the transaction.
         self.transaction_log.Clear()
       finally:
-        self._is_active = False
-        # We want to send ClientStats when client action is complete.
-        self.stats_collector.RequestSend()
-      else:
-        raise RuntimeError("GRR Server token was not verified
-        \n Either the client does not allow % to
-        \n be executed on it, or the server sending the action
-        \n has not assumed the role before asking the access
+          self._is_active = False
+          # We want to send ClientStats when client action is complete.
+          self.stats_collector.RequestSend()
+    else:
+        raise RuntimeError("GRR Server token was not verified \
+        \n Either the client does not allow % to \
+        \n be executed on it, or the server sending the action \
+        \n has not assumed the role before asking the access \
         \n control authority to issue a JWT token for the role")
 
 

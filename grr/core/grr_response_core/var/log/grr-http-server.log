@@ -19,3 +19,191 @@ Traceback (most recent call last):
     " + message.JWT_Token)
 AttributeError: 'GrrMessage' object has no attribute 'JWT_Token'
 ERROR:2019-02-15 21:01:56,548 6717 MainProcess 140384199460608 Thread-16 mysql_advanced_data_store:616] OperationalError: (1213, 'Deadlock found when trying to get lock; try restarting transaction'). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-02-18 21:17:29,821 28816 MainProcess 139819086763776 Thread-1 frontend:205] Had to respond with status 500.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 199, in do_POST
+    self.Control()
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 55, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 33, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 237, in Control
+    self._GetPOSTData(length))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalue.py", line 187, in FromSerializedString
+    res.ParseFromString(value)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 1813, in ParseFromString
+    ReadIntoObject(string, 0, self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 285, in ReadIntoObject
+    buff, index=index, length=length):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 224, in SplitBuffer
+    raise rdfvalue.DecodeError("Unexpected Tag.")
+DecodeError: Unexpected Tag.
+ERROR:2019-02-18 21:17:31,938 28816 MainProcess 139819086763776 Thread-2 frontend:205] Had to respond with status 500.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 199, in do_POST
+    self.Control()
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 55, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 33, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 237, in Control
+    self._GetPOSTData(length))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalue.py", line 187, in FromSerializedString
+    res.ParseFromString(value)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 1813, in ParseFromString
+    ReadIntoObject(string, 0, self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 285, in ReadIntoObject
+    buff, index=index, length=length):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 224, in SplitBuffer
+    raise rdfvalue.DecodeError("Unexpected Tag.")
+DecodeError: Unexpected Tag.
+ERROR:2019-02-18 21:17:33,466 28816 MainProcess 139819086763776 Thread-3 frontend:205] Had to respond with status 500.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 199, in do_POST
+    self.Control()
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 55, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 33, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 237, in Control
+    self._GetPOSTData(length))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalue.py", line 187, in FromSerializedString
+    res.ParseFromString(value)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 1813, in ParseFromString
+    ReadIntoObject(string, 0, self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 285, in ReadIntoObject
+    buff, index=index, length=length):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 224, in SplitBuffer
+    raise rdfvalue.DecodeError("Unexpected Tag.")
+DecodeError: Unexpected Tag.
+ERROR:2019-02-18 21:17:35,191 28816 MainProcess 139819086763776 Thread-4 frontend:205] Had to respond with status 500.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 199, in do_POST
+    self.Control()
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 55, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 33, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 237, in Control
+    self._GetPOSTData(length))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalue.py", line 187, in FromSerializedString
+    res.ParseFromString(value)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 1813, in ParseFromString
+    ReadIntoObject(string, 0, self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 285, in ReadIntoObject
+    buff, index=index, length=length):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 224, in SplitBuffer
+    raise rdfvalue.DecodeError("Unexpected Tag.")
+DecodeError: Unexpected Tag.
+ERROR:2019-02-18 21:18:40,648 28816 MainProcess 139819086763776 Thread-5 frontend:205] Had to respond with status 500.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 199, in do_POST
+    self.Control()
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 55, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 33, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 237, in Control
+    self._GetPOSTData(length))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalue.py", line 187, in FromSerializedString
+    res.ParseFromString(value)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 1813, in ParseFromString
+    ReadIntoObject(string, 0, self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 285, in ReadIntoObject
+    buff, index=index, length=length):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 224, in SplitBuffer
+    raise rdfvalue.DecodeError("Unexpected Tag.")
+DecodeError: Unexpected Tag.
+ERROR:2019-02-18 21:18:49,179 28816 MainProcess 139819086763776 Thread-6 frontend:205] Had to respond with status 500.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 199, in do_POST
+    self.Control()
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 55, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 33, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 237, in Control
+    self._GetPOSTData(length))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalue.py", line 187, in FromSerializedString
+    res.ParseFromString(value)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 1813, in ParseFromString
+    ReadIntoObject(string, 0, self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 285, in ReadIntoObject
+    buff, index=index, length=length):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/rdfvalues/structs.py", line 224, in SplitBuffer
+    raise rdfvalue.DecodeError("Unexpected Tag.")
+DecodeError: Unexpected Tag.
+ERROR:2019-02-18 21:26:29,030 28816 MainProcess 139819086763776 Thread-42 frontend:205] Had to respond with status 500.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 199, in do_POST
+    self.Control()
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 55, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 33, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 259, in Control
+    request_comms, responses_comms)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 55, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 33, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/frontend_lib.py", line 417, in HandleMessageBundles
+    api_version=request_comms.api_version)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/communicator.py", line 400, in EncodeMessages
+    message = TokenizedMessage(message)
+NameError: global name 'TokenizedMessage' is not defined
+ERROR:2019-02-18 21:27:53,160 2787 MainProcess 140342830024448 Thread-4 frontend:205] Had to respond with status 500.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 199, in do_POST
+    self.Control()
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 55, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 33, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 259, in Control
+    request_comms, responses_comms)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 55, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 33, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/frontend_lib.py", line 417, in HandleMessageBundles
+    api_version=request_comms.api_version)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/communicator.py", line 400, in EncodeMessages
+    message = TokenizedMessage(message)
+NameError: global name 'TokenizedMessage' is not defined
+ERROR:2019-02-18 21:29:12,089 3852 MainProcess 140049851950848 Thread-2 frontend:205] Had to respond with status 500.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 199, in do_POST
+    self.Control()
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 55, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 33, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 259, in Control
+    request_comms, responses_comms)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 55, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 33, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/frontend_lib.py", line 417, in HandleMessageBundles
+    api_version=request_comms.api_version)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/communicator.py", line 400, in EncodeMessages
+    message = TokenizedMessage(message)
+NameError: global name 'TokenizedMessage' is not defined
+ERROR:2019-02-18 21:31:56,642 5762 MainProcess 140483500316416 Thread-2 frontend:205] Had to respond with status 500.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 199, in do_POST
+    self.Control()
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 55, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/stats/stats_utils.py", line 33, in Decorated
+    return func(*args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 264, in Control
+    self.Send(responses_comms.SerializeToString())
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/bin/frontend.py", line 92, in Send
+    self.wfile.write(data)
+  File "/usr/lib/python2.7/socket.py", line 328, in write
+    self.flush()
+  File "/usr/lib/python2.7/socket.py", line 307, in flush
+    self._sock.sendall(view[write_offset:write_offset+buffer_size])
+error: [Errno 32] Broken pipe

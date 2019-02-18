@@ -722,3 +722,215 @@ ERROR:2019-02-15 21:40:40,322 23623 MainProcess 139817199322880 grr_threadpool-1
     "command had %s return code" % (cmd, return_val))
 CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
 
+ERROR:2019-02-18 21:32:13,939 5801 MainProcess 140356276434688 grr_threadpool-31536604 artifact:279] Artifact LinuxRelease returned an Anomaly: message Anomaly {
+ symptom : u'Unable to determine distribution.'
+ type : PARSER_ANOMALY
+}
+ERROR:2019-02-18 21:33:59,830 5801 MainProcess 140356905592576 grr_threadpool-750570327 flow_runner:584] Flow aff4:/C.f28825fa1c88991b/flows/F:28E4EB92/F:153A3C01 raised Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+ERROR:2019-02-18 21:33:59,868 5801 MainProcess 140356905592576 grr_threadpool-750570327 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/F:28E4EB92/F:153A3C01 (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+
+ERROR:2019-02-18 21:38:30,276 8228 MainProcess 140355389335296 grr_threadpool-2510271245 artifact:279] Artifact LinuxRelease returned an Anomaly: message Anomaly {
+ symptom : u'Unable to determine distribution.'
+ type : PARSER_ANOMALY
+}
+ERROR:2019-02-18 21:38:30,918 8228 MainProcess 140354254776064 grr_threadpool-4280490412 artifact:279] Artifact LinuxRelease returned an Anomaly: message Anomaly {
+ symptom : u'Unable to determine distribution.'
+ type : PARSER_ANOMALY
+}
+ERROR:2019-02-18 21:38:32,148 8228 MainProcess 140353172641536 grr_threadpool-1870317167 artifact:279] Artifact LinuxRelease returned an Anomaly: message Anomaly {
+ symptom : u'Unable to determine distribution.'
+ type : PARSER_ANOMALY
+}
+ERROR:2019-02-18 21:39:28,974 8228 MainProcess 140353222997760 grr_threadpool-3653609793 artifact:279] Artifact LinuxRelease returned an Anomaly: message Anomaly {
+ symptom : u'Unable to determine distribution.'
+ type : PARSER_ANOMALY
+}
+ERROR:2019-02-18 21:39:50,762 8228 MainProcess 140354883933952 grr_threadpool-1845432354 artifact:279] Artifact LinuxRelease returned an Anomaly: message Anomaly {
+ symptom : u'Unable to determine distribution.'
+ type : PARSER_ANOMALY
+}
+ERROR:2019-02-18 21:39:56,914 8228 MainProcess 140353181034240 grr_threadpool-2796556868 flow_runner:584] Flow aff4:/C.f28825fa1c88991b/flows/F:9CFD24E9/F:1755C83F raised Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+ERROR:2019-02-18 21:39:56,967 8228 MainProcess 140353181034240 grr_threadpool-2796556868 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/F:9CFD24E9/F:1755C83F (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+
+ERROR:2019-02-18 21:43:10,362 8228 MainProcess 140354875541248 grr_threadpool-1495733450 flow_runner:584] Flow aff4:/C.f28825fa1c88991b/flows/F:8E23086B/F:178C874 raised Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+ERROR:2019-02-18 21:43:10,405 8228 MainProcess 140354875541248 grr_threadpool-1495733450 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/F:8E23086B/F:178C874 (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+
+ERROR:2019-02-18 21:48:28,316 8228 MainProcess 140354245596928 grr_threadpool-1806386505 artifact:279] Artifact LinuxRelease returned an Anomaly: message Anomaly {
+ symptom : u'Unable to determine distribution.'
+ type : PARSER_ANOMALY
+}
+ERROR:2019-02-18 21:50:20,878 8228 MainProcess 140354883933952 grr_threadpool-1050577672 flow_runner:584] Flow aff4:/C.f28825fa1c88991b/flows/F:CEE20D20/F:B6714FD7 raised Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+ERROR:2019-02-18 21:50:20,912 8228 MainProcess 140354883933952 grr_threadpool-1050577672 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/F:CEE20D20/F:B6714FD7 (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+
+ERROR:2019-02-18 21:55:47,800 8228 MainProcess 140354875541248 grr_threadpool-1157462319 flow_runner:584] Flow aff4:/C.f28825fa1c88991b/flows/F:860B6090/F:D56856FA raised Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+ERROR:2019-02-18 21:55:47,836 8228 MainProcess 140354875541248 grr_threadpool-1157462319 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/F:860B6090/F:D56856FA (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+
+ERROR:2019-02-18 21:56:46,223 8228 MainProcess 140354875541248 grr_threadpool-1157462319 flow_runner:584] Flow aff4:/C.f28825fa1c88991b/flows/F:9BCD9450/F:B3B6BD97 raised Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+ERROR:2019-02-18 21:56:46,257 8228 MainProcess 140354875541248 grr_threadpool-1157462319 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/F:9BCD9450/F:B3B6BD97 (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+
+ERROR:2019-02-18 23:09:35,221 8228 MainProcess 140353743083264 grr_threadpool-341930238 artifact:279] Artifact LinuxRelease returned an Anomaly: message Anomaly {
+ symptom : u'Unable to determine distribution.'
+ type : PARSER_ANOMALY
+}

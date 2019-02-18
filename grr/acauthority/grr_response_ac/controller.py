@@ -109,7 +109,7 @@ import keycloak
 from config import KEYCLOAK_CONFIG
 from accesslvl_identifier import *
 from request_types import *
-from jsonrpc import Dispatcher
+# from jsonrpc import Dispatcher
 
 
 # TODO: use the get_client_roles_of_user method in the KeycloakAdmin

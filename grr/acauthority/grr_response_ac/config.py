@@ -13,12 +13,11 @@ RPCSERVER_CONFIG = {
 ACSERVER_protocol = "http://"
 ACSERVER_hostname = "localhost"
 ACSERVER_port = '8090'
-ACSERVER =
-{
-    'hostname' :ACSERVER_hostname,
+ACSERVER ={
+    'hostname' : ACSERVER_hostname,
     'port': ACSERVER_port,
-    'server_url':ACSERVER_protocol+ACSERVER_hostname+':'+ACSERVER_port+'/auth/'
-    'realm':'grr'
-    'public_key':''
-    'encryption_algorithm':''
+    'server_url':ACSERVER_protocol+ACSERVER_hostname+':'+ACSERVER_port+'/auth/',
+    'realm' : 'grr',
+    'public_key':'',
+    'encryption_algorithm':'',
 }
