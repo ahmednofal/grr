@@ -1,29 +1,20 @@
 #!/usr/bin/env python
-from grr_response_client.actions import ActionPlugin
-
-
 from tkinter import *
-class Checkbar(Frame):
-   def __init__(self, parent=None, picks=[], side=LEFT, anchor=W):
-      Frame.__init__(self, parent)
-      self.vars = []
-      for pick in picks:
-         var = IntVar()
-         chk = Checkbutton(self, text=pick, variable=var)
-         chk.pack(side=side, anchor=anchor, expand=YES)
-         self.vars.append(var)
-   def state(self):
-      return map((lambda var: var.get()), self.vars)
-if __name__ == '__main__':
-   root = Tk()
-   lng = Checkbar(root, ['Python', 'Ruby', 'Perl', 'C++'])
-   tgl = Checkbar(root, ['English','German'])
-   lng.pack(side=TOP,  fill=X)
-   tgl.pack(side=LEFT)
-   lng.config(relief=GROOVE, bd=2)
 
-   def allstates():
-      print(list(lng.state()), list(tgl.state()))
-   Button(root, text='Quit', command=root.quit).pack(side=RIGHT)
-   Button(root, text='Peek', command=allstates).pack(side=RIGHT)
-   root.mainloop()
+# checkbar will take options and create booleans for them
+class Checklist(Frame):
+   def __init__(self, parent, actions_whitelist_dict, side=LEFT, anchor=W):
+      self.actions_whitelist_dict = actions_whitelist_dict
+      Frame.__init__(self, parent)
+      row_idx = 0
+      for action_entry, accessible in self.actions_whitelist_dict.items():
+         chk = Checkbutton(self, text=action_entry, variable=accessible)
+         chk.select()
+         chk.grid(row=row_idx, sticky=W)
+         # chk.pack(side=side, anchor=anchor, expand=YES)
+         row_idx += 1
+
+# class ACGUI():
+#    def __init__(self, parent, )
+
+# ACGUI(Tk(), actions_whitelist.values(), actions_whitelist.keys())

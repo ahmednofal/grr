@@ -105,7 +105,7 @@ from grr_response_core.lib.rdfvalues import crypto as rdf_crypto
 from grr_response_core.lib.rdfvalues import flows as rdf_flows
 from grr_response_core.lib.rdfvalues import protodict as rdf_protodict
 from grr_response_core.stats import stats_collector_instance
-from grr_response_client.ac import action_auth
+from grr_response_client.ac import action_authorization
 from grr_response_ac.config import ACSERVER
 
 
@@ -561,25 +561,25 @@ class GRRClientWorker(threading.Thread):
 
     self.daemon = True
 
-  #TODO(ahmednofal) : Remove my code
-  def action_accessible(self, action_name):
-    """
-    This function checks if the action si accessible to the server from the
-    client side
-    :returns: boolean indicating if the action can be executed
-    """
-    print("\t\t\t\tthe action name is\t\t\t\t\n\n\n\n")
-    print(action_name)
-    print("\n\n\n\n\n\n\n\n")
+  # #TODO(ahmednofal) : Remove my code
+  # def action_accessible(self, action_name):
+  #   """
+  #   This function checks if the action si accessible to the server from the
+  #   client side
+  #   :returns: boolean indicating if the action can be executed
+  #   """
+  #   print("\t\t\t\tthe action name is\t\t\t\t\n\n\n\n")
+  #   print(action_name)
+  #   print("\n\n\n\n\n\n\n\n")
 
-    print("\t\t\t\tthe action list is\t\t\t\t\n\n\n\n")
-    print(unicode(ActionPlugin.classes.keys()))
-    print("\n\n\n\n\n\n\n\n")
+  #   print("\t\t\t\tthe action list is\t\t\t\t\n\n\n\n")
+  #   print(unicode(ActionPlugin.classes.keys()))
+  #   print("\n\n\n\n\n\n\n\n")
 
-    # action_name is unicode, apples to apples
-    # return action_name in unicode(ActionPlugin.classes.keys())
-    return "hamada" in unicode(ActionPlugin.classes.keys())
-    # return True
+  #   # action_name is unicode, apples to apples
+  #   # return action_name in unicode(ActionPlugin.classes.keys())
+  #   return "hamada" in unicode(ActionPlugin.classes.keys())
+  #   # return True
 
   def QueueResponse(self, message, blocking=True):
     """Pushes the Serialized Message on the output queue."""
@@ -723,18 +723,14 @@ class GRRClientWorker(threading.Thread):
         RuntimeError: The token was not verified
     """
     self._is_active = True
-    if self.action_accessible(message.name):
-      print("yes the action is accessible")
+    if action_authorization.action_accessible(message.name):
+      print("%s action is accessible", message.name)
       try:
         action_cls = actions.ActionPlugin.classes.get(message.name)
         if action_cls is None:
-          raise RuntimeError("Client action %r not known" % message.name)
+          raise RuntimeError("Client action %s not known", message.name)
 
         # For debugging purposes only
-        # TODO: Remove before packaging
-        print("the message lease is "+ str(message.leased_by))
-        print("the actions in client are\n ")
-        print(ActionPlugin.classes)
         action = action_cls(grr_worker=self)
 
         # Write the message to the transaction log.
@@ -756,11 +752,12 @@ class GRRClientWorker(threading.Thread):
           # We want to send ClientStats when client action is complete.
           self.stats_collector.RequestSend()
     else:
+        print("%s action is not accessible", message.name)
         raise RuntimeError("GRR Server token was not verified \
-        \n Either the client does not allow % to \
+        \n Either the client does not allow %s to \
         \n be executed on it, or the server sending the action \
         \n has not assumed the role before asking the access \
-        \n control authority to issue a JWT token for the role")
+        \n control authority to issue a JWT token for the role", message.name)
 
 
   def MemoryExceeded(self):
@@ -1161,8 +1158,6 @@ class GRRHTTPClient(object):
 
     # If any outbound messages require fast poll we switch to fast poll mode.
     for message in message_list.job:
-      print("this is the name of the message lease by is \
-                " + message.leased_by)
       if message.require_fastpoll:
         self.timer.FastPoll()
         break

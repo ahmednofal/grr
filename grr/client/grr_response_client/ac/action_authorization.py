@@ -1,16 +1,54 @@
 from grr_response_ac import config
-
+from grr_response_client.gui import access_control_agent
+from grr_response_client.actions import ActionPlugin
 from keycloak import KeycloakOpenID
 from config import KEYCLOAK_CLIENT
+from tkinter import *
+import thread
+
 import requests
 import jwt
-class ACController:
-    def accessible_action(cls, action):
+
+# Need to be globally accessible for the current client context
+# so the gui can access it
+# whitelisted_actions init
+
+actions_whitelist = dict().fromkeys(ActionPlugin.classes.keys(), True)
+# actions_whitelist = dict().fromkeys(ActionPlugin.classes.keys())
+# root = Tk()
+# actions_whitelist = ActionPlugin.classes.keys()
+# actions_whitelist = {anaction: BooleanVar(root) for anaction in actions_whitelist}
+# actions_list_gui = access_control_agent.Checklist(root, actions_whitelist)
+# actions_list_gui.pack(side=LEFT)
+# actions_list_gui.config(relief=GROOVE, bd=2)
+# print(actions_whitelist)
+# Init GUI
+# TODO(ahmednofal): Remove from here
+
+# TODO(ahmednofal): Remove, just testing same context
+# for action_entry, accessible in actions_whitelist.items():
+#         print(action_entry , " is ", accessible.get())
+# actions_list_gui.pack(side=TOP,  fill=X)
+# thread.start_new_thread(newthread_for_gui, ())
+# try:
+#         thread.start_new_thread(root.mainloop, (root, ))
+# except:
+#         print("got an except")
+# root.mainloop()
+
+
+
+def action_accessible(action):
         """
         checks if the action exists in the whitelisted
         actions defined in the grr_response_client.ac.config file
         """
-        return action in client_actions_white_lise
+        # TODO(ahmednofal): Separate gui from the ac
+        try: 
+                valuetoreturn = actions_whitelist[action].get()
+        except:
+                valuetoreturn = actions_whitelist[action]
+        return valuetoreturn
 
 class ACServerCommunicator:
     def __init__(self, hostname = None, port = None):

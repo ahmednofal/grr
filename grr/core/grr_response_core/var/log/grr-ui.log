@@ -33,3 +33,970 @@ Traceback (most recent call last):
   File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
     raise NotFound()
 NotFound: 404: Not Found
+ERROR:2019-02-19 11:33:46,783 644 MainProcess 140566562076416 Thread-54 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:48,360 644 MainProcess 140566562076416 Thread-55 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:48,736 644 MainProcess 140566562076416 Thread-56 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:48,885 644 MainProcess 140566562076416 Thread-57 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:49,022 644 MainProcess 140566562076416 Thread-58 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:49,140 644 MainProcess 140566562076416 Thread-59 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:52,731 644 MainProcess 140566562076416 Thread-60 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:53,082 644 MainProcess 140566562076416 Thread-61 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:53,223 644 MainProcess 140566562076416 Thread-62 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:53,358 644 MainProcess 140566562076416 Thread-63 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:53,505 644 MainProcess 140566562076416 Thread-64 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:53,670 644 MainProcess 140566562076416 Thread-65 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:53,933 644 MainProcess 140566562076416 Thread-66 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:54,086 644 MainProcess 140566562076416 Thread-67 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:54,229 644 MainProcess 140566562076416 Thread-68 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:54,499 644 MainProcess 140566562076416 Thread-69 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:54,671 644 MainProcess 140566562076416 Thread-71 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:54,823 644 MainProcess 140566553683712 Thread-73 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:55,092 644 MainProcess 140566553683712 Thread-74 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:55,262 644 MainProcess 140566553683712 Thread-75 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:55,413 644 MainProcess 140566553683712 Thread-76 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:55,574 644 MainProcess 140566553683712 Thread-77 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:58,027 644 MainProcess 140566553683712 Thread-78 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:58,412 644 MainProcess 140566553683712 Thread-79 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:58,564 644 MainProcess 140566553683712 Thread-80 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:58,699 644 MainProcess 140566553683712 Thread-81 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:58,818 644 MainProcess 140566553683712 Thread-82 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:59,182 644 MainProcess 140566553683712 Thread-83 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:33:59,326 644 MainProcess 140566553683712 Thread-84 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:02,024 644 MainProcess 140566562076416 Thread-90 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:03,124 644 MainProcess 140566562076416 Thread-91 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:03,259 644 MainProcess 140566562076416 Thread-92 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:03,388 644 MainProcess 140566562076416 Thread-93 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:03,518 644 MainProcess 140566562076416 Thread-94 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:03,654 644 MainProcess 140566562076416 Thread-95 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:04,044 644 MainProcess 140566562076416 Thread-96 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:04,195 644 MainProcess 140566562076416 Thread-97 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:04,323 644 MainProcess 140566562076416 Thread-98 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:04,451 644 MainProcess 140566562076416 Thread-99 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:04,563 644 MainProcess 140566562076416 Thread-100 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:07,049 644 MainProcess 140566562076416 Thread-103 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:09,492 644 MainProcess 140566562076416 Thread-104 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:12,763 644 MainProcess 140566553683712 Thread-108 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:12,915 644 MainProcess 140566553683712 Thread-109 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:13,266 644 MainProcess 140566553683712 Thread-110 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:13,419 644 MainProcess 140566553683712 Thread-111 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:13,547 644 MainProcess 140566553683712 Thread-112 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:15,036 644 MainProcess 140566553683712 Thread-115 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:15,178 644 MainProcess 140566553683712 Thread-116 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:15,331 644 MainProcess 140566553683712 Thread-117 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:15,491 644 MainProcess 140566553683712 Thread-118 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:15,645 644 MainProcess 140566553683712 Thread-119 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:18,657 644 MainProcess 140566553683712 Thread-125 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:21,746 644 MainProcess 140566553683712 Thread-126 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:22,101 644 MainProcess 140566553683712 Thread-127 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:22,284 644 MainProcess 140566553683712 Thread-128 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:22,454 644 MainProcess 140566553683712 Thread-129 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:22,677 644 MainProcess 140566553683712 Thread-130 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:22,894 644 MainProcess 140566553683712 Thread-131 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:23,099 644 MainProcess 140566553683712 Thread-132 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:23,285 644 MainProcess 140566553683712 Thread-133 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:23,442 644 MainProcess 140566553683712 Thread-134 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:23,586 644 MainProcess 140566553683712 Thread-135 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:34:23,788 644 MainProcess 140566553683712 Thread-136 wsgiapp:328] http exception: /api/clients/C.f28825fa1c88991b/actions/interrogate [POST]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 326, in __call__
+    return endpoint(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 252, in Wrapper
+    return WEBAUTH_MANAGER.SecurityCheck(func, request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/webauth.py", line 134, in SecurityCheck
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 168, in Wrapper
+    response = func(request, *args, **kwargs)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 275, in _HandleApi
+    ValidateCSRFTokenOrRaise(request)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 97, in ValidateCSRFTokenOrRaise
+    raise werkzeug_exceptions.Forbidden("CSRF token is missing")
+Forbidden: 403: Forbidden
+ERROR:2019-02-19 11:55:26,350 9173 MainProcess 140502473111296 Thread-201 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found

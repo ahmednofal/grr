@@ -207,3 +207,4 @@ Traceback (most recent call last):
   File "/usr/lib/python2.7/socket.py", line 307, in flush
     self._sock.sendall(view[write_offset:write_offset+buffer_size])
 error: [Errno 32] Broken pipe
+ERROR:2019-02-19 11:50:10,681 9208 MainProcess 140483607127808 Thread-78 mysql_advanced_data_store:616] OperationalError: (1213, 'Deadlock found when trying to get lock; try restarting transaction'). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
