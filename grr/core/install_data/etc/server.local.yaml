@@ -2,7 +2,7 @@ Monitoring.alert_email: grr-monitoring@localhost
 Mysql.port: 0
 Mysql.host: localhost
 Logging.domain: localhost
-Mysql.database_username: root
+Mysql.database_username: grradmin
 Mysql.database_name: grr
 AdminUI.port: 8000
 PrivateKeys.server_key: '-----BEGIN RSA PRIVATE KEY-----
@@ -59,7 +59,7 @@ PrivateKeys.server_key: '-----BEGIN RSA PRIVATE KEY-----
 
   -----END RSA PRIVATE KEY-----'
 Client.server_urls:
-- http://naufal:8080/
+- http://localhost:8080/
 PrivateKeys.executable_signing_private_key: '-----BEGIN RSA PRIVATE KEY-----
 
   MIIEowIBAAKCAQEAvCmPXT+pLIyWAjnG4mnGbdad1fQeXnRdKinpD2FbSjGG386x
@@ -113,7 +113,7 @@ PrivateKeys.executable_signing_private_key: '-----BEGIN RSA PRIVATE KEY-----
   Uk7a8yCZ356uT5AbR/1uXyqLNqi9b26zpw3IbMYYOQXtXaMHH30S
 
   -----END RSA PRIVATE KEY-----'
-AdminUI.url: http://naufal:8000
+AdminUI.url: http://localhost:8000
 Mysql.database_password: '9437618525'
 Monitoring.emergency_access_email: grr-emergency@localhost
 Frontend.bind_port: 8080

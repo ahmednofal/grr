@@ -105,7 +105,7 @@ from grr_response_core.lib.rdfvalues import crypto as rdf_crypto
 from grr_response_core.lib.rdfvalues import flows as rdf_flows
 from grr_response_core.lib.rdfvalues import protodict as rdf_protodict
 from grr_response_core.stats import stats_collector_instance
-from grr_response_client.ac import action_authorization
+from grr_response_client.ac.action_authorization import access_control_manager
 from grr_response_ac.config import ACSERVER
 
 
@@ -723,7 +723,7 @@ class GRRClientWorker(threading.Thread):
         RuntimeError: The token was not verified
     """
     self._is_active = True
-    if action_authorization.action_accessible(message.name):
+    if access_control_manager.ActionAccessible(message.name):
       print("%s action is accessible", message.name)
       try:
         action_cls = actions.ActionPlugin.classes.get(message.name)
@@ -737,12 +737,6 @@ class GRRClientWorker(threading.Thread):
         self.transaction_log.Write(message)
 
         # Heartbeat so we have the full period to work on this message.
-        # TODO : Add here code to verify the token sent by the server obtained from the AC
-        # TODO : you can actually just check the name of the action
-        # that has been verified by the ac authorit if the name
-        # Of the action does not conform with the one in the token
-        # just do not execute the action
-        # if self.ac_server_communicator.token_verified(message.JWT_token):
         action.Progress()
         action.Execute(message)
         # If we get here without exception, we can remove the transaction.
@@ -1272,6 +1266,8 @@ class GRRHTTPClient(object):
     client to exit.
     """
     while True:
+        # TODO(ahmednofal): add here the authorization list update code
+      access_control_manager.UpdateGui()
       if self.http_manager.ErrorLimitReached():
         return
 

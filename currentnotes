@@ -15,3 +15,25 @@ GRRClientWorker is used in GRRHTTPClient which
 is used by the client.py file which is the 
 entry point/script for the client after installation
 
+# Notes for the plugin defintion engine
+================================================================
+================================================================
+  def __init__(self, source_urn=None, args=None, token=None):
+    """OutputPlugin constructor.
+
+    Constructor should be overridden to maintain instance-local state - i.e.
+    state that gets accumulated during the single output plugin run and that
+    should be used to update the global state via UpdateState method.
+
+
+apparently we are not going to be using the ouput
+plugin option and rather use the input plugin
+option because making a format agnostic output
+plugin definition engine is very tough for users to
+use essentially users will be defining BNF grammar
+just to use the output plugin which is very inconve
+nient 
+
+The alternative model, spawn up a gRPC server and
+use the underlying shell_api, either directly
+execing shell cmds or through using the API 

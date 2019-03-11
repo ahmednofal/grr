@@ -1138,3 +1138,239 @@ ERROR:2019-02-19 17:02:36,703 9324 MainProcess 140664373229312 grr_threadpool-29
     "command had %s return code" % (cmd, return_val))
 CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
 
+ERROR:2019-03-07 14:09:07,015 32283 MainProcess 139985491568384 grr_threadpool-3160492350 artifact:279] Artifact LinuxRelease returned an Anomaly: message Anomaly {
+ symptom : u'Unable to determine distribution.'
+ type : PARSER_ANOMALY
+}
+ERROR:2019-03-07 14:09:11,464 32283 MainProcess 139986565310208 grr_threadpool-3629937480 artifact:279] Artifact LinuxRelease returned an Anomaly: message Anomaly {
+ symptom : u'Unable to determine distribution.'
+ type : PARSER_ANOMALY
+}
+ERROR:2019-03-07 14:09:11,827 32283 MainProcess 139984954697472 grr_threadpool-1717150143 flow_runner:584] Flow aff4:/C.f28825fa1c88991b/flows/E:B264767/E:4C778CC raised Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+ERROR:2019-03-07 14:09:11,863 32283 MainProcess 139984954697472 grr_threadpool-1717150143 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/E:B264767/E:4C778CC (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+
+ERROR:2019-03-07 14:09:15,920 32283 MainProcess 139987110573824 grr_threadpool-3138097538 flow_runner:584] Flow aff4:/hunts/H:370CC874/C.f28825fa1c88991b/H:7A87DC6D/H:3CF2096C raised Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+ERROR:2019-03-07 14:09:15,969 32283 MainProcess 139987110573824 grr_threadpool-3138097538 flow_runner:859] Error in flow aff4:/hunts/H:370CC874/C.f28825fa1c88991b/H:7A87DC6D/H:3CF2096C (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+
+ERROR:2019-03-07 15:18:12,582 32283 MainProcess 139987681015552 grr_threadpool-1224002852 flow_runner:584] Flow aff4:/C.f28825fa1c88991b/flows/F:B8E48D59/F:467C2A03 raised Invalid type LIST_FILES in UserHomeDirs.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 151, in StartCollection
+    self.Collect(artifact_obj)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 221, in Collect
+    "Invalid type %s in %s" % (type_name, artifact_name))
+RuntimeError: Invalid type LIST_FILES in UserHomeDirs
+ERROR:2019-03-07 15:18:12,630 32283 MainProcess 139987630659328 grr_threadpool-1953017005 flow_runner:584] Flow aff4:/C.f28825fa1c88991b/flows/F:B8E48D59/F:B4818FCD raised Invalid type LIST_FILES in LinuxLogFiles.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 151, in StartCollection
+    self.Collect(artifact_obj)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 221, in Collect
+    "Invalid type %s in %s" % (type_name, artifact_name))
+RuntimeError: Invalid type LIST_FILES in LinuxLogFiles
+ERROR:2019-03-07 15:18:12,631 32283 MainProcess 139986598881024 grr_threadpool-3474222067 flow_runner:584] Flow aff4:/C.f28825fa1c88991b/flows/F:B8E48D59/F:E43BBE raised Invalid type LIST_FILES in RootEnvPath.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 151, in StartCollection
+    self.Collect(artifact_obj)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 221, in Collect
+    "Invalid type %s in %s" % (type_name, artifact_name))
+RuntimeError: Invalid type LIST_FILES in RootEnvPath
+ERROR:2019-03-07 15:18:12,636 32283 MainProcess 139987110573824 grr_threadpool-161744149 flow_runner:584] Flow aff4:/C.f28825fa1c88991b/flows/F:B8E48D59/F:BB233C31 raised Artifact PamConfig missing from registry. You may need to sync the artifact repo by running make in the artifact directory..
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 144, in StartCollection
+    artifact_obj = self._GetArtifactFromName(artifact_name)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 131, in _GetArtifactFromName
+    return artifact_registry.REGISTRY.GetArtifact(name)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/utils.py", line 85, in NewFunction
+    return f(self, *args, **kw)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact_registry.py", line 433, in GetArtifact
+    "artifact repo by running make in the artifact directory." % name)
+ArtifactNotRegisteredError: Artifact PamConfig missing from registry. You may need to sync the artifact repo by running make in the artifact directory.
+ERROR:2019-03-07 15:18:12,650 32283 MainProcess 139987639052032 grr_threadpool-2713481724 flow_runner:584] Flow aff4:/C.f28825fa1c88991b/flows/F:B8E48D59/F:72A9067E raised Invalid type LIST_FILES in UserDotFiles.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 151, in StartCollection
+    self.Collect(artifact_obj)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 221, in Collect
+    "Invalid type %s in %s" % (type_name, artifact_name))
+RuntimeError: Invalid type LIST_FILES in UserDotFiles
+ERROR:2019-03-07 15:18:12,698 32283 MainProcess 139987681015552 grr_threadpool-1224002852 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/F:B8E48D59/F:467C2A03 (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 151, in StartCollection
+    self.Collect(artifact_obj)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 221, in Collect
+    "Invalid type %s in %s" % (type_name, artifact_name))
+RuntimeError: Invalid type LIST_FILES in UserHomeDirs
+
+ERROR:2019-03-07 15:18:12,765 32283 MainProcess 139986598881024 grr_threadpool-3474222067 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/F:B8E48D59/F:E43BBE (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 151, in StartCollection
+    self.Collect(artifact_obj)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 221, in Collect
+    "Invalid type %s in %s" % (type_name, artifact_name))
+RuntimeError: Invalid type LIST_FILES in RootEnvPath
+
+ERROR:2019-03-07 15:18:12,775 32283 MainProcess 139987630659328 grr_threadpool-1953017005 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/F:B8E48D59/F:B4818FCD (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 151, in StartCollection
+    self.Collect(artifact_obj)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 221, in Collect
+    "Invalid type %s in %s" % (type_name, artifact_name))
+RuntimeError: Invalid type LIST_FILES in LinuxLogFiles
+
+ERROR:2019-03-07 15:18:12,799 32283 MainProcess 139987110573824 grr_threadpool-161744149 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/F:B8E48D59/F:BB233C31 (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 144, in StartCollection
+    artifact_obj = self._GetArtifactFromName(artifact_name)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 131, in _GetArtifactFromName
+    return artifact_registry.REGISTRY.GetArtifact(name)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/utils.py", line 85, in NewFunction
+    return f(self, *args, **kw)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact_registry.py", line 433, in GetArtifact
+    "artifact repo by running make in the artifact directory." % name)
+ArtifactNotRegisteredError: Artifact PamConfig missing from registry. You may need to sync the artifact repo by running make in the artifact directory.
+
+ERROR:2019-03-07 15:18:12,814 32283 MainProcess 139987639052032 grr_threadpool-2713481724 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/F:B8E48D59/F:72A9067E (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 151, in StartCollection
+    self.Collect(artifact_obj)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 221, in Collect
+    "Invalid type %s in %s" % (type_name, artifact_name))
+RuntimeError: Invalid type LIST_FILES in UserDotFiles
+
+ERROR:2019-03-07 15:18:14,158 32283 MainProcess 139986020046592 grr_threadpool-281260174 flow_runner:584] Flow aff4:/C.f28825fa1c88991b/flows/F:B8E48D59/F:DABC855A raised Invalid type LIST_FILES in RootEnvPathDirs.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 151, in StartCollection
+    self.Collect(artifact_obj)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 221, in Collect
+    "Invalid type %s in %s" % (type_name, artifact_name))
+RuntimeError: Invalid type LIST_FILES in RootEnvPathDirs
+ERROR:2019-03-07 15:18:14,295 32283 MainProcess 139986020046592 grr_threadpool-281260174 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/F:B8E48D59/F:DABC855A (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 151, in StartCollection
+    self.Collect(artifact_obj)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 221, in Collect
+    "Invalid type %s in %s" % (type_name, artifact_name))
+RuntimeError: Invalid type LIST_FILES in RootEnvPathDirs
+
+ERROR:2019-03-07 15:18:14,734 32283 MainProcess 139987672622848 grr_threadpool-3644443434 flow_runner:584] Flow aff4:/C.f28825fa1c88991b/flows/F:B8E48D59/F:F09042DC/F:8CBDE183 raised Invalid type LIST_FILES in LinuxCronParentFolders.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 151, in StartCollection
+    self.Collect(artifact_obj)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 221, in Collect
+    "Invalid type %s in %s" % (type_name, artifact_name))
+RuntimeError: Invalid type LIST_FILES in LinuxCronParentFolders
+ERROR:2019-03-07 15:18:14,997 32283 MainProcess 139987672622848 grr_threadpool-3644443434 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/F:B8E48D59/F:F09042DC/F:8CBDE183 (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 151, in StartCollection
+    self.Collect(artifact_obj)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 221, in Collect
+    "Invalid type %s in %s" % (type_name, artifact_name))
+RuntimeError: Invalid type LIST_FILES in LinuxCronParentFolders
+
+ERROR:2019-03-07 15:32:19,626 32283 MainProcess 139986062010112 grr_threadpool-1439786698 artifact:279] Artifact LinuxRelease returned an Anomaly: message Anomaly {
+ symptom : u'Unable to determine distribution.'
+ type : PARSER_ANOMALY
+}
+ERROR:2019-03-07 15:32:25,320 32283 MainProcess 139986607273728 grr_threadpool-3002096671 flow_runner:584] Flow aff4:/C.f28825fa1c88991b/flows/F:93D8067E/F:CEE38964 raised Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+ERROR:2019-03-07 15:32:25,391 32283 MainProcess 139986607273728 grr_threadpool-3002096671 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/F:93D8067E/F:CEE38964 (aff4:/C.f28825fa1c88991b). Trace: Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 585, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/collectors.py", line 693, in _ParseResponses
+    self)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/artifact.py", line 431, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/lib/parser.py", line 186, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+
