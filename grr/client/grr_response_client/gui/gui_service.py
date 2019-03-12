@@ -19,8 +19,8 @@ class Checklist(Frame):
             chk = Checkbutton(self,
                     text=action_entry,
                     variable=accessible,
-                    callback=gui_obj.UpdatePresistantActionsList)
-            chk.select()
+                    command=gui_obj.UpdatePresistantActionsList)
+            # chk.select()
             chk.grid(row=row_idx, sticky=W)
             row_idx += 1
     @property
@@ -35,38 +35,36 @@ class Checklist(Frame):
 class GUIAgent:
     def __init__(self):
         self.root = Tk()
-        # A list of actions
-        # TODO(ahmednofal): try retrieving from storage first then
-        actions_whitelist = ActionPlugin.classes.keys()
-        # A dict
-        actions_whitelist = {anaction: BooleanVar(self.root) for anaction in actions_whitelist}
+        actions_whitelist_dict = self.PresistentActionsWhitelistDict()
+        actions_whitelist_dict = {anaction: BooleanVar(self.root) for anaction in actions_whitelist_dict.keys()}
+        print(actions_whitelist_dict)
         self.actions_list_gui = Checklist(self, self.root,
-                actions_whitelist)
-        self.actions_list_gui.pack(side=LEFT)
-        self.actions_list_gui.config(relief=GROOVE, bd=2)
+                actions_whitelist_dict)
         self.actions_list_gui.pack(side=TOP,  fill=X)
-        # self.count = 0
+        self.actions_list_gui.config(relief=GROOVE, bd=2)
+        print(self)
         while True:
             self.UpdateActionsList()
             self.root.update()
 
+    def PresistentActionsWhitelistDict(self):
+        with open(actions_whitelist_json_file, 'r') as f:
+            return json.load(f)
+
     def UpdateActionsList(self):
         # The file has to exist
         # Read JSON file
-        print("here")
         with open(actions_whitelist_json_file, 'r') as f:
             actions_whitelist_dict = json.load(f)
-        # print(type(self.actions_list_gui.actions_whitelist()))
-        self.actions_list_gui.actions_whitelist = actions_whitelist_dict
-        print(self.actions_list_gui.actions_whitelist)
+        for action_entry, accessible in actions_whitelist_dict.items():
+            self.actions_list_gui.actions_whitelist[action_entry].set(accessible)
         return self
 
     def UpdatePresistantActionsList(self):
-
         with open(actions_whitelist_json_file, 'w') as f:
-            json.dump(self.actions_whitelist, f)
+            dict_tob_dumped = {action_entry: accessible_boolvar.get() for action_entry, accessible_boolvar in self.actions_list_gui.actions_whitelist.items()}
+            json.dump(dict_tob_dumped, f)
         return self
-        return self.actions_list_gui.actions_whitelist()
 
 gui_agent = GUIAgent()
 

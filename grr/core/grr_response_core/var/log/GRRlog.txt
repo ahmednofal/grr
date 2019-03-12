@@ -20318,3 +20318,15 @@ INFO:2019-03-12 11:43:13,767 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634
 DEBUG:2019-03-12 11:53:14,504 connectionpool:205] Starting new HTTP connection (1): localhost:8080
 DEBUG:2019-03-12 11:53:14,579 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
 INFO:2019-03-12 11:53:14,587 comms:1230] aff4:/C.f28825fa1c88991b: Sending 1(1787), Received 0 messages in 0.0806360244751 sec. Sleeping for 600.0 sec.
+INFO:2019-03-12 13:31:31,053 client_logging:108] Writing log file to /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/var/log//GRRlog.txt
+DEBUG:2019-03-12 13:31:31,059 registry:241] Initializing VFSInit
+DEBUG:2019-03-12 13:31:31,059 registry:241] Initializing InitHook
+DEBUG:2019-03-12 13:31:31,061 config_lib:657] Applying filter env for SystemRoot.
+INFO:2019-03-12 13:31:31,065 comms:1371] Starting client aff4:/C.f28825fa1c88991b
+DEBUG:2019-03-12 13:31:31,070 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 13:31:31,071 admin:353] Sending startup information.
+DEBUG:2019-03-12 13:31:31,072 connectionpool:393] http://localhost:8080 "GET /server.pem HTTP/1.1" 200 1005
+INFO:2019-03-12 13:31:31,079 comms:1068] Server PEM re-keyed.
+DEBUG:2019-03-12 13:31:31,084 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 13:31:31,185 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 13:31:31,193 comms:1230] aff4:/C.f28825fa1c88991b: Sending 3(859), Received 0 messages in 0.10452580452 sec. Sleeping for 600.0 sec.
