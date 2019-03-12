@@ -20315,3 +20315,6 @@ INFO:2019-03-12 11:29:25,905 comms:1230] aff4:/C.f28825fa1c88991b: Sending 1(682
 DEBUG:2019-03-12 11:43:13,727 connectionpool:205] Starting new HTTP connection (1): localhost:8080
 DEBUG:2019-03-12 11:43:13,764 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
 INFO:2019-03-12 11:43:13,767 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0405068397522 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 11:53:14,504 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 11:53:14,579 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 11:53:14,587 comms:1230] aff4:/C.f28825fa1c88991b: Sending 1(1787), Received 0 messages in 0.0806360244751 sec. Sleeping for 600.0 sec.
