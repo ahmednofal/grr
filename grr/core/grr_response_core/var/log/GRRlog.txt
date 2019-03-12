@@ -19984,3 +19984,334 @@ INFO:2019-03-11 11:50:33,803 comms:1068] Server PEM re-keyed.
 DEBUG:2019-03-11 11:50:33,809 connectionpool:205] Starting new HTTP connection (1): localhost:8080
 DEBUG:2019-03-11 11:50:33,887 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
 INFO:2019-03-11 11:50:33,890 comms:1230] aff4:/C.f28825fa1c88991b: Sending 3(859), Received 0 messages in 0.0797910690308 sec. Sleeping for 600.0 sec.
+INFO:2019-03-11 23:29:53,923 client_logging:108] Writing log file to /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/var/log//GRRlog.txt
+DEBUG:2019-03-11 23:29:53,928 registry:241] Initializing VFSInit
+DEBUG:2019-03-11 23:29:53,928 registry:241] Initializing InitHook
+DEBUG:2019-03-11 23:29:53,931 config_lib:657] Applying filter env for SystemRoot.
+INFO:2019-03-11 23:29:53,934 comms:1371] Starting client aff4:/C.f28825fa1c88991b
+DEBUG:2019-03-11 23:29:53,940 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:29:53,941 admin:353] Sending startup information.
+DEBUG:2019-03-11 23:29:53,946 connectionpool:393] http://localhost:8080 "GET /server.pem HTTP/1.1" 200 1005
+INFO:2019-03-11 23:29:53,949 comms:1068] Server PEM re-keyed.
+DEBUG:2019-03-11 23:29:53,953 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:29:59,095 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 985
+INFO:2019-03-11 23:29:59,099 comms:1230] aff4:/C.f28825fa1c88991b: Sending 3(859), Received 8 messages in 5.14395189285 sec. Sleeping for 0.2 sec.
+WARNING:2019-03-11 23:29:59,108 comms:848] global name 'actions_whitelist' is not defined
+WARNING:2019-03-11 23:29:59,109 comms:848] global name 'actions_whitelist' is not defined
+WARNING:2019-03-11 23:29:59,110 comms:848] global name 'actions_whitelist' is not defined
+WARNING:2019-03-11 23:29:59,111 comms:848] global name 'actions_whitelist' is not defined
+WARNING:2019-03-11 23:29:59,111 comms:848] global name 'actions_whitelist' is not defined
+WARNING:2019-03-11 23:29:59,112 comms:848] global name 'actions_whitelist' is not defined
+WARNING:2019-03-11 23:29:59,113 comms:848] global name 'actions_whitelist' is not defined
+WARNING:2019-03-11 23:29:59,114 comms:848] global name 'actions_whitelist' is not defined
+DEBUG:2019-03-11 23:29:59,307 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:29:59,457 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:29:59,460 comms:1230] aff4:/C.f28825fa1c88991b: Sending 8(859), Received 0 messages in 0.153182029724 sec. Sleeping for 0.2 sec.
+DEBUG:2019-03-11 23:29:59,662 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:29:59,689 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:29:59,692 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.028881072998 sec. Sleeping for 0.23 sec.
+DEBUG:2019-03-11 23:29:59,928 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:29:59,973 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:29:59,982 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0504779815674 sec. Sleeping for 0.2645 sec.
+DEBUG:2019-03-11 23:30:00,253 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:00,299 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:00,307 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0505058765411 sec. Sleeping for 0.304175 sec.
+DEBUG:2019-03-11 23:30:00,617 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:00,664 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:00,672 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0515749454498 sec. Sleeping for 0.34980125 sec.
+DEBUG:2019-03-11 23:30:01,029 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:01,074 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:01,082 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0501251220703 sec. Sleeping for 0.4022714375 sec.
+DEBUG:2019-03-11 23:30:01,487 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:01,514 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:01,516 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.027909040451 sec. Sleeping for 0.462612153125 sec.
+DEBUG:2019-03-11 23:30:01,982 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:02,009 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:02,011 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0286180973053 sec. Sleeping for 0.532003976094 sec.
+DEBUG:2019-03-11 23:30:02,546 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:02,577 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:02,580 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0324308872223 sec. Sleeping for 0.611804572508 sec.
+DEBUG:2019-03-11 23:30:03,198 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:03,274 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:03,286 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0820250511169 sec. Sleeping for 0.703575258384 sec.
+DEBUG:2019-03-11 23:30:03,997 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:04,044 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:04,052 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0517621040344 sec. Sleeping for 0.809111547142 sec.
+DEBUG:2019-03-11 23:30:04,868 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:04,925 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:04,931 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0606799125671 sec. Sleeping for 0.930478279213 sec.
+DEBUG:2019-03-11 23:30:05,868 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:05,939 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 1001
+INFO:2019-03-11 23:30:05,946 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 6 messages in 0.0750930309296 sec. Sleeping for 0.2 sec.
+WARNING:2019-03-11 23:30:05,986 comms:848] global name 'actions_whitelist' is not defined
+WARNING:2019-03-11 23:30:05,988 comms:848] global name 'actions_whitelist' is not defined
+WARNING:2019-03-11 23:30:05,991 comms:848] global name 'actions_whitelist' is not defined
+WARNING:2019-03-11 23:30:05,994 comms:848] global name 'actions_whitelist' is not defined
+WARNING:2019-03-11 23:30:05,996 comms:848] global name 'actions_whitelist' is not defined
+WARNING:2019-03-11 23:30:05,998 comms:848] global name 'actions_whitelist' is not defined
+DEBUG:2019-03-11 23:30:06,154 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:06,319 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:06,327 comms:1230] aff4:/C.f28825fa1c88991b: Sending 6(891), Received 0 messages in 0.169743061066 sec. Sleeping for 0.2 sec.
+DEBUG:2019-03-11 23:30:06,533 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:06,578 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:06,587 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.050155878067 sec. Sleeping for 0.23 sec.
+DEBUG:2019-03-11 23:30:06,824 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:06,870 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:06,878 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0513620376587 sec. Sleeping for 0.2645 sec.
+DEBUG:2019-03-11 23:30:07,150 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:07,197 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:07,206 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0531051158905 sec. Sleeping for 0.304175 sec.
+DEBUG:2019-03-11 23:30:07,517 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:07,589 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:07,599 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0774037837982 sec. Sleeping for 0.34980125 sec.
+DEBUG:2019-03-11 23:30:07,953 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:07,993 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:07,999 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0431551933289 sec. Sleeping for 0.4022714375 sec.
+DEBUG:2019-03-11 23:30:08,408 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:08,454 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:08,463 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0518939495087 sec. Sleeping for 0.462612153125 sec.
+DEBUG:2019-03-11 23:30:08,933 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:08,981 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:08,989 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0527350902557 sec. Sleeping for 0.532003976094 sec.
+DEBUG:2019-03-11 23:30:09,525 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:09,562 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:09,571 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0408442020416 sec. Sleeping for 0.611804572508 sec.
+DEBUG:2019-03-11 23:30:10,190 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:10,239 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:10,249 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0545980930328 sec. Sleeping for 0.703575258384 sec.
+DEBUG:2019-03-11 23:30:10,959 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:11,007 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:11,016 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0531919002533 sec. Sleeping for 0.809111547142 sec.
+DEBUG:2019-03-11 23:30:11,828 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:11,877 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:11,879 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.050628900528 sec. Sleeping for 0.930478279213 sec.
+DEBUG:2019-03-11 23:30:12,817 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:12,863 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:12,871 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0515339374542 sec. Sleeping for 1.07005002109 sec.
+DEBUG:2019-03-11 23:30:13,949 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:13,995 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:14,003 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.050968170166 sec. Sleeping for 1.23055752426 sec.
+DEBUG:2019-03-11 23:30:15,241 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:15,298 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 857
+INFO:2019-03-11 23:30:15,307 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 2 messages in 0.0616638660431 sec. Sleeping for 0.2 sec.
+WARNING:2019-03-11 23:30:15,333 comms:848] global name 'actions_whitelist' is not defined
+WARNING:2019-03-11 23:30:15,334 comms:848] global name 'actions_whitelist' is not defined
+DEBUG:2019-03-11 23:30:15,515 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:15,601 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:15,609 comms:1230] aff4:/C.f28825fa1c88991b: Sending 2(811), Received 0 messages in 0.0911462306976 sec. Sleeping for 0.2 sec.
+DEBUG:2019-03-11 23:30:15,816 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:15,862 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:15,870 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0513830184937 sec. Sleeping for 0.23 sec.
+DEBUG:2019-03-11 23:30:16,107 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:16,155 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:16,165 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0533351898193 sec. Sleeping for 0.2645 sec.
+DEBUG:2019-03-11 23:30:16,437 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:16,481 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:16,487 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0489251613617 sec. Sleeping for 0.304175 sec.
+DEBUG:2019-03-11 23:30:16,798 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:16,845 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:16,853 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0525829792023 sec. Sleeping for 0.34980125 sec.
+DEBUG:2019-03-11 23:30:17,210 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:17,257 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:17,265 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0516681671143 sec. Sleeping for 0.4022714375 sec.
+DEBUG:2019-03-11 23:30:17,674 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:17,728 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:17,738 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0596039295197 sec. Sleeping for 0.462612153125 sec.
+DEBUG:2019-03-11 23:30:18,207 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:18,254 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:18,263 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0517151355743 sec. Sleeping for 0.532003976094 sec.
+DEBUG:2019-03-11 23:30:18,802 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:18,848 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:18,857 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0515959262848 sec. Sleeping for 0.611804572508 sec.
+DEBUG:2019-03-11 23:30:19,478 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:19,514 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:19,521 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0422439575195 sec. Sleeping for 0.703575258384 sec.
+DEBUG:2019-03-11 23:30:20,232 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:20,279 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:20,288 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0528299808502 sec. Sleeping for 0.809111547142 sec.
+DEBUG:2019-03-11 23:30:21,103 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:21,141 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:21,146 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0412640571594 sec. Sleeping for 0.930478279213 sec.
+DEBUG:2019-03-11 23:30:22,084 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:22,129 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:22,138 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0500779151917 sec. Sleeping for 1.07005002109 sec.
+DEBUG:2019-03-11 23:30:23,216 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:23,261 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:23,269 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0504658222198 sec. Sleeping for 1.23055752426 sec.
+DEBUG:2019-03-11 23:30:24,507 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:24,592 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:24,600 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0895228385925 sec. Sleeping for 1.4151411529 sec.
+DEBUG:2019-03-11 23:30:26,023 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:26,071 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:26,080 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0530281066895 sec. Sleeping for 1.62741232583 sec.
+DEBUG:2019-03-11 23:30:27,714 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:27,762 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:27,770 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0521960258484 sec. Sleeping for 1.87152417471 sec.
+DEBUG:2019-03-11 23:30:29,650 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:29,696 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:29,704 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0511457920074 sec. Sleeping for 2.15225280091 sec.
+DEBUG:2019-03-11 23:30:31,865 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:31,912 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:31,920 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0517230033875 sec. Sleeping for 2.47509072105 sec.
+DEBUG:2019-03-11 23:30:34,404 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:34,451 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:34,460 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0515310764313 sec. Sleeping for 2.84635432921 sec.
+DEBUG:2019-03-11 23:30:37,316 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:37,364 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:37,369 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.052906036377 sec. Sleeping for 3.27330747859 sec.
+DEBUG:2019-03-11 23:30:40,653 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:40,696 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:40,703 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0476980209351 sec. Sleeping for 3.76430360038 sec.
+DEBUG:2019-03-11 23:30:44,479 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:44,526 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:44,534 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0521619319916 sec. Sleeping for 4.32894914043 sec.
+DEBUG:2019-03-11 23:30:48,874 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:48,921 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:48,929 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0519490242004 sec. Sleeping for 4.9782915115 sec.
+DEBUG:2019-03-11 23:30:53,919 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:53,967 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:53,975 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0531258583069 sec. Sleeping for 5.72503523822 sec.
+DEBUG:2019-03-11 23:30:59,712 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:30:59,775 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:30:59,783 comms:1230] aff4:/C.f28825fa1c88991b: Sending 1(779), Received 0 messages in 0.0674669742584 sec. Sleeping for 6.58379052396 sec.
+DEBUG:2019-03-11 23:31:06,380 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:31:06,427 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:31:06,435 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0523641109467 sec. Sleeping for 7.57135910255 sec.
+DEBUG:2019-03-11 23:31:14,023 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:31:14,071 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:31:14,075 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0533740520477 sec. Sleeping for 8.70706296793 sec.
+DEBUG:2019-03-11 23:31:22,798 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:31:22,845 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:31:22,854 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0523519515991 sec. Sleeping for 10.0131224131 sec.
+DEBUG:2019-03-11 23:31:32,885 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:31:32,932 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:31:32,941 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0525331497192 sec. Sleeping for 11.5150907751 sec.
+DEBUG:2019-03-11 23:31:44,474 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:31:44,522 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:31:44,531 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0531899929047 sec. Sleeping for 13.2423543914 sec.
+DEBUG:2019-03-11 23:31:57,795 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:31:57,859 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:31:57,867 comms:1230] aff4:/C.f28825fa1c88991b: Sending 1(779), Received 0 messages in 0.069277048111 sec. Sleeping for 15.2287075501 sec.
+DEBUG:2019-03-11 23:32:13,121 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:32:13,170 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:32:13,178 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0531229972839 sec. Sleeping for 17.5130136826 sec.
+DEBUG:2019-03-11 23:32:30,716 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:32:30,766 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:32:30,773 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0544939041138 sec. Sleeping for 20.139965735 sec.
+INFO:2019-03-11 23:34:20,345 client_logging:108] Writing log file to /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/var/log//GRRlog.txt
+DEBUG:2019-03-11 23:34:20,350 registry:241] Initializing VFSInit
+DEBUG:2019-03-11 23:34:20,350 registry:241] Initializing InitHook
+DEBUG:2019-03-11 23:34:20,353 config_lib:657] Applying filter env for SystemRoot.
+INFO:2019-03-11 23:34:20,357 comms:1371] Starting client aff4:/C.f28825fa1c88991b
+DEBUG:2019-03-11 23:34:20,363 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:34:20,364 admin:353] Sending startup information.
+DEBUG:2019-03-11 23:34:20,364 connectionpool:393] http://localhost:8080 "GET /server.pem HTTP/1.1" 200 1005
+INFO:2019-03-11 23:34:20,370 comms:1068] Server PEM re-keyed.
+DEBUG:2019-03-11 23:34:20,376 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:34:20,472 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:34:20,480 comms:1230] aff4:/C.f28825fa1c88991b: Sending 3(859), Received 0 messages in 0.0988130569458 sec. Sleeping for 600.0 sec.
+INFO:2019-03-11 23:34:26,043 client_logging:108] Writing log file to /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/var/log//GRRlog.txt
+DEBUG:2019-03-11 23:34:26,048 registry:241] Initializing VFSInit
+DEBUG:2019-03-11 23:34:26,049 registry:241] Initializing InitHook
+DEBUG:2019-03-11 23:34:26,051 config_lib:657] Applying filter env for SystemRoot.
+INFO:2019-03-11 23:34:26,055 comms:1371] Starting client aff4:/C.f28825fa1c88991b
+DEBUG:2019-03-11 23:34:26,061 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:34:26,062 admin:353] Sending startup information.
+DEBUG:2019-03-11 23:34:26,063 connectionpool:393] http://localhost:8080 "GET /server.pem HTTP/1.1" 200 1005
+INFO:2019-03-11 23:34:26,070 comms:1068] Server PEM re-keyed.
+DEBUG:2019-03-11 23:34:26,074 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:34:26,174 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:34:26,182 comms:1230] aff4:/C.f28825fa1c88991b: Sending 3(859), Received 0 messages in 0.102342128754 sec. Sleeping for 600.0 sec.
+INFO:2019-03-11 23:34:29,785 client_logging:108] Writing log file to /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/var/log//GRRlog.txt
+DEBUG:2019-03-11 23:34:29,790 registry:241] Initializing VFSInit
+DEBUG:2019-03-11 23:34:29,791 registry:241] Initializing InitHook
+DEBUG:2019-03-11 23:34:29,793 config_lib:657] Applying filter env for SystemRoot.
+INFO:2019-03-11 23:34:29,798 comms:1371] Starting client aff4:/C.f28825fa1c88991b
+DEBUG:2019-03-11 23:34:29,804 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:34:29,805 admin:353] Sending startup information.
+DEBUG:2019-03-11 23:34:29,807 connectionpool:393] http://localhost:8080 "GET /server.pem HTTP/1.1" 200 1005
+INFO:2019-03-11 23:34:29,812 comms:1068] Server PEM re-keyed.
+DEBUG:2019-03-11 23:34:29,816 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:34:29,900 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:34:29,907 comms:1230] aff4:/C.f28825fa1c88991b: Sending 3(859), Received 0 messages in 0.0866589546204 sec. Sleeping for 600.0 sec.
+INFO:2019-03-11 23:36:50,683 client_logging:108] Writing log file to /home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/core/grr_response_core/var/log//GRRlog.txt
+DEBUG:2019-03-11 23:36:50,688 registry:241] Initializing VFSInit
+DEBUG:2019-03-11 23:36:50,688 registry:241] Initializing InitHook
+DEBUG:2019-03-11 23:36:50,691 config_lib:657] Applying filter env for SystemRoot.
+INFO:2019-03-11 23:36:50,695 comms:1371] Starting client aff4:/C.f28825fa1c88991b
+DEBUG:2019-03-11 23:36:50,702 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:36:50,702 admin:353] Sending startup information.
+DEBUG:2019-03-11 23:36:50,705 connectionpool:393] http://localhost:8080 "GET /server.pem HTTP/1.1" 200 1005
+INFO:2019-03-11 23:36:50,711 comms:1068] Server PEM re-keyed.
+DEBUG:2019-03-11 23:36:50,715 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-11 23:36:50,861 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-11 23:36:50,869 comms:1230] aff4:/C.f28825fa1c88991b: Sending 3(859), Received 0 messages in 0.148396968842 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 01:34:26,189 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 01:34:26,268 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 01:34:26,276 comms:1230] aff4:/C.f28825fa1c88991b: Sending 2(795), Received 0 messages in 0.0840611457825 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 01:44:26,948 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 01:44:26,986 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 01:44:26,991 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0427830219269 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 01:54:27,617 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 01:54:27,639 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 01:54:27,642 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0241158008575 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 02:04:28,289 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 02:04:28,350 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 02:04:28,359 comms:1230] aff4:/C.f28825fa1c88991b: Sending 1(682), Received 0 messages in 0.0669949054718 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 02:14:29,659 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 02:14:29,704 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 02:14:29,714 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0529310703278 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 02:24:30,354 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 02:24:30,417 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 02:24:30,430 comms:1230] aff4:/C.f28825fa1c88991b: Sending 1(1851), Received 0 messages in 0.0696499347687 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 02:34:31,068 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 02:34:31,129 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 02:34:31,137 comms:1230] aff4:/C.f28825fa1c88991b: Sending 1(682), Received 0 messages in 0.0654740333557 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 02:44:31,769 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 02:44:31,813 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 02:44:31,821 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0483858585358 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 02:54:32,468 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 02:54:32,512 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 02:54:32,520 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0482001304626 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 09:29:16,157 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 09:29:16,270 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 09:29:16,277 comms:1230] aff4:/C.f28825fa1c88991b: Sending 2(795), Received 0 messages in 0.118574142456 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 09:39:16,974 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 09:39:17,018 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 09:39:17,026 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0486879348755 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 09:49:17,681 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 09:49:17,736 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 09:49:17,745 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.06072306633 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 09:59:19,091 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 09:59:19,175 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 09:59:19,182 comms:1230] aff4:/C.f28825fa1c88991b: Sending 1(682), Received 0 messages in 0.0886068344116 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 10:09:19,826 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 10:09:19,893 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 10:09:19,899 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0722019672394 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 10:19:20,538 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 10:19:20,627 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 10:19:20,634 comms:1230] aff4:/C.f28825fa1c88991b: Sending 1(1819), Received 0 messages in 0.0929388999939 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 10:29:21,283 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 10:29:21,381 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 10:29:21,385 comms:1230] aff4:/C.f28825fa1c88991b: Sending 1(682), Received 0 messages in 0.103680849075 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 10:39:22,024 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 10:39:22,102 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 10:39:22,110 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0825700759888 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 10:49:22,759 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 10:49:22,814 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 10:49:22,824 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0589680671692 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 10:59:23,467 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 10:59:23,518 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 10:59:23,521 comms:1230] aff4:/C.f28825fa1c88991b: Sending 1(682), Received 0 messages in 0.0537600517273 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 11:09:24,248 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 11:09:24,298 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 11:09:24,301 comms:1230] aff4:/C.f28825fa1c88991b: Sending 1(1835), Received 0 messages in 0.0525679588318 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 11:19:25,038 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 11:19:25,087 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 11:19:25,095 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0538909435272 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 11:29:25,842 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 11:29:25,902 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 11:29:25,905 comms:1230] aff4:/C.f28825fa1c88991b: Sending 1(682), Received 0 messages in 0.0623531341553 sec. Sleeping for 600.0 sec.
+DEBUG:2019-03-12 11:43:13,727 connectionpool:205] Starting new HTTP connection (1): localhost:8080
+DEBUG:2019-03-12 11:43:13,764 connectionpool:393] http://localhost:8080 "POST /control?api=3 HTTP/1.1" 200 616
+INFO:2019-03-12 11:43:13,767 comms:1230] aff4:/C.f28825fa1c88991b: Sending 0(634), Received 0 messages in 0.0405068397522 sec. Sleeping for 600.0 sec.

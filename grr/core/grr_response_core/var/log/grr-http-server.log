@@ -208,3 +208,8 @@ Traceback (most recent call last):
     self._sock.sendall(view[write_offset:write_offset+buffer_size])
 error: [Errno 32] Broken pipe
 ERROR:2019-02-19 11:50:10,681 9208 MainProcess 140483607127808 Thread-78 mysql_advanced_data_store:616] OperationalError: (1213, 'Deadlock found when trying to get lock; try restarting transaction'). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-03-11 23:29:53,956 17362 MainProcess 140441290065664 Thread-12 mysql_advanced_data_store:616] OperationalError: (2006, 'MySQL server has gone away'). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-03-11 23:29:54,958 17362 MainProcess 140441290065664 Thread-12 mysql_advanced_data_store:616] OperationalError: (2006, 'MySQL server has gone away'). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-03-11 23:29:55,960 17362 MainProcess 140441290065664 Thread-12 mysql_advanced_data_store:616] OperationalError: (2006, 'MySQL server has gone away'). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-03-11 23:29:56,962 17362 MainProcess 140441290065664 Thread-12 mysql_advanced_data_store:616] OperationalError: (2006, 'MySQL server has gone away'). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-03-11 23:29:57,964 17362 MainProcess 140441290065664 Thread-12 mysql_advanced_data_store:616] OperationalError: (2006, 'MySQL server has gone away'). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.

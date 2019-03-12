@@ -1374,3 +1374,7 @@ ERROR:2019-03-07 15:32:25,391 32283 MainProcess 139986607273728 grr_threadpool-3
     "command had %s return code" % (cmd, return_val))
 CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
 
+ERROR:2019-03-11 23:30:11,853 17469 MainProcess 140592449312512 grr_threadpool-1628243676 artifact:279] Artifact LinuxRelease returned an Anomaly: message Anomaly {
+ symptom : u'Unable to determine distribution.'
+ type : PARSER_ANOMALY
+}

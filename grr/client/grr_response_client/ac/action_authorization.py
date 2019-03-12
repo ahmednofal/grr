@@ -1,12 +1,11 @@
 from collections import OrderedDict
 from grr_response_ac import config
+from grr_response_client.ac.config import actions_whitelist_json_file
 from grr_response_client.actions import ActionPlugin
 from tkinter import *
 import thread
-
-from multiprocessing.connection import Client
-
-import requests
+import json
+import os
 
 # Need to be globally accessible for the current client context
 # so the gui can access it
@@ -22,12 +21,16 @@ class AccessControlManager:
         """
         initializes the communicator
         """
-        self.address = ('localhost', 6001)
-        # TODO (ahmednofal): This should be removed to when the update
-        # is needed and the port is open
-        self.actions_whitelist = OrderedDict().fromkeys(
-                ActionPlugin.classes.keys()
-                ,False)
+        if self.PersistentActionsListExist():
+            self.UpdateActionsList()
+        else:
+            self.InitializePersistentActionsList()
+
+    def PersistentActionsListExist(self):
+        print(os.getcwd())
+        print(actions_whitelist_json_file)
+        print(os.path.exists(actions_whitelist_json_file))
+        return os.path.exists(actions_whitelist_json_file)
 
     def ActionAccessible(self,action):
         """
@@ -35,12 +38,31 @@ class AccessControlManager:
         actions
         """
         # updateInternalList
-        self.conn = Client(self.address)
-        return actions_whitelist[action]
+        self.UpdateActionsList()
+        # actionlist_updated
+        return self.actions_whitelist[action]
 
-    def UpdateGui(self):
-        self.conn.send(self.actions_whitelist)
-        pass
+    def InitializePersistentActionsList(self):
+        # Only run when presistent storage is not there
+        self.actions_whitelist = OrderedDict().fromkeys(
+                ActionPlugin.classes.keys()
+                ,False)
+        with open(actions_whitelist_json_file, 'w') as f:
+            json.dump(self.actions_whitelist, f)
+        return self
+
+    def UpdateActionsList(self):
+        # The file has to exist
+        # Read JSON file
+        with open(actions_whitelist_json_file, 'r') as f:
+            self.actions_whitelist = json.load(f)
+        return self
+
+    def UpdatePersistentActionsList(self):
+        # Write JSON file
+        with open(actions_whitelist_json_file, 'w') as f:
+            json.dump(self.actions_whitelist, f)
+        return self
 
 access_control_manager = AccessControlManager()
 

@@ -1266,8 +1266,6 @@ class GRRHTTPClient(object):
     client to exit.
     """
     while True:
-        # TODO(ahmednofal): add here the authorization list update code
-      access_control_manager.UpdateGui()
       if self.http_manager.ErrorLimitReached():
         return
 
