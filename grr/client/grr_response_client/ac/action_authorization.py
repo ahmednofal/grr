@@ -27,9 +27,6 @@ class AccessControlManager:
             self.InitializePersistentActionsList()
 
     def PersistentActionsListExist(self):
-        print(os.getcwd())
-        print(actions_whitelist_json_file)
-        print(os.path.exists(actions_whitelist_json_file))
         return os.path.exists(actions_whitelist_json_file)
 
     def ActionAccessible(self,action):
@@ -44,6 +41,7 @@ class AccessControlManager:
 
     def InitializePersistentActionsList(self):
         # Only run when presistent storage is not there
+        # or if somethings goes wrong
         self.actions_whitelist = OrderedDict().fromkeys(
                 ActionPlugin.classes.keys()
                 ,False)
@@ -55,7 +53,11 @@ class AccessControlManager:
         # The file has to exist
         # Read JSON file
         with open(actions_whitelist_json_file, 'r') as f:
-            self.actions_whitelist = json.load(f)
+            try:
+                self.actions_whitelist = json.load(f)
+            except:
+                self.InitializePersistentActionsList()
+                self.UpdateActionsList()
         return self
 
     def UpdatePersistentActionsList(self):

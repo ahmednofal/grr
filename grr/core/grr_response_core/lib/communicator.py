@@ -21,7 +21,6 @@ from grr_response_core.lib.rdfvalues import crypto as rdf_crypto
 from grr_response_core.lib.rdfvalues import flows as rdf_flows
 from grr_response_core.stats import stats_collector_instance
 from grr_response_core.stats import stats_utils
-# from grr_resonse_server.rbac import server_comm as ac_server_comm
 
 
 # Although these metrics are never queried on the client, removing them from the
