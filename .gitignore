@@ -16,3 +16,4 @@ grr/core/grr_response_core/artifacts/*.yaml
 *.egg-info/
 tags
 */var/log/*
+actions_whitelist.json
