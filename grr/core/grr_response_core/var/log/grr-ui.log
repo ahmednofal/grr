@@ -1064,3 +1064,59 @@ Traceback (most recent call last):
   File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
     raise NotFound()
 NotFound: 404: Not Found
+ERROR:2019-03-14 20:21:00,609 5627 MainProcess 139711981016832 Thread-7 wsgiapp:328] http exception: /favicon.ico [GET]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-03-14 20:21:02,227 5627 MainProcess 139711964231424 Thread-23 wsgiapp:328] http exception: /favicon.ico [GET]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-03-14 20:21:11,958 5627 MainProcess 139711981016832 Thread-53 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-03-14 20:21:19,167 5627 MainProcess 139711968167680 Thread-60 flow_runner:859] Error in flow aff4:/C.f28825fa1c88991b/flows/F:9CE2332 (aff4:/C.f28825fa1c88991b). Trace: Could not find homedir for user 
+ERROR:2019-03-14 20:21:19,193 5627 MainProcess 139711968167680 Thread-60 http_api:558] Error while processing /api/clients/C.f28825fa1c88991b/flows (POST) with ApiCreateFlowHandler: Could not find valid History paths.
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/http_api.py", line 510, in HandleRequest
+    result = self.CallApiHandler(handler, args, token=token)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/http_api.py", line 298, in CallApiHandler
+    result = handler.Handle(args, token=token)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/api_plugins/flow.py", line 1313, in Handle
+    runner_args=runner_args)
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flow.py", line 291, in StartAFF4Flow
+    flow_obj.Start()
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/flows/general/webhistory.py", line 72, in Start
+    raise flow.FlowError("Could not find valid History paths.")
+FlowError: Could not find valid History paths.
+ERROR:2019-03-20 18:35:55,828 8741 MainProcess 139677545776896 Thread-8 wsgiapp:328] http exception: /favicon.ico [GET]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-03-20 18:35:57,116 8741 MainProcess 139677528991488 Thread-29 wsgiapp:328] http exception: /favicon.ico [GET]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-03-20 18:41:10,635 8741 MainProcess 139677001832192 Thread-292 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/naufal/Documents/auc/semesters/fall2018/seniorprj1/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/naufal/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found

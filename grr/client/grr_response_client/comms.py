@@ -747,11 +747,7 @@ class GRRClientWorker(threading.Thread):
           self.stats_collector.RequestSend()
     else:
         print("%s action is not accessible", message.name)
-        raise RuntimeError("GRR Server token was not verified \
-        \n Either the client does not allow %s to \
-        \n be executed on it, or the server sending the action \
-        \n has not assumed the role before asking the access \
-        \n control authority to issue a JWT token for the role", message.name)
+        raise RuntimeError("Action Denied", message.name)
 
 
   def MemoryExceeded(self):
