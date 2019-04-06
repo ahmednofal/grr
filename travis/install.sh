@@ -4,7 +4,7 @@
 
 set -ex
 
-source "${HOME}/INSTALL/bin/activate"
+source "${HOME}/.virtualenv/GRR/bin/activate"
 pip install --upgrade pip wheel six setuptools nodeenv
 
 # Install the latest version of nodejs. Some packages
@@ -12,7 +12,7 @@ pip install --upgrade pip wheel six setuptools nodeenv
 nodeenv -p --prebuilt --node=10.12.0
 
 # Pull in changes to activate made by nodeenv
-source "${HOME}/INSTALL/bin/activate"
+source "${HOME}/.virtualenv/GRR/bin/activate"
 
 # Set default value for PROTOC if necessary.
 default_protoc_path="${HOME}/protobuf/bin/protoc"

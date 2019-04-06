@@ -40,6 +40,7 @@ class CAEnrolerMixin(object):
 
   def Start(self):
     """Sign the CSR from the client."""
+    #print "as"
     if self.args.csr.type != rdf_crypto.Certificate.Type.CSR:
       raise ValueError("Must be called with CSR")
 

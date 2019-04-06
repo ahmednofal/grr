@@ -89,6 +89,7 @@ import psutil
 import queue
 import requests
 
+from grr_response_client.actions import ActionPlugin
 from grr_response_client import actions
 from grr_response_client import client_stats
 from grr_response_client import client_utils
@@ -104,7 +105,7 @@ from grr_response_core.lib.rdfvalues import crypto as rdf_crypto
 from grr_response_core.lib.rdfvalues import flows as rdf_flows
 from grr_response_core.lib.rdfvalues import protodict as rdf_protodict
 from grr_response_core.stats import stats_collector_instance
-
+from grr_response_client.ac.action_authorization import access_control_manager
 
 class HTTPObject(object):
   """Data returned from a HTTP connection."""
@@ -158,6 +159,7 @@ class HTTPManager(object):
   def _GetBaseURLs(self):
     """Gathers a list of base URLs we will try."""
     result = config.CONFIG["Client.server_urls"]
+    #print result
     if not result:
       # Backwards compatibility - deduce server_urls from Client.control_urls.
       for control_url in config.CONFIG["Client.control_urls"]:
@@ -507,6 +509,13 @@ class GRRClientWorker(threading.Thread):
     threading.Thread.__init__(self)
 
     # A reference to the parent client that owns us.
+    # TODO(ahmednofal)  : Check if giving the clientworker an acserver handler
+    # is bad and has side effects
+    # Check if the calling is right from the point of view of modules and
+    # packages
+
+    # self.ac_server_communicator = server_comm.ACServerCommunicator()
+   
     self.client = client
 
     self._is_active = False
@@ -644,6 +653,7 @@ class GRRClientWorker(threading.Thread):
         require_fastpoll=require_fastpoll,
         ttl=ttl,
         type=message_type)
+    #print rdf_value
 
     if rdf_value is not None:
       message.payload = rdf_value
@@ -690,28 +700,34 @@ class GRRClientWorker(threading.Thread):
 
     Raises:
         RuntimeError: The client action requested was not found.
+        RuntimeError: The token was not verified
     """
     self._is_active = True
-    try:
-      action_cls = actions.ActionPlugin.classes.get(message.name)
-      if action_cls is None:
-        raise RuntimeError("Client action %r not known" % message.name)
+    if access_control_manager.ActionAccessible(message.name):
+      print("%s action is accessible", message.name)
+      try:
+      	action_cls = actions.ActionPlugin.classes.get(message.name)
+      	if action_cls is None:
+        	raise RuntimeError("Client action %r not known" % message.name)
 
-      action = action_cls(grr_worker=self)
+      	action = action_cls(grr_worker=self)
 
-      # Write the message to the transaction log.
-      self.transaction_log.Write(message)
+      	# Write the message to the transaction log.
+      	self.transaction_log.Write(message)
 
-      # Heartbeat so we have the full period to work on this message.
-      action.Progress()
-      action.Execute(message)
+      	# Heartbeat so we have the full period to work on this message.
+      	action.Progress()
+      	action.Execute(message)
 
-      # If we get here without exception, we can remove the transaction.
-      self.transaction_log.Clear()
-    finally:
-      self._is_active = False
-      # We want to send ClientStats when client action is complete.
-      self.stats_collector.RequestSend()
+      	# If we get here without exception, we can remove the transaction.
+      	self.transaction_log.Clear()
+      finally:
+      		self._is_active = False
+      		# We want to send ClientStats when client action is complete.
+      		self.stats_collector.RequestSend()
+    else:
+        print("%s action is not accessible", message.name)
+        raise RuntimeError("Action Denied", message.name)
 
   def MemoryExceeded(self):
     """Returns True if our memory footprint is too large."""
@@ -977,7 +993,7 @@ class GRRHTTPClient(object):
 
     # The communicator manages our crypto with the server.
     self.communicator = ClientCommunicator(private_key=private_key)
-
+    #print private_key
     # This controls our polling frequency.
     self.timer = Timer()
 
@@ -1005,7 +1021,6 @@ class GRRHTTPClient(object):
     """Check the server PEM for validity.
 
     This is used to determine connectivity to the server. Sometimes captive
-    portals return a valid HTTP status, but the data is corrupted.
 
     Args:
       http_object: The response received from the server.
@@ -1021,6 +1036,7 @@ class GRRHTTPClient(object):
         # Now we know that this proxy is working. We still have to verify the
         # certificate. This will raise if the server cert is invalid.
         server_certificate = rdf_crypto.RDFX509Cert(server_pem)
+	#print server_certificate
         self.communicator.LoadServerCertificate(
             server_certificate=server_certificate, ca_certificate=self.ca_cert)
 
@@ -1077,6 +1093,7 @@ class GRRHTTPClient(object):
         headers={"Content-Type": "binary/octet-stream"})
 
     if response.code == 406:
+      #print "eheree"
       self.InitiateEnrolment()
       return response
 
@@ -1279,7 +1296,7 @@ class GRRHTTPClient(object):
   def InitiateEnrolment(self):
     """Initiate the enrollment process.
 
-    We do not sent more than one enrollment request every 10 minutes. Note that
+    We do not send more than one enrollment request every 10 minutes. Note that
     we still communicate to the server in fast poll mode, but these requests are
     not carrying any payload.
     """
@@ -1326,9 +1343,8 @@ class ClientCommunicator(communicator.Communicator):
     if self.private_key:
       try:
         self.common_name = rdf_client.ClientURN.FromPrivateKey(self.private_key)
-
         logging.info("Starting client %s", self.common_name)
-
+	#print self.private_key
         return self.private_key
 
       except type_info.TypeValueError:
@@ -1373,7 +1389,7 @@ class ClientCommunicator(communicator.Communicator):
 
     # Make sure that the serial number is higher.
     server_cert_serial = server_certificate.GetSerialNumber()
-
+    #print server_certificate
     if server_cert_serial < config.CONFIG["Client.server_serial_number"]:
       # We can not accept this serial number...
       raise IOError("Server certificate serial number is too old.")
@@ -1398,7 +1414,7 @@ class ClientCommunicator(communicator.Communicator):
         message_list, result, **kwargs)
 
   def _GetRemotePublicKey(self, common_name):
-
+    #print self.server_public_key
     if common_name == self.server_name:
       return self.server_public_key
 

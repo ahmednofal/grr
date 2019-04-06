@@ -242,7 +242,7 @@ class GRRHTTPServerHandler(http_server.BaseHTTPRequestHandler):
         raise IOError("No content-length header provided.")
 
       length = int(content_length)
-
+      #print (length)
       request_comms = rdf_flows.ClientCommunication.FromSerializedString(
           self._GetPOSTData(length))
 
@@ -262,6 +262,7 @@ class GRRHTTPServerHandler(http_server.BaseHTTPRequestHandler):
       # that if needed. On Python 3 these should be always unicode strings, so
       # once support for Python 2 is dropped this branch can be removed.
       address = self.client_address[0]
+      #print (address)
       if compatibility.PY2 and isinstance(self.client_address[0], bytes):
         address = address.decode("ascii")
       source_ip = ipaddress.ip_address(address)

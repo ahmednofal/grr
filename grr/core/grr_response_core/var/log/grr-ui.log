@@ -1,0 +1,198 @@
+ERROR:2019-04-04 20:26:47,376 29536 MainProcess 140709445728000 Thread-68 config:58] Can't get config value ClientBuilder.fleetspeak_config_path: Unable to find resource install_data/fleetspeak/linux/grr_service_config.txt.in@grr-response-core while interpolating: : %(install_data/fleetspeak/%(Client.platform)/grr_service_config.txt.in@grr-response-core|resource)
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/api_plugins/config.py", line 56, in InitFromConfigOption
+    config_value = config.CONFIG.Get(name)
+  File "/home/samanoudy/grr_new/grr/core/grr_response_core/lib/config_lib.py", line 1294, in Get
+    context=calc_context)
+  File "/home/samanoudy/grr_new/grr/core/grr_response_core/lib/config_lib.py", line 1435, in InterpolateValue
+    raise type(e)(message)
+FilterError: Unable to find resource install_data/fleetspeak/linux/grr_service_config.txt.in@grr-response-core while interpolating: : %(install_data/fleetspeak/%(Client.platform)/grr_service_config.txt.in@grr-response-core|resource)
+ERROR:2019-04-04 20:26:47,498 29536 MainProcess 140709445728000 Thread-68 package:32] Distribution grr-response-templates not found. Is it installed?
+ERROR:2019-04-04 20:26:47,498 29536 MainProcess 140709445728000 Thread-68 config:58] Can't get config value ClientBuilder.template_dir: Unable to find resource grr-response-templates@grr-response-templates while interpolating: : %(grr-response-templates@grr-response-templates|resource)/templates
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/api_plugins/config.py", line 56, in InitFromConfigOption
+    config_value = config.CONFIG.Get(name)
+  File "/home/samanoudy/grr_new/grr/core/grr_response_core/lib/config_lib.py", line 1294, in Get
+    context=calc_context)
+  File "/home/samanoudy/grr_new/grr/core/grr_response_core/lib/config_lib.py", line 1435, in InterpolateValue
+    raise type(e)(message)
+FilterError: Unable to find resource grr-response-templates@grr-response-templates while interpolating: : %(grr-response-templates@grr-response-templates|resource)/templates
+ERROR:2019-04-04 20:26:47,586 29536 MainProcess 140709445728000 Thread-68 package:32] Distribution grr-response-templates not found. Is it installed?
+ERROR:2019-04-04 20:26:47,587 29536 MainProcess 140709445728000 Thread-68 config:58] Can't get config value ClientBuilder.template_path: Unable to find resource grr-response-templates@grr-response-templates while interpolating: : %(grr-response-templates@grr-response-templates|resource)/templates: %(ClientBuilder.template_dir)/%(PyInstaller.template_filename)
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/api_plugins/config.py", line 56, in InitFromConfigOption
+    config_value = config.CONFIG.Get(name)
+  File "/home/samanoudy/grr_new/grr/core/grr_response_core/lib/config_lib.py", line 1294, in Get
+    context=calc_context)
+  File "/home/samanoudy/grr_new/grr/core/grr_response_core/lib/config_lib.py", line 1435, in InterpolateValue
+    raise type(e)(message)
+FilterError: Unable to find resource grr-response-templates@grr-response-templates while interpolating: : %(grr-response-templates@grr-response-templates|resource)/templates: %(ClientBuilder.template_dir)/%(PyInstaller.template_filename)
+ERROR:2019-04-04 20:27:17,995 29536 MainProcess 140708690257664 Thread-142 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/samanoudy/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-04-04 20:31:30,245 29536 MainProcess 140709093062400 Thread-317 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/samanoudy/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-04-04 20:32:27,048 29536 MainProcess 140709093062400 Thread-435 wsgiapp:328] http exception: /favicon.ico [GET]
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/samanoudy/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-04-04 20:57:07,574 2459 MainProcess 139651297818368 Thread-208 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/samanoudy/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-04-05 14:33:00,161 4925 MainProcess 139804591249152 Thread-221 config:58] Can't get config value ClientBuilder.fleetspeak_config_path: Unable to find resource install_data/fleetspeak/linux/grr_service_config.txt.in@grr-response-core while interpolating: : %(install_data/fleetspeak/%(Client.platform)/grr_service_config.txt.in@grr-response-core|resource)
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/api_plugins/config.py", line 56, in InitFromConfigOption
+    config_value = config.CONFIG.Get(name)
+  File "/home/samanoudy/grr_new/grr/core/grr_response_core/lib/config_lib.py", line 1294, in Get
+    context=calc_context)
+  File "/home/samanoudy/grr_new/grr/core/grr_response_core/lib/config_lib.py", line 1435, in InterpolateValue
+    raise type(e)(message)
+FilterError: Unable to find resource install_data/fleetspeak/linux/grr_service_config.txt.in@grr-response-core while interpolating: : %(install_data/fleetspeak/%(Client.platform)/grr_service_config.txt.in@grr-response-core|resource)
+ERROR:2019-04-05 14:33:01,662 4925 MainProcess 139804599641856 Thread-219 http_api:560] Error while processing /api/artifacts (GET) with ApiListArtifactsHandler: [<ArtifactName('HadoopAppRoot')>]: system artifacts were shadowed and had to be deleted
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/http_api.py", line 511, in HandleRequest
+    result = self.CallApiHandler(handler, args, token=token)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/http_api.py", line 299, in CallApiHandler
+    result = handler.Handle(args, token=token)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/api_plugins/artifact.py", line 64, in Handle
+    reload_datastore_artifacts=True),
+  File "/home/samanoudy/grr_new/grr/core/grr_response_core/lib/utils.py", line 85, in NewFunction
+    return f(self, *args, **kw)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/artifact_registry.py", line 384, in GetArtifacts
+    self._CheckDirty(reload_datastore_artifacts=reload_datastore_artifacts)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/artifact_registry.py", line 354, in _CheckDirty
+    self._ReloadArtifacts()
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/artifact_registry.py", line 334, in _ReloadArtifacts
+    self.ReloadDatastoreArtifacts()
+  File "/home/samanoudy/grr_new/grr/core/grr_response_core/lib/utils.py", line 85, in NewFunction
+    return f(self, *args, **kw)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/artifact_registry.py", line 349, in ReloadDatastoreArtifacts
+    self._LoadArtifactsFromDatastore()
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/artifact_registry.py", line 182, in _LoadArtifactsFromDatastore
+    raise rdf_artifacts.ArtifactDefinitionError(to_delete, detail)
+ArtifactDefinitionError: [<ArtifactName('HadoopAppRoot')>]: system artifacts were shadowed and had to be deleted
+ERROR:2019-04-05 14:33:01,843 4925 MainProcess 139804591249152 Thread-221 package:32] Distribution grr-response-templates not found. Is it installed?
+ERROR:2019-04-05 14:33:01,843 4925 MainProcess 139804591249152 Thread-221 config:58] Can't get config value ClientBuilder.template_dir: Unable to find resource grr-response-templates@grr-response-templates while interpolating: : %(grr-response-templates@grr-response-templates|resource)/templates
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/api_plugins/config.py", line 56, in InitFromConfigOption
+    config_value = config.CONFIG.Get(name)
+  File "/home/samanoudy/grr_new/grr/core/grr_response_core/lib/config_lib.py", line 1294, in Get
+    context=calc_context)
+  File "/home/samanoudy/grr_new/grr/core/grr_response_core/lib/config_lib.py", line 1435, in InterpolateValue
+    raise type(e)(message)
+FilterError: Unable to find resource grr-response-templates@grr-response-templates while interpolating: : %(grr-response-templates@grr-response-templates|resource)/templates
+ERROR:2019-04-05 14:33:01,926 4925 MainProcess 139804591249152 Thread-221 package:32] Distribution grr-response-templates not found. Is it installed?
+ERROR:2019-04-05 14:33:01,927 4925 MainProcess 139804591249152 Thread-221 config:58] Can't get config value ClientBuilder.template_path: Unable to find resource grr-response-templates@grr-response-templates while interpolating: : %(grr-response-templates@grr-response-templates|resource)/templates: %(ClientBuilder.template_dir)/%(PyInstaller.template_filename)
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/api_plugins/config.py", line 56, in InitFromConfigOption
+    config_value = config.CONFIG.Get(name)
+  File "/home/samanoudy/grr_new/grr/core/grr_response_core/lib/config_lib.py", line 1294, in Get
+    context=calc_context)
+  File "/home/samanoudy/grr_new/grr/core/grr_response_core/lib/config_lib.py", line 1435, in InterpolateValue
+    raise type(e)(message)
+FilterError: Unable to find resource grr-response-templates@grr-response-templates while interpolating: : %(grr-response-templates@grr-response-templates|resource)/templates: %(ClientBuilder.template_dir)/%(PyInstaller.template_filename)
+ERROR:2019-04-06 12:41:21,493 7282 MainProcess 140246439945984 Thread-2924 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/samanoudy/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-04-06 13:34:25,334 7282 MainProcess 140245849581312 Thread-4469 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/samanoudy/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-04-06 13:42:14,559 7282 MainProcess 140245849581312 Thread-5170 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/samanoudy/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-04-06 14:05:44,144 29082 MainProcess 140111856248576 Thread-53 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/samanoudy/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-04-06 14:05:51,137 29082 MainProcess 140111882737408 Thread-60 http_api:560] Error while processing /api/clients/C.b367c69a0728ebba/flows (POST) with ApiCreateFlowHandler: 'module' object has no attribute 'ExecuteLine'
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/http_api.py", line 511, in HandleRequest
+    result = self.CallApiHandler(handler, args, token=token)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/http_api.py", line 299, in CallApiHandler
+    result = handler.Handle(args, token=token)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/api_plugins/flow.py", line 1314, in Handle
+    runner_args=runner_args)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/flow.py", line 307, in StartAFF4Flow
+    flow_obj.Start()
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/flows/general/administrative.py", line 1027, in Start
+    server_stubs.ExecuteLine,
+AttributeError: 'module' object has no attribute 'ExecuteLine'
+ERROR:2019-04-06 14:05:59,186 29082 MainProcess 140111882737408 Thread-65 http_api:560] Error while processing /api/clients/C.b367c69a0728ebba/flows (POST) with ApiCreateFlowHandler: 'module' object has no attribute 'ExecuteLine'
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/http_api.py", line 511, in HandleRequest
+    result = self.CallApiHandler(handler, args, token=token)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/http_api.py", line 299, in CallApiHandler
+    result = handler.Handle(args, token=token)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/api_plugins/flow.py", line 1314, in Handle
+    runner_args=runner_args)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/flow.py", line 307, in StartAFF4Flow
+    flow_obj.Start()
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/flows/general/administrative.py", line 1027, in Start
+    server_stubs.ExecuteLine,
+AttributeError: 'module' object has no attribute 'ExecuteLine'
+ERROR:2019-04-06 14:08:38,956 29082 MainProcess 140111882737408 Thread-115 http_api:560] Error while processing /api/clients/C.b367c69a0728ebba/flows (POST) with ApiCreateFlowHandler: Unable to locate flow interrogate
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/http_api.py", line 511, in HandleRequest
+    result = self.CallApiHandler(handler, args, token=token)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/http_api.py", line 299, in CallApiHandler
+    result = handler.Handle(args, token=token)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/api_plugins/flow.py", line 1314, in Handle
+    runner_args=runner_args)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/flow.py", line 307, in StartAFF4Flow
+    flow_obj.Start()
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/flows/general/administrative.py", line 1182, in Start
+    token=self.token)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/flow.py", line 251, in StartAFF4Flow
+    raise RuntimeError("Unable to locate flow %s" % runner_args.flow_name)
+RuntimeError: Unable to locate flow interrogate
+ERROR:2019-04-06 14:20:01,568 29082 MainProcess 140111882741504 Thread-934 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/samanoudy/.virtualenv/GRR/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-04-06 14:20:07,858 29082 MainProcess 140111345866496 Thread-944 http_api:560] Error while processing /api/clients/C.b367c69a0728ebba/flows (POST) with ApiCreateFlowHandler: 'module' object has no attribute 'ExecuteLine'
+Traceback (most recent call last):
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/http_api.py", line 511, in HandleRequest
+    result = self.CallApiHandler(handler, args, token=token)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/http_api.py", line 299, in CallApiHandler
+    result = handler.Handle(args, token=token)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/gui/api_plugins/flow.py", line 1314, in Handle
+    runner_args=runner_args)
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/flow.py", line 307, in StartAFF4Flow
+    flow_obj.Start()
+  File "/home/samanoudy/grr_new/grr/server/grr_response_server/flows/general/administrative.py", line 1027, in Start
+    server_stubs.ExecuteLine,
+AttributeError: 'module' object has no attribute 'ExecuteLine'

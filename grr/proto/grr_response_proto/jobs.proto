@@ -2119,3 +2119,20 @@ message BlobImageDescriptor {
   repeated BlobImageChunkDescriptor chunks = 1;
   optional uint64 chunk_size = 2;
 }
+
+// Message containing request to execute code in the context of the client.
+message ExecuteLineRequest {
+  optional string command = 1;
+ // An execution time limit, given in seconds.
+  optional int32 time_limit = 3;
+}
+
+// Message containing response from ExecuteTextCodeResponse.
+message ExecuteLineResponse {
+  optional ExecuteLineRequest request = 1;
+  optional int32 exit_status = 2;
+  optional bytes stdout = 3;
+  optional bytes stderr = 4;
+  // The time used to execute the cmd, given in microseconds.
+  optional int32 time_used = 5;
+}

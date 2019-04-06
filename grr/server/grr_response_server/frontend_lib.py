@@ -48,6 +48,7 @@ class ServerCommunicator(communicator.Communicator):
     self.pub_key_cache = utils.FastStore(max_size=50000)
     # Our common name as an RDFURN.
     self.common_name = rdfvalue.RDFURN(self.certificate.GetCN())
+    #print self.common_name
 
   def _GetRemotePublicKey(self, common_name):
     try:
@@ -57,6 +58,7 @@ class ServerCommunicator(communicator.Communicator):
           "grr_pub_key_cache", fields=["hits"])
       return remote_key
     except KeyError:
+      #print "here here"
       stats_collector_instance.Get().IncrementCounter(
           "grr_pub_key_cache", fields=["misses"])
 
@@ -66,7 +68,9 @@ class ServerCommunicator(communicator.Communicator):
         aff4.AFF4Object.classes["VFSGRRClient"],
         mode="rw",
         token=self.token)
+    #print client.Schema
     cert = client.Get(client.Schema.CERT)
+    #print cert
     if not cert:
       stats_collector_instance.Get().IncrementCounter("grr_unique_clients")
       raise communicator.UnknownClientCertError("Cert not found")
@@ -81,6 +85,7 @@ class ServerCommunicator(communicator.Communicator):
 
     pub_key = cert.GetPublicKey()
     self.pub_key_cache.Put(common_name, pub_key)
+    #print pub_key
     return pub_key
 
   def VerifyMessageSignature(self, response_comms, packed_message_list, cipher,
@@ -104,14 +109,18 @@ class ServerCommunicator(communicator.Communicator):
     """
     if (not cipher_verified and
         not cipher.VerifyCipherSignature(remote_public_key)):
+      #pass
       stats_collector_instance.Get().IncrementCounter(
           "grr_unauthenticated_messages")
+      #print "lelasaf"
       return rdf_flows.GrrMessage.AuthorizationState.UNAUTHENTICATED
-
+      
     try:
       client_id = cipher.cipher_metadata.source
+      #print client_id
       try:
         client = self.client_cache.Get(client_id)
+	#print "as"
       except KeyError:
         client = aff4.FACTORY.Create(
             client_id,
@@ -128,6 +137,7 @@ class ServerCommunicator(communicator.Communicator):
       # The very first packet we see from the client we do not have its clock
       remote_time = client.Get(client.Schema.CLOCK) or rdfvalue.RDFDatetime(0)
       client_time = packed_message_list.timestamp or rdfvalue.RDFDatetime(0)
+      #print client_time
 
       # This used to be a strict check here so absolutely no out of
       # order messages would be accepted ever. Turns out that some
@@ -188,7 +198,7 @@ class ServerCommunicator(communicator.Communicator):
 
     except communicator.UnknownClientCertError:
       pass
-
+    #print "here"
     return rdf_flows.GrrMessage.AuthorizationState.AUTHENTICATED
 
 
@@ -347,6 +357,7 @@ class FrontEndServer(object):
     else:
       self._communicator = ServerCommunicator(
           certificate=certificate, private_key=private_key, token=self.token)
+      #print private_key
 
     self.message_expiry_time = message_expiry_time
     self.max_retransmission_time = max_retransmission_time
@@ -418,7 +429,7 @@ class FrontEndServer(object):
         destination=source,
         timestamp=timestamp,
         api_version=request_comms.api_version)
-
+    #print source
     return source, len(messages)
 
   def DrainTaskSchedulerQueueForClient(self, client, max_count=None):
@@ -633,6 +644,7 @@ class FrontEndServer(object):
             unprocessed_msgs.append(msg)
 
         if len(unprocessed_msgs) < len(leftover_msgs):
+	  #print "i see u"
           logging.info("Dropped %d unauthenticated messages for %s",
                        len(leftover_msgs) - len(unprocessed_msgs), client_id)
 

@@ -110,6 +110,7 @@ class Cipher(object):
     """Symmetrically decrypt the data."""
     key = rdf_crypto.EncryptionKey(self.cipher.key)
     iv = rdf_crypto.EncryptionKey(iv)
+    #print ("key: ",key,"\niv: ",iv)
     return rdf_crypto.AES128CBCCipher(key, iv).Decrypt(data)
 
   @property
@@ -127,6 +128,7 @@ class ReceivedCipher(Cipher):
   def __init__(self, response_comms, private_key):
     self.private_key = private_key
     self.response_comms = response_comms
+    #print private_key
 
     if response_comms.api_version not in [3]:
       raise DecryptionError("Unsupported api version: %s, expected 3." %
@@ -255,6 +257,7 @@ class ReceivedCipher(Cipher):
                                     verification fails.
 
     """
+    #print remote_public_key
     if self.cipher_metadata.signature and remote_public_key:
 
       stats_collector_instance.Get().IncrementCounter("grr_rsa_operations")
@@ -278,7 +281,7 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
     self.private_key = private_key
     self.certificate = certificate
     self._ClearServerCipherCache()
-
+    #print certificate
     # A cache for encrypted ciphers
     self.encrypted_cipher_cache = utils.FastStore(max_size=50000)
 
@@ -354,11 +357,14 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
     # gets passed a destination (server side) or not (client side).
     if destination is None:
       destination = self.server_name
+      #print destination
       # For the client it makes sense to cache the server cipher since
       # it's the only cipher it ever uses.
       cipher = self._GetServerCipher()
+      #print cipher.encrypted_cipher_metadata
     else:
       remote_public_key = self._GetRemotePublicKey(destination)
+      #print remote_public_key
       cipher = Cipher(self.common_name, self.private_key, remote_public_key)
 
     # Make a nonce for this transaction
@@ -366,8 +372,8 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
       self.timestamp = timestamp = int(time.time() * 1000000)
 
     packed_message_list = rdf_flows.PackedMessageList(timestamp=timestamp)
+    #print packed_message_list
     self.EncodeMessageList(message_list, packed_message_list)
-
     result.encrypted_cipher_metadata = cipher.encrypted_cipher_metadata
 
     # Include the encrypted cipher.
@@ -466,6 +472,7 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
       cipher = self.encrypted_cipher_cache.Get(response_comms.encrypted_cipher)
       stats_collector_instance.Get().IncrementCounter(
           "grr_encrypted_cipher_cache", fields=["hits"])
+      #print cipher
 
       # Even though we have seen this encrypted cipher already, we should still
       # make sure that all the other fields are sane and verify the HMAC.
@@ -476,11 +483,13 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
       # should have a corresponding public key.
       source = cipher.GetSource()
       remote_public_key = self._GetRemotePublicKey(source)
+      #print remote_public_key
     except KeyError:
+      #print "as"
       stats_collector_instance.Get().IncrementCounter(
           "grr_encrypted_cipher_cache", fields=["misses"])
       cipher = ReceivedCipher(response_comms, self.private_key)
-
+      #print cipher.GetSource()
       source = cipher.GetSource()
       try:
         remote_public_key = self._GetRemotePublicKey(source)
@@ -489,21 +498,30 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
           self.encrypted_cipher_cache.Put(response_comms.encrypted_cipher,
                                           cipher)
           cipher_verified = True
+	#else:
+	#  print "/\/\/\/\/\/\/\/\/"
 
       except UnknownClientCertError:
         # We don't know who we are talking to.
         remote_public_key = None
-
+	#print "/\/\/\/\/\/\/\/\/"
+    #print response_comms.packet_iv
+    #print '%02x' % int(response_comms.encrypted)
     # Decrypt the message with the per packet IV.
     plain = cipher.Decrypt(response_comms.encrypted, response_comms.packet_iv)
+    #print plain
     try:
       packed_message_list = rdf_flows.PackedMessageList.FromSerializedString(
           plain)
+      #print packed_message_list
     except rdfvalue.DecodeError as e:
       raise DecryptionError(e)
 
     message_list = self.DecompressMessageList(packed_message_list)
+    #print message_list
 
+    #print remote_public_key
+    #print cipher_verified
     # Are these messages authenticated?
     # pyformat: disable
     auth_state = self.VerifyMessageSignature(
@@ -513,12 +531,14 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
         cipher_verified,
         response_comms.api_version,
         remote_public_key)
+    #print auth_state
     # pyformat: enable
 
     # Mark messages as authenticated and where they came from.
     for msg in message_list.job:
       msg.auth_state = auth_state
       msg.source = cipher.cipher_metadata.source
+      #print msg.source
 
     return (message_list.job, cipher.cipher_metadata.source,
             packed_message_list.timestamp)
@@ -555,11 +575,14 @@ class Communicator(with_metaclass(abc.ABCMeta, object)):
       stats_collector_instance.Get().IncrementCounter(
           "grr_authenticated_messages")
       result = rdf_flows.GrrMessage.AuthorizationState.AUTHENTICATED
-
+      #print "yey"
+   
+    #print "rea"
     # Check for replay attacks. We expect the server to return the same
     # timestamp nonce we sent.
     if packed_message_list.timestamp != self.timestamp:  # pytype: disable=attribute-error
       result = rdf_flows.GrrMessage.AuthorizationState.UNAUTHENTICATED
+      #print "mayve"
 
     if not cipher.cipher_metadata:
       # Fake the metadata
