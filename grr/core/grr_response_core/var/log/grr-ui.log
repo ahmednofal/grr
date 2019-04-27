@@ -196,3 +196,43 @@ Traceback (most recent call last):
   File "/home/samanoudy/grr_new/grr/server/grr_response_server/flows/general/administrative.py", line 1027, in Start
     server_stubs.ExecuteLine,
 AttributeError: 'module' object has no attribute 'ExecuteLine'
+ERROR:2019-04-27 06:53:59,670 15711 MainProcess 140142116902656 Thread-74 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/ahmed/.virtualenv/grr/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-04-27 06:54:37,748 15711 MainProcess 140141620356864 Thread-127 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/ahmed/.virtualenv/grr/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-04-27 06:55:22,973 15711 MainProcess 140142133688064 Thread-224 config:58] Can't get config value ClientBuilder.fleetspeak_config_path: Unable to find resource install_data/fleetspeak/linux/grr_service_config.txt.in@grr-response-core while interpolating: : %(install_data/fleetspeak/%(Client.platform)/grr_service_config.txt.in@grr-response-core|resource)
+Traceback (most recent call last):
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/gui/api_plugins/config.py", line 56, in InitFromConfigOption
+    config_value = config.CONFIG.Get(name)
+  File "/home/ahmed/bin/thesis/grr/grr/core/grr_response_core/lib/config_lib.py", line 1294, in Get
+    context=calc_context)
+  File "/home/ahmed/bin/thesis/grr/grr/core/grr_response_core/lib/config_lib.py", line 1435, in InterpolateValue
+    raise type(e)(message)
+FilterError: Unable to find resource install_data/fleetspeak/linux/grr_service_config.txt.in@grr-response-core while interpolating: : %(install_data/fleetspeak/%(Client.platform)/grr_service_config.txt.in@grr-response-core|resource)
+ERROR:2019-04-27 07:51:25,194 15711 MainProcess 140141611964160 Thread-1850 wsgiapp:328] http exception: /third-party/jstree/themes/default/32px.png [GET]
+Traceback (most recent call last):
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/gui/wsgiapp.py", line 325, in __call__
+    endpoint, _ = matcher.match(request.path, request.method)
+  File "/home/ahmed/.virtualenv/grr/local/lib/python2.7/site-packages/werkzeug/routing.py", line 1563, in match
+    raise NotFound()
+NotFound: 404: Not Found
+ERROR:2019-04-27 16:19:36,912 26286 MainProcess 139833804982080 MainThread mysql_advanced_data_store:616] OperationalError: (1296, "Got error 4009 'Cluster Failure' from NDBCLUSTER"). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-04-27 16:19:37,914 26286 MainProcess 139833804982080 MainThread mysql_advanced_data_store:616] OperationalError: (1296, "Got error 4009 'Cluster Failure' from NDBCLUSTER"). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-04-27 16:19:38,916 26286 MainProcess 139833804982080 MainThread mysql_advanced_data_store:616] OperationalError: (1296, "Got error 4009 'Cluster Failure' from NDBCLUSTER"). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-04-27 16:19:39,918 26286 MainProcess 139833804982080 MainThread mysql_advanced_data_store:616] OperationalError: (1296, "Got error 4009 'Cluster Failure' from NDBCLUSTER"). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-04-27 16:19:40,919 26286 MainProcess 139833804982080 MainThread mysql_advanced_data_store:616] OperationalError: (1296, "Got error 4009 'Cluster Failure' from NDBCLUSTER"). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-04-27 16:19:41,921 26286 MainProcess 139833804982080 MainThread mysql_advanced_data_store:616] OperationalError: (1296, "Got error 4009 'Cluster Failure' from NDBCLUSTER"). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-04-27 16:19:42,924 26286 MainProcess 139833804982080 MainThread mysql_advanced_data_store:616] OperationalError: (1296, "Got error 4009 'Cluster Failure' from NDBCLUSTER"). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-04-27 16:19:43,927 26286 MainProcess 139833804982080 MainThread mysql_advanced_data_store:616] OperationalError: (1296, "Got error 4009 'Cluster Failure' from NDBCLUSTER"). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-04-27 16:19:44,930 26286 MainProcess 139833804982080 MainThread mysql_advanced_data_store:616] OperationalError: (1296, "Got error 4009 'Cluster Failure' from NDBCLUSTER"). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.
+ERROR:2019-04-27 16:19:45,931 26286 MainProcess 139833804982080 MainThread mysql_advanced_data_store:616] OperationalError: (1296, "Got error 4009 'Cluster Failure' from NDBCLUSTER"). This may be due to an incorrect MySQL 'max_allowed_packet' setting (try increasing it). Retrying.

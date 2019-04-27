@@ -3815,3 +3815,66 @@ FlowError: (u'Action Denied', u'Echo')
 
 ERROR:2019-04-06 14:37:04,107 351 MainProcess 139775323391744 grr_threadpool-3822929338 notification:196] Trying to notify non-existent user: GRRWorker
 ERROR:2019-04-06 14:52:25,519 1918 MainProcess 140193210287872 grr_threadpool-2553029838 flow_runner:1071] Tried to log a format string with the wrong number of arguments: Execution of %s %s (return value %d, ran for %f seconds):
+ERROR:2019-04-27 06:56:25,950 15758 MainProcess 139933314443008 grr_threadpool-403083894 flow_runner:584] Flow aff4:/C.b367c69a0728ebba/flows/F:6D46FE4F raised Failed to get connections. Err: message GrrStatus {
+ cpu_time_used :   message CpuSeconds {
+    }
+ error_message : u"u'Netstat'"
+ network_bytes_sent : 86
+ status : GENERIC_ERROR
+}.
+Traceback (most recent call last):
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/flows/general/network.py", line 54, in StoreNetstat
+    responses.status))
+FlowError: Failed to get connections. Err: message GrrStatus {
+ cpu_time_used :   message CpuSeconds {
+    }
+ error_message : u"u'Netstat'"
+ network_bytes_sent : 86
+ status : GENERIC_ERROR
+}
+ERROR:2019-04-27 06:56:25,999 15758 MainProcess 139933314443008 grr_threadpool-403083894 flow_runner:859] Error in flow aff4:/C.b367c69a0728ebba/flows/F:6D46FE4F (aff4:/C.b367c69a0728ebba). Trace: Traceback (most recent call last):
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/flows/general/network.py", line 54, in StoreNetstat
+    responses.status))
+FlowError: Failed to get connections. Err: message GrrStatus {
+ cpu_time_used :   message CpuSeconds {
+    }
+ error_message : u"u'Netstat'"
+ network_bytes_sent : 86
+ status : GENERIC_ERROR
+}
+
+ERROR:2019-04-27 06:56:26,002 15758 MainProcess 139933314443008 grr_threadpool-403083894 notification:196] Trying to notify non-existent user: GRRWorker
+ERROR:2019-04-27 06:59:49,763 15758 MainProcess 139932676892416 grr_threadpool-3305031334 flow_runner:584] Flow aff4:/C.b367c69a0728ebba/flows/F:2AA45431/F:7D32E93 raised Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code.
+Traceback (most recent call last):
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/flows/general/collectors.py", line 596, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/flows/general/collectors.py", line 704, in _ParseResponses
+    self)
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/artifact.py", line 425, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/ahmed/bin/thesis/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/ahmed/bin/thesis/grr/grr/core/grr_response_core/lib/parser.py", line 179, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+ERROR:2019-04-27 06:59:49,810 15758 MainProcess 139932676892416 grr_threadpool-3305031334 flow_runner:859] Error in flow aff4:/C.b367c69a0728ebba/flows/F:2AA45431/F:7D32E93 (aff4:/C.b367c69a0728ebba). Trace: Traceback (most recent call last):
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/flow_runner.py", line 568, in RunStateMethod
+    method(responses)
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/flows/general/collectors.py", line 596, in ProcessCollected
+    self._ParseResponses(list(responses), artifact_name, source)
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/flows/general/collectors.py", line 704, in _ParseResponses
+    self)
+  File "/home/ahmed/bin/thesis/grr/grr/server/grr_response_server/artifact.py", line 425, in ApplyParsersToResponses
+    flow_obj.args.path_type))
+  File "/home/ahmed/bin/thesis/grr/grr/core/grr_response_core/lib/parsers/linux_cmd_parser.py", line 188, in Parse
+    self.CheckReturn(cmd, return_val)
+  File "/home/ahmed/bin/thesis/grr/grr/core/grr_response_core/lib/parser.py", line 179, in CheckReturn
+    "command had %s return code" % (cmd, return_val))
+CommandFailedError: Parsing output of Command /usr/sbin/dmidecode failed, as command had 1 return code
+

@@ -810,23 +810,23 @@ class MySQLAdvancedDataStore(data_store.DataStore):
 
   def _CreateTables(self):
     self.ExecuteQuery("""
-    CREATE TABLE IF NOT EXISTS `subjects` (
+    CREATE TABLE IF NOT EXISTS `subjects`(
       hash BINARY(16) PRIMARY KEY NOT NULL,
-      subject TEXT CHARACTER SET utf8 NULL,
-      KEY `subject` (`subject`(96))
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT ='Table for storing subjects';
+      subject VARCHAR(1024) CHARACTER SET utf8 NULL,
+      KEY `subject` (`subject`)
+    ) ENGINE=NDBCLUSTER DEFAULT CHARSET=utf8 COMMENT ='Table for storing subjects';
     """)
 
     self.ExecuteQuery("""
-    CREATE TABLE IF NOT EXISTS `attributes` (
+    CREATE TABLE IF NOT EXISTS `attributes`(
       hash BINARY(16) PRIMARY KEY NOT NULL,
-      attribute VARCHAR(2048) CHARACTER SET utf8 DEFAULT NULL,
+      attribute VARCHAR(1024) CHARACTER SET utf8 DEFAULT NULL,
       KEY `attribute` (`attribute`(32))
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT ='Table storing attributes';
+    ) ENGINE=NDBCLUSTER DEFAULT CHARSET=utf8 COMMENT ='Table storing attributes';
     """)
 
     self.ExecuteQuery("""
-    CREATE TABLE IF NOT EXISTS `aff4` (
+    CREATE TABLE IF NOT EXISTS `aff4`(
       id BIGINT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
       subject_hash BINARY(16) NOT NULL,
       attribute_hash BINARY(16) NOT NULL,
@@ -834,16 +834,16 @@ class MySQLAdvancedDataStore(data_store.DataStore):
       value MEDIUMBLOB NULL,
       KEY `master` (`subject_hash`,`attribute_hash`,`timestamp`),
       KEY `attribute` (`attribute_hash`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+    ) ENGINE=NDBCLUSTER DEFAULT CHARSET=utf8
     COMMENT ='Table representing AFF4 objects';
     """)
 
     self.ExecuteQuery("""
-    CREATE TABLE IF NOT EXISTS `locks` (
+    CREATE TABLE IF NOT EXISTS `locks`(
       subject_hash BINARY(16) PRIMARY KEY NOT NULL,
       lock_owner BIGINT UNSIGNED DEFAULT NULL,
       lock_expiration BIGINT UNSIGNED DEFAULT NULL
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+    ) ENGINE=NDBCLUSTER DEFAULT CHARSET=utf8
     COMMENT ='Table representing locks on subjects';
     """)
 
