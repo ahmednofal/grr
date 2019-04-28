@@ -6,6 +6,7 @@
 *.pb.cc
 *.pb.h
 *~
+*.egg-info/
 .idea
 build/
 dist/
@@ -14,4 +15,6 @@ grr.egg-info/
 get-pip.py
 grr/core/grr_response_core/artifacts/*.yaml
 grr/core/executables/installers
-*.egg-info/
+grr/core/executables/windows
+log/
+*.log
