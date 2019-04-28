@@ -16,5 +16,6 @@ get-pip.py
 grr/core/grr_response_core/artifacts/*.yaml
 grr/core/executables/installers
 grr/core/executables/windows
+node_modules/
 log/
 *.log
