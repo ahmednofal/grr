@@ -1,14 +1,5 @@
 #!/bin/bash
-
-set -ex
-echo "GRR will be installed into a virtualenv at ~/.virtualenv/cluster"
-virtualenv virtualenv --python=/usr/bin/python2.7 ~/.virtualenv/cluster
-source "${HOME}/.virtualenv/cluster/bin/activate"
-pip install --upgrade pip wheel six setuptools nodeenv
-nodeenv -p --prebuilt --node=10.12.0
-source "${HOME}/.virtualenv/cluster/bin/activate"
-
-pip install --no-cache-dir -f https://storage.googleapis.com/releases.grr-response.com/index.html grr-response-templates
+source "${HOME}/.virtualenv/grr/bin/activate"
 
 pip install -e grr/proto --progress-bar off
 pip install -e grr/core --progress-bar off

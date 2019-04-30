@@ -135,6 +135,11 @@ parser_initialize.add_argument(
     "is set).")
 
 parser_initialize.add_argument(
+    "--mysql_type",
+    help="Type of the MySQL datastore, MySQLAdvancedDataStore or MySQLClusterDataStore (only applies if --noprompt is set)."
+)
+
+parser_initialize.add_argument(
     "--mysql_db",
     help="Name of GRR's MySQL database (only applies if --noprompt is set).")
 
@@ -283,6 +288,7 @@ def main(args):
           grr_config.CONFIG,
           external_hostname=args.external_hostname,
           admin_password=args.admin_password,
+          mysql_type=args.mysql_type,
           mysql_hostname=args.mysql_hostname,
           mysql_port=args.mysql_port,
           mysql_username=args.mysql_username,

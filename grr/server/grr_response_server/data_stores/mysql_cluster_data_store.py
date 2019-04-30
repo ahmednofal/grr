@@ -171,7 +171,7 @@ class ConnectionPool(object):
       pass
 
 
-class MySQLAdvancedDataStore(data_store.DataStore):
+class MySQLClusterDataStore(data_store.DataStore):
   """A mysql based data store."""
 
   POOL = None
@@ -179,8 +179,8 @@ class MySQLAdvancedDataStore(data_store.DataStore):
   def __init__(self, database_name=None):
     self.database_name = database_name or config.CONFIG["Mysql.database_name"]
     # Use the global connection pool.
-    if MySQLAdvancedDataStore.POOL is None:
-      MySQLAdvancedDataStore.POOL = ConnectionPool(self.database_name)
+    if MySQLClusterDataStore.POOL is None:
+      MySQLClusterDataStore.POOL = ConnectionPool(self.database_name)
     self.pool = self.POOL
 
     self.to_replace = []
@@ -193,10 +193,10 @@ class MySQLAdvancedDataStore(data_store.DataStore):
     self.max_values_per_query = config.CONFIG["Mysql.max_values_per_query"]
     self.max_retries = config.CONFIG["Mysql.max_retries"]
 
-    super(MySQLAdvancedDataStore, self).__init__()
+    super(MySQLClusterDataStore, self).__init__()
 
   def Initialize(self):
-    super(MySQLAdvancedDataStore, self).Initialize()
+    super(MySQLClusterDataStore, self).Initialize()
     try:
       self.ExecuteQuery("desc `aff4`")
     except MySQLdb.Error:
@@ -215,12 +215,12 @@ class MySQLAdvancedDataStore(data_store.DataStore):
 
   @classmethod
   def SetupTestDB(cls):
-    super(MySQLAdvancedDataStore, cls).SetupTestDB()
-    MySQLAdvancedDataStore.POOL = None
-    return MySQLAdvancedDataStore(database_name="grr_test_%d" % os.getpid())
+    super(MySQLClusterDataStore, cls).SetupTestDB()
+    MySQLClusterDataStore.POOL = None
+    return MySQLClusterDataStore(database_name="grr_test_%d" % os.getpid())
 
   def ClearTestDB(self):
-    super(MySQLAdvancedDataStore, self).ClearTestDB()
+    super(MySQLClusterDataStore, self).ClearTestDB()
     if "test" not in self.database_name:
       raise ValueError("Can't use db name %s for testing, must contain 'test'."
                        % self.database_name)
@@ -505,7 +505,7 @@ class MySQLAdvancedDataStore(data_store.DataStore):
     # This is not easy to fix - except by taking a huge performance hit and
     # locking the whole Flush() method. Long term, we should stop flushing the
     # data store and use MutationPools everywhere.
-    super(MySQLAdvancedDataStore, self).Flush()
+    super(MySQLClusterDataStore, self).Flush()
     with self.buffer_lock:
       to_insert = self.to_insert
       to_replace = self.to_replace
@@ -810,23 +810,23 @@ class MySQLAdvancedDataStore(data_store.DataStore):
 
   def _CreateTables(self):
     self.ExecuteQuery("""
-    CREATE TABLE IF NOT EXISTS `subjects` (
+    CREATE TABLE IF NOT EXISTS `subjects`(
       hash BINARY(16) PRIMARY KEY NOT NULL,
-      subject TEXT CHARACTER SET utf8 NULL,
-      KEY `subject` (`subject`(96))
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT ='Table for storing subjects';
+      subject VARCHAR(1024) CHARACTER SET utf8 NULL,
+      KEY `subject` (`subject`)
+    ) ENGINE=NDBCLUSTER DEFAULT CHARSET=utf8 COMMENT ='Table for storing subjects';
     """)
 
     self.ExecuteQuery("""
-    CREATE TABLE IF NOT EXISTS `attributes` (
+    CREATE TABLE IF NOT EXISTS `attributes`(
       hash BINARY(16) PRIMARY KEY NOT NULL,
-      attribute VARCHAR(2048) CHARACTER SET utf8 DEFAULT NULL,
+      attribute VARCHAR(1024) CHARACTER SET utf8 DEFAULT NULL,
       KEY `attribute` (`attribute`(32))
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT ='Table storing attributes';
+    ) ENGINE=NDBCLUSTER DEFAULT CHARSET=utf8 COMMENT ='Table storing attributes';
     """)
 
     self.ExecuteQuery("""
-    CREATE TABLE IF NOT EXISTS `aff4` (
+    CREATE TABLE IF NOT EXISTS `aff4`(
       id BIGINT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
       subject_hash BINARY(16) NOT NULL,
       attribute_hash BINARY(16) NOT NULL,
@@ -834,16 +834,16 @@ class MySQLAdvancedDataStore(data_store.DataStore):
       value MEDIUMBLOB NULL,
       KEY `master` (`subject_hash`,`attribute_hash`,`timestamp`),
       KEY `attribute` (`attribute_hash`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+    ) ENGINE=NDBCLUSTER DEFAULT CHARSET=utf8
     COMMENT ='Table representing AFF4 objects';
     """)
 
     self.ExecuteQuery("""
-    CREATE TABLE IF NOT EXISTS `locks` (
+    CREATE TABLE IF NOT EXISTS `locks`(
       subject_hash BINARY(16) PRIMARY KEY NOT NULL,
       lock_owner BIGINT UNSIGNED DEFAULT NULL,
       lock_expiration BIGINT UNSIGNED DEFAULT NULL
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+    ) ENGINE=NDBCLUSTER DEFAULT CHARSET=utf8
     COMMENT ='Table representing locks on subjects';
     """)
 

@@ -31,6 +31,7 @@ from grr_response_server.databases import mysql_client_reports
 from grr_response_server.databases import mysql_clients
 from grr_response_server.databases import mysql_cronjobs
 from grr_response_server.databases import mysql_ddl
+from grr_response_server.databases import mysql_cluster_ddl
 from grr_response_server.databases import mysql_events
 from grr_response_server.databases import mysql_flows
 from grr_response_server.databases import mysql_foreman_rules
@@ -228,13 +229,22 @@ def _CheckForSSL(cursor):
 
 def _InitializeSchema(cursor):
   """Initialize the database's schema."""
-  for command in mysql_ddl.SCHEMA_SETUP:
-    try:
-      cursor.execute(command)
-    except MySQLdb.MySQLError as e:
-      raise SchemaInitializationError(
-          "{}. Error occurred during execution of {}".format(
-              e, command.strip()))
+  if (config.CONFIG["Datastore.implementation"] == "MySQLAdvancedDataStore"):
+    for command in mysql_ddl.SCHEMA_SETUP:
+      try:
+        cursor.execute(command)
+      except MySQLdb.MySQLError as e:
+        raise SchemaInitializationError(
+            "{}. Error occurred during execution of {}".format(
+                e, command.strip()))
+  elif (config.CONFIG["Datastore.implementation"] == "MySQLClusterDataStore"):
+    for command in mysql_cluster_ddl.SCHEMA_SETUP:
+      try:
+        cursor.execute(command)
+      except MySQLdb.MySQLError as e:
+        raise SchemaInitializationError(
+            "{}. Error occurred during execution of {}".format(
+                e, command.strip()))
 
 
 def _SetupDatabase(host, port, user, password, database, **kwargs):

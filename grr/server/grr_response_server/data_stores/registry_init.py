@@ -11,6 +11,7 @@ from grr_response_server.data_stores import fake_data_store
 
 try:
   from grr_response_server.data_stores import mysql_advanced_data_store
+  from grr_response_server.data_stores import mysql_cluster_data_store
 except ImportError:
   pass
 

@@ -18,4 +18,5 @@ grr/core/executables/installers
 grr/core/executables/windows
 node_modules/
 log/
+server.local.yaml
 *.log

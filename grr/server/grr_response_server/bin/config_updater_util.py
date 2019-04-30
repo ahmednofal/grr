@@ -262,7 +262,31 @@ def ConfigureMySQLDatastore(config):
   datastore_init_complete = False
   db_options = {}
   while not datastore_init_complete:
-    db_options["Datastore.implementation"] = "MySQLAdvancedDataStore"
+    """Set the datastore to use by prompting the user to choose."""
+    print("""
+    1. MySQLAdvancedDataStore (default) - This datastore uses MySQL and requires 
+    MySQL 5.6 server or later to be running and a user with the ability to create 
+    the GRR database and tables. The MySQL client binaries are required for use with 
+    the MySQLdb python module as well.
+    2. MySQLClusterDataStore - This datastore uses MySQL Cluster server 7.5 or later
+    to be running and a user with the ability to create the GRR database and tables.
+    """)
+    datastore = RetryQuestion("Datastore", "^[1-2]$", "1")
+
+    print("""\n\n***WARNING***
+        Do not continue until a the database server running and a user with the ability 
+        to create the  GRR database and tables has been created.
+        """)
+    while raw_input("Are you ready to continue?[Yn]: ").upper() != "Y":
+      pass
+
+    if datastore == "1":
+      config.Set("Datastore.implementation", "MySQLAdvancedDataStore")
+      db_options["Datastore.implementation"] = "MySQLAdvancedDataStore"
+    elif datastore == "2":
+      config.Set("Datastore.implementation", "MySQLClusterDataStore")
+      db_options["Datastore.implementation"] = "MySQLClusterDataStore"
+
     db_options["Mysql.host"] = RetryQuestion("MySQL Host", "^[\\.A-Za-z0-9-]+$",
                                              config["Mysql.host"])
     db_options["Mysql.port"] = int(
@@ -332,7 +356,7 @@ def ConfigureDatastore(config):
       ConfigureMySQLDatastore(config)
     else:
       raise ConfigInitError()
-  elif existing_datastore == "MySQLAdvancedDataStore":
+  elif existing_datastore == "MySQLAdvancedDataStore" or existing_datastore == "MySQLClusterDataStore":
     print("  MySQL Host: %s\n  MySQL Port: %s\n  MySQL Database: %s\n"
           "  MySQL Username: %s\n" %
           (grr_config.CONFIG.Get("Mysql.host"),
@@ -545,6 +569,7 @@ def Initialize(config=None,
 def InitializeNoPrompt(config=None,
                        external_hostname = None,
                        admin_password = None,
+                       mysql_type = None,
                        mysql_hostname = None,
                        mysql_port = None,
                        mysql_username = None,
@@ -562,6 +587,7 @@ def InitializeNoPrompt(config=None,
     config: config object
     external_hostname: A hostname.
     admin_password: A password used for the admin user.
+    mysql_type: The mysql datastore implementation type, MySQLAdvanced or MySQLCluster
     mysql_hostname: A hostname used for establishing connection to MySQL.
     mysql_port: A port used for establishing connection to MySQL.
     mysql_username: A username used for establishing connection to MySQL.
@@ -594,13 +620,16 @@ def InitializeNoPrompt(config=None,
     raise ValueError("--noprompt set, but --admin_password was not provided.")
   if mysql_password is None:
     raise ValueError("--noprompt set, but --mysql_password was not provided.")
+  if mysql_type is None:
+    raise ValueError("--noprompt set, but --mysql_type was not provided.")
 
   print("Checking write access on config %s" % config.parser)
   if not os.access(config.parser.filename, os.W_OK):
     raise IOError("Config not writeable (need sudo?)")
 
   config_dict = {}
-  config_dict["Datastore.implementation"] = "MySQLAdvancedDataStore"
+  config_dict["Datastore.implementation"] = mysql_type or config["Mysql.type"]
+  config_dict["Mysql.type"] = mysql_type or config_dict["Mysql.type"]
   config_dict["Mysql.host"] = mysql_hostname or config["Mysql.host"]
   config_dict["Mysql.port"] = mysql_port or config["Mysql.port"]
   config_dict["Mysql.database_name"] = mysql_db or config["Mysql.database_name"]

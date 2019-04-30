@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""A collection of DDL for use by the mysql database implementation."""
+"""A collection of DDL for use by the mysql cluster database implementation."""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -7,21 +7,21 @@ from __future__ import unicode_literals
 
 SCHEMA_SETUP = [
     """
-CREATE TABLE IF NOT EXISTS artifacts(
+CREATE TABLE IF NOT EXISTS artifacts ENGINE=NDBCLUSTER (
     name VARCHAR(100) PRIMARY KEY,
     definition MEDIUMBLOB
 )""", """
-CREATE TABLE IF NOT EXISTS blobs(
+CREATE TABLE IF NOT EXISTS blobs ENGINE=NDBCLUSTER (
     blob_id BINARY(32),
     chunk_index INT UNSIGNED,
     blob_chunk MEDIUMBLOB,
     PRIMARY KEY (blob_id, chunk_index)
 )""", """
-CREATE TABLE IF NOT EXISTS hash_blob_references(
+CREATE TABLE IF NOT EXISTS hash_blob_references ENGINE=NDBCLUSTER (
     hash_id BINARY(32) PRIMARY KEY,
     blob_references MEDIUMBLOB
 )""", """
-CREATE TABLE IF NOT EXISTS clients(
+CREATE TABLE IF NOT EXISTS clients ENGINE=NDBCLUSTER (
     client_id BIGINT UNSIGNED PRIMARY KEY,
     last_client_timestamp DATETIME(6),
     last_startup_timestamp DATETIME(6),
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS clients(
     last_platform VARCHAR(128),
     last_platform_release VARCHAR(256)
 )""", """
-CREATE TABLE IF NOT EXISTS client_labels(
+CREATE TABLE IF NOT EXISTS client_labels ENGINE=NDBCLUSTER (
     client_id BIGINT UNSIGNED,
     owner_username_hash BINARY(32),
     label VARCHAR(100),
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS client_labels(
 CREATE INDEX IF NOT EXISTS owner_label_idx
     ON client_labels(owner_username(191), label)
 """, """
-CREATE TABLE IF NOT EXISTS client_snapshot_history(
+CREATE TABLE IF NOT EXISTS client_snapshot_history ENGINE=NDBCLUSTER (
     client_id BIGINT UNSIGNED,
     timestamp DATETIME(6),
     client_snapshot MEDIUMBLOB,
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS client_snapshot_history(
         REFERENCES clients(client_id)
         ON DELETE CASCADE
 )""", """
-CREATE TABLE IF NOT EXISTS client_startup_history(
+CREATE TABLE IF NOT EXISTS client_startup_history ENGINE=NDBCLUSTER (
     client_id BIGINT UNSIGNED,
     timestamp DATETIME(6),
     startup_info MEDIUMBLOB,
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS client_startup_history(
         REFERENCES clients(client_id)
         ON DELETE CASCADE
 )""", """
-CREATE TABLE IF NOT EXISTS client_crash_history(
+CREATE TABLE IF NOT EXISTS client_crash_history ENGINE=NDBCLUSTER (
     client_id BIGINT UNSIGNED,
     timestamp DATETIME(6),
     crash_info MEDIUMBLOB,
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS client_crash_history(
         REFERENCES clients(client_id)
         ON DELETE CASCADE
 )""", """
-CREATE TABLE IF NOT EXISTS client_keywords(
+CREATE TABLE IF NOT EXISTS client_keywords ENGINE=NDBCLUSTER (
     client_id BIGINT UNSIGNED,
     keyword_hash BINARY(32),
     keyword VARCHAR(255),
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS client_keywords(
         REFERENCES clients(client_id)
         ON DELETE CASCADE
 )""", """
-CREATE TABLE IF NOT EXISTS client_stats(
+CREATE TABLE IF NOT EXISTS client_stats ENGINE=NDBCLUSTER (
     client_id BIGINT UNSIGNED,
     payload MEDIUMBLOB,
     timestamp DATETIME(6),
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS client_stats(
         REFERENCES clients(client_id)
         ON DELETE CASCADE
 )""", """
-CREATE TABLE IF NOT EXISTS client_report_graphs(
+CREATE TABLE IF NOT EXISTS client_report_graphs ENGINE=NDBCLUSTER (
     client_label VARCHAR(100) NOT NULL,
     report_type INT UNSIGNED NOT NULL,
     timestamp DATETIME(6) NOT NULL,
@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS client_report_graphs(
     PRIMARY KEY (client_label, report_type, timestamp)
 )
 """, """
-CREATE TABLE IF NOT EXISTS grr_users(
+CREATE TABLE IF NOT EXISTS grr_users ENGINE=NDBCLUSTER (
     username_hash BINARY(32) PRIMARY KEY,
     username VARCHAR(254),
     password VARBINARY(255),
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS grr_users(
 )""", """
 CREATE INDEX IF NOT EXISTS username_idx ON grr_users(username(191))
 """, """
-CREATE TABLE IF NOT EXISTS approval_request(
+CREATE TABLE IF NOT EXISTS approval_request ENGINE=NDBCLUSTER (
     username_hash BINARY(32),
     approval_type INT UNSIGNED,
     subject_id VARCHAR(128),
@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS approval_request(
 CREATE INDEX IF NOT EXISTS by_username_type_subject
 ON approval_request(username_hash, approval_type, subject_id)
 """, """
-CREATE TABLE IF NOT EXISTS approval_grant(
+CREATE TABLE IF NOT EXISTS approval_grant ENGINE=NDBCLUSTER (
     username_hash BINARY(32),
     approval_id BIGINT UNSIGNED,
     grantor_username_hash BINARY(32),
@@ -150,7 +150,7 @@ CREATE TABLE IF NOT EXISTS approval_grant(
         REFERENCES grr_users (username_hash)
         ON DELETE CASCADE
 )""", """
-CREATE TABLE IF NOT EXISTS user_notification(
+CREATE TABLE IF NOT EXISTS user_notification ENGINE=NDBCLUSTER (
     username_hash BINARY(32),
     timestamp DATETIME(6),
     notification_state INT UNSIGNED,
@@ -160,7 +160,7 @@ CREATE TABLE IF NOT EXISTS user_notification(
         REFERENCES grr_users (username_hash)
         ON DELETE CASCADE
 )""", """
-CREATE TABLE IF NOT EXISTS api_audit_entry(
+CREATE TABLE IF NOT EXISTS api_audit_entry ENGINE=NDBCLUSTER (
     -- Entries are retained after user deletion. Thus, do not use a FOREIGN KEY
     -- to grr_users.username_hash.
     username VARCHAR(254),
@@ -175,7 +175,7 @@ ON api_audit_entry(timestamp)
 CREATE INDEX IF NOT EXISTS router_method_name_idx
 ON api_audit_entry(router_method_name)
 """, """
-CREATE TABLE IF NOT EXISTS message_handler_requests(
+CREATE TABLE IF NOT EXISTS message_handler_requests ENGINE=NDBCLUSTER (
     handlername VARCHAR(128),
     timestamp DATETIME(6),
     request_id INT UNSIGNED,
@@ -184,13 +184,13 @@ CREATE TABLE IF NOT EXISTS message_handler_requests(
     leased_by VARCHAR(128),
     PRIMARY KEY (handlername, request_id)
 )""", """
-CREATE TABLE IF NOT EXISTS foreman_rules(
+CREATE TABLE IF NOT EXISTS foreman_rules ENGINE=NDBCLUSTER (
     hunt_id VARCHAR(128),
     expiration_time DATETIME(6),
     rule MEDIUMBLOB,
     PRIMARY KEY (hunt_id)
 )""", """
-CREATE TABLE IF NOT EXISTS cron_jobs(
+CREATE TABLE IF NOT EXISTS cron_jobs ENGINE=NDBCLUSTER (
     job_id VARCHAR(100),
     job MEDIUMBLOB,
     create_time DATETIME(6),
@@ -204,7 +204,7 @@ CREATE TABLE IF NOT EXISTS cron_jobs(
     leased_by VARCHAR(128),
     PRIMARY KEY (job_id)
 )""", """
-CREATE TABLE IF NOT EXISTS cron_job_runs(
+CREATE TABLE IF NOT EXISTS cron_job_runs ENGINE=NDBCLUSTER (
     job_id VARCHAR(100),
     run_id INT UNSIGNED,
     write_time DATETIME(6),
@@ -212,7 +212,7 @@ CREATE TABLE IF NOT EXISTS cron_job_runs(
     PRIMARY KEY (job_id, run_id),
     FOREIGN KEY (job_id) REFERENCES cron_jobs (job_id) ON DELETE CASCADE
 )""", """
-CREATE TABLE IF NOT EXISTS client_messages(
+CREATE TABLE IF NOT EXISTS client_messages ENGINE=NDBCLUSTER (
     client_id BIGINT UNSIGNED,
     message_id BIGINT UNSIGNED,
     timestamp DATETIME(6),
@@ -225,7 +225,7 @@ CREATE TABLE IF NOT EXISTS client_messages(
         REFERENCES clients(client_id)
         ON DELETE CASCADE
 )""", """
-CREATE TABLE IF NOT EXISTS flows(
+CREATE TABLE IF NOT EXISTS flows ENGINE=NDBCLUSTER (
     client_id BIGINT UNSIGNED,
     flow_id BIGINT UNSIGNED,
     long_flow_id VARCHAR(255),
@@ -247,7 +247,7 @@ CREATE TABLE IF NOT EXISTS flows(
 )""", """
 CREATE INDEX IF NOT EXISTS timestamp_idx ON flows(timestamp)
 """, """
-CREATE TABLE IF NOT EXISTS flow_requests(
+CREATE TABLE IF NOT EXISTS flow_requests ENGINE=NDBCLUSTER (
     client_id BIGINT UNSIGNED,
     flow_id BIGINT UNSIGNED,
     request_id BIGINT UNSIGNED,
@@ -263,7 +263,7 @@ CREATE TABLE IF NOT EXISTS flow_requests(
         REFERENCES flows(client_id, flow_id)
         ON DELETE CASCADE
 )""", """
-CREATE TABLE IF NOT EXISTS flow_responses(
+CREATE TABLE IF NOT EXISTS flow_responses ENGINE=NDBCLUSTER (
     client_id BIGINT UNSIGNED,
     flow_id BIGINT UNSIGNED,
     request_id BIGINT UNSIGNED,
@@ -280,7 +280,7 @@ CREATE TABLE IF NOT EXISTS flow_responses(
         REFERENCES flow_requests(client_id, flow_id, request_id)
         ON DELETE CASCADE
 )""", """
-CREATE TABLE IF NOT EXISTS flow_processing_requests(
+CREATE TABLE IF NOT EXISTS flow_processing_requests ENGINE=NDBCLUSTER (
     client_id BIGINT UNSIGNED,
     flow_id BIGINT UNSIGNED,
     timestamp DATETIME(6),
@@ -296,7 +296,7 @@ CREATE TABLE IF NOT EXISTS flow_processing_requests(
         REFERENCES flows(client_id, flow_id)
         ON DELETE CASCADE
 )""", """
-CREATE TABLE IF NOT EXISTS signed_binary_references(
+CREATE TABLE IF NOT EXISTS signed_binary_references ENGINE=NDBCLUSTER (
     binary_type INT UNSIGNED NOT NULL,
     binary_path_hash BINARY(32) NOT NULL,
     binary_path TEXT NOT NULL,

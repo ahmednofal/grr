@@ -132,6 +132,9 @@ config_lib.DEFINE_integer(
           "data_store cache."))
 
 # MySQL configuration (relational database and legacy MySQLAdvancedDataStore).
+config_lib.DEFINE_string("Mysql.type", "MySQLAdvancedDataStore",
+                         "The MySQL server type, MySQL or MySQLCluster")
+
 config_lib.DEFINE_string("Mysql.host", "localhost",
                          "The MySQL server hostname.")
 
