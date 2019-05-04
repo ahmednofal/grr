@@ -1021,6 +1021,8 @@ class ExecuteLineMixin(object):
 
   category = "/Administrative/"
   args_type = ExecuteLineArgs
+  behaviours = flow.GRRFlow.behaviours + "BASIC"
+
 
   def Start(self):
     """Call the execute function on the client."""
@@ -1067,8 +1069,8 @@ class CombineFlowMixin(object):
   """Creates a new custom flow by combining some already existing flows"""
 
   category = "/Administrative/"
-
   args_type = CombineFlowArgs
+  behaviours = flow.GRRFlow.behaviours + "BASIC"
 
   def Start(self):
     """The start method."""
