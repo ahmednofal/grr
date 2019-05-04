@@ -149,7 +149,8 @@ function start_cluster {
 }
 
 cd ~
-mkdir mysql_cluster && cd mysql_cluster
+mkdir -p mysql_cluster
+cd mysql_cluster
 
 echo "Which distribution are you on?"
 options=("Ubuntu 18.04 x64" "Debian 9")
@@ -172,7 +173,7 @@ do
 done
 
 echo "Do you want to destroy existing mysql installation in its entirety?
-This is an extremely destructive operation and very dangerous but it's best to do it guarantee correct operation of the cluster, it will however cause issues for other programs but all resolvable by installing some dependencies."
+This is an extremely destructive operation and very dangerous but it's best to do it guarantee correct operation of the cluster."
 select yn in "Yes" "No"; do
     case $yn in
         Yes)
@@ -185,6 +186,7 @@ select yn in "Yes" "No"; do
 done
 
 wget --no-check-certificate $download -O bundle.tar
+mkdir -p install
 tar -xvf bundle.tar -C install/
 cd install
 
@@ -196,6 +198,7 @@ case $option in
         install_cluster_debian;
         break;;
 esac
+
 install_cluster_common;
 
 echo "How do you want database to operate?"
@@ -208,7 +211,6 @@ do
             install_systemd;
             break;;
         "I'll start on my own each time [Recommended for RAM concerns]")
-            start_cluster;
             break;;
         *) echo "invalid option $REPLY";;
     esac
@@ -236,8 +238,8 @@ id=1    @127.0.0.1  (mysql-8.0.16 ndb-8.0.16)
 
 [mysqld(API)]   1 node(s)
 id=4    @127.0.0.1  (mysql-8.0.16 ndb-8.0.16)"
-echo "For this time only, ndb management server and data nodes have been started for you. To shut them down use"
-echo "shell> ndb_mgm -e shutdown"
-echo "To start them up later use"
+echo "To start the cluster nodes use"
 echo "shell> sudo ndb_mgmd -f /var/lib/mysql-cluster/ndb_mgmd_config.ini && sudo ndbd && sudo ndbd"
-echo "We hope you're satisfied with our service. If not, please promptly proceed to go **** yourself because this took a while to figure out!"
+echo "To shut them down use"
+echo "shell> ndb_mgm -e shutdown"
+echo "We hope you're satisfied with our service. If not, please promptly proceed to complain to your immediately facing brick wall."
